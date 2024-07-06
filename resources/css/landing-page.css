@@ -1,0 +1,159 @@
+:root {
+    --primary-color: #EF352B;
+    --secondary-color: #831a15;
+    --grey-color: #727375;
+    --soft-grey-color: #e0e0e0;
+    --white-color: #FFFFFF;
+    --dark-color: #1a1a1a;
+}
+
+body {
+    height: 100%;
+}
+
+
+.content {
+    display: flex;
+    height: 100vh;
+}
+
+.left-side {
+    width: 40%;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-side {
+    width: 60%;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-menu {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+}
+
+.btn-menu:hover {
+    background-color: var(--grey-color);
+    columns: var(--white-color);
+}
+
+.login-box {
+    width: 80%;
+    max-width: 400px;
+    color: var(--white-color);
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+}
+
+
+
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.btn-login:hover {
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+.register-link {
+    margin-top: 15px;
+    color: var(--white-color);
+    text-align: center;
+}
+
+.register-link a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo {
+    max-width: 50%;
+}
+
+.logohead {
+    max-width: 50%;
+}
+
+
+
+
+/* Home */
+.home-bg{
+    background-color: var(--primary-color);
+    height: 100vh;
+}
+
+
+.home-h1
+{
+    color: var(--white-color);
+}
+
+.card-header{
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+}
+
+.btn-masuk{
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn-masuk:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+.btn-keluar{
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn-keluar:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+#home-logo-telkom{
+    width: 30%;
+}
+
+
+/* media query */
+@media (max-width: 800px) {
+    .right-side {
+        width: 0%;
+    }
+
+    .left-side {
+        width: 100%;
+        align-items: normal;
+    }
+
+    #home-logo-telkom{
+        width: 40%;
+    }
+}

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class SuperAdminContoller extends Controller
 {
@@ -23,14 +25,77 @@ class SuperAdminContoller extends Controller
         return view('super-admin.tools', compact('title'));
     }
 
+    public function vlookup(Request $request)
+    {
+        ini_set('memory_limit', '1024M');  // Increase memory limit
+
+        $request->validate([
+            'file1' => 'required|file|mimes:xlsx',
+            'file2' => 'required|file|mimes:xlsx',
+        ]);
+
+        $file1 = $request->file('file1')->getRealPath();
+        $file2 = $request->file('file2')->getRealPath();
+
+        $spreadsheet1 = IOFactory::load($file1);
+        $spreadsheet2 = IOFactory::load($file2);
+
+        $sheet1 = $spreadsheet1->getActiveSheet();
+        $sheet2 = $spreadsheet2->getActiveSheet();
+
+        $data1 = $sheet1->toArray();
+        $data2 = $sheet2->toArray();
+
+        // Validasi kolom yang dibutuhkan
+        if (!in_array('SND', $data1[0])) {
+            return back()->withErrors(['file1' => 'Kolom SND tidak ditemukan dalam file 1']);
+        }
+        if (!in_array('EVENT_SOURCE', $data2[0])) {
+            return back()->withErrors(['file2' => 'Kolom EVENT_SOURCE tidak ditemukan dalam file 2']);
+        }
+
+        $result = [];
+
+        foreach ($data2 as $index2 => $row2) {
+            if ($index2 == 0) continue; // Skip header row
+            $lookupValue = $row2[array_search('EVENT_SOURCE', $data2[0])];
+            foreach ($data1 as $index1 => $row1) {
+                if ($index1 == 0) continue; // Skip header row
+                if ($row1[array_search('SND', $data1[0])] == $lookupValue) {
+                    $result[] = [
+                        'NAMA' => $row2[array_search('PELANGGAN', $data2[0])],
+                        'No. Inet' => $row2[array_search('EVENT_SOURCE', $data2[0])],
+                        'SALDO' => $row1[array_search('SALDO', $data1[0])],
+                        'No. Tlf' => $row2[array_search('MOBILE_CONTACT_TEL', $data2[0])],
+                        'Email' => $row2[array_search('EMAIL_ADDRESS', $data2[0])],
+                        'STO' => $row2[array_search('CSTO', $data2[0])],
+                        'UMUR_CUSTOMER' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
+                    ];
+                    break;
+                }
+            }
+        }
+
+        $newSpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $newSheet = $newSpreadsheet->getActiveSheet();
+        $newSheet->fromArray(array_merge([['NAMA', 'No. Inet', 'SALDO', 'No. Tlf', 'Email', 'STO', 'UMUR_CUSTOMER']], $result));
+
+        $resultFilePath = storage_path('app/public/result.xlsx');
+        $writer = IOFactory::createWriter($newSpreadsheet, 'Xlsx');
+        $writer->save($resultFilePath);
+
+        return response()->download($resultFilePath);
+    }
+
+
 
     // AKUN
     public function indexdataakun()
     {
         $title = 'Data Akun';
         $users = User::where('level', '!=', 'Super Admin')
-              ->orderBy('created_at', 'asc') // Sort by created_at in ascending order
-              ->get();
+            ->orderBy('created_at', 'asc') // Sort by created_at in ascending order
+            ->get();
         return view(
             'super-admin.data-akun',
             compact('title', 'users')

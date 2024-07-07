@@ -8,10 +8,12 @@
 }
 
 
-/* Super Admin */
-#th{
+.btn.btn-submit{
     background-color: var(--secondary-color);
     color: var(--white-color);
+    transition: 0.5s;
 }
-
-
+.btn.btn-submit:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}

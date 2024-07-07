@@ -11,7 +11,7 @@
                 Dashboard
             </a>
         </li>
-
+        
         <span class="fw-bold">Operasional</span>
 
         <li class="{{ Route::is('tools.index') ? 'active' : '' }}">

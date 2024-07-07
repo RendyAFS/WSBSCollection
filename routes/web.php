@@ -35,6 +35,7 @@ Route::prefix('login')->middleware(['auth'])->group(function () {
         Route::get('/data-akun', [SuperAdminContoller::class, 'indexdataakun'])->name('data-akun.index');
         Route::post('/update-status', [SuperAdminContoller::class, 'updatestatus'])->name('updatestatus');
         Route::delete('/akun/{id}', [SuperAdminContoller::class, 'destroyakun'])->name('destroy-akun');
+        Route::post('/vlookup', [SuperAdminContoller::class, 'vlookup'])->name('vlookup.perform');
     });
 
 

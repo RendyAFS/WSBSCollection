@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WSBS Collection</title>
 
-    @vite(['resources/sass/app.scss', 'resources/css/landing-page.css'])
+    @vite(['resources/sass/app.scss', 'resources/css/landing-page.css', 'resources/css/bootstrap.css'])
 </head>
 
 <body>

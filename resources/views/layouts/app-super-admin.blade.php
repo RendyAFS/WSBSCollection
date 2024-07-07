@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $title }}</title>
 
-    @vite(['resources/sass/app.scss', 'resources/css/nav-side-bar.css', 'resources/css/app.css'])
+    @vite(['resources/sass/app.scss', 'resources/css/nav-side-bar.css', 'resources/css/app.css', 'resources/css/bootstrap.css'])
 
     {{-- CSS DATATABLES --}}
     {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"> --}}

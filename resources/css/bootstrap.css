@@ -1,0 +1,19 @@
+:root {
+    --primary-color: #EF352B;
+    --secondary-color: #831a15;
+    --grey-color: #727375;
+    --soft-grey-color: #e0e0e0;
+    --white-color: #FFFFFF;
+    --dark-color: #1a1a1a;
+}
+
+
+.btn.btn-submit{
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn.btn-submit:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TempPranpcs;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class SuperAdminContoller extends Controller
+class SuperAdminController extends Controller
 {
     // DASHBOARD
     public function index()
@@ -22,12 +24,52 @@ class SuperAdminContoller extends Controller
     public function indextool()
     {
         $title = 'Tool';
-        return view('super-admin.tools', compact('title'));
+        $temp_pranpcs = TempPranpcs::all();
+        return view('super-admin.tools', compact('title', 'temp_pranpcs'));
+    }
+
+    public function checkFile1(Request $request)
+    {
+        $request->validate(['file1' => 'required|file|mimes:xlsx']);
+        $file1 = $request->file('file1');
+        $fileName1 = $file1->getClientOriginalName();
+        $file1Path = $file1->getRealPath();
+
+        // Load spreadsheet and get first row as array
+        $spreadsheet1 = IOFactory::load($file1Path);
+        $sheet1 = $spreadsheet1->getActiveSheet();
+        $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+        if (in_array('SND', $firstRow1)) {
+            return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
+        }
+    }
+
+    public function checkFile2(Request $request)
+    {
+        $request->validate(['file2' => 'required|file|mimes:xlsx']);
+        $file2 = $request->file('file2');
+        $fileName2 = $file2->getClientOriginalName();
+        $file2Path = $file2->getRealPath();
+
+        // Load spreadsheet and get first row as array
+        $spreadsheet2 = IOFactory::load($file2Path);
+        $sheet2 = $spreadsheet2->getActiveSheet();
+        $firstRow2 = $sheet2->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+        if (in_array('EVENT_SOURCE', $firstRow2)) {
+            return response()->json(['status' => 'success', 'message' => "*Kolom EVENT_SOURCE ditemukan dalam file $fileName2"]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => "*Kolom EVENT_SOURCE tidak ditemukan dalam file $fileName2"]);
+        }
     }
 
     public function vlookup(Request $request)
     {
-        ini_set('memory_limit', '1024M');  // Increase memory limit
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // max_execution_time=300
 
         $request->validate([
             'file1' => 'required|file|mimes:xlsx',
@@ -45,14 +87,6 @@ class SuperAdminContoller extends Controller
 
         $data1 = $sheet1->toArray();
         $data2 = $sheet2->toArray();
-
-        // Validasi kolom yang dibutuhkan
-        if (!in_array('SND', $data1[0])) {
-            return back()->withErrors(['file1' => 'Kolom SND tidak ditemukan dalam file 1']);
-        }
-        if (!in_array('EVENT_SOURCE', $data2[0])) {
-            return back()->withErrors(['file2' => 'Kolom EVENT_SOURCE tidak ditemukan dalam file 2']);
-        }
 
         $result = [];
 
@@ -76,6 +110,7 @@ class SuperAdminContoller extends Controller
             }
         }
 
+        // Save the result to a new spreadsheet
         $newSpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $newSheet = $newSpreadsheet->getActiveSheet();
         $newSheet->fromArray(array_merge([['NAMA', 'No. Inet', 'SALDO', 'No. Tlf', 'Email', 'STO', 'UMUR_CUSTOMER']], $result));
@@ -84,7 +119,30 @@ class SuperAdminContoller extends Controller
         $writer = IOFactory::createWriter($newSpreadsheet, 'Xlsx');
         $writer->save($resultFilePath);
 
+        // Insert the result into the database
+        foreach ($result as $row) {
+            DB::table('temp_pranpcs')->insert([
+                'nama' => $row['NAMA'],
+                'no_inet' => $row['No. Inet'],
+                'saldo' => $row['SALDO'],
+                'no_tlf' => $row['No. Tlf'],
+                'email' => $row['Email'],
+                'sto' => $row['STO'],
+                'umur_customer' => $row['UMUR_CUSTOMER'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         return response()->download($resultFilePath);
+    }
+
+    public function destroyPranpcs($id)
+    {
+        $data = TempPranpcs::findOrFail($id);
+        $data->delete();
+
+        return redirect()->route('tools.index');
     }
 
 

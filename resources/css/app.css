@@ -4,12 +4,42 @@
     --grey-color: #727375;
     --soft-grey-color: #e0e0e0;
     --white-color: #FFFFFF;
+    --bg-loading-color: rgb(255, 255, 255, 0.85);
+    /* Tambahkan variabel RGB */
     --dark-color: #1a1a1a;
 }
 
-
 /* Super Admin */
-#th{
+#th {
     background-color: var(--secondary-color);
     color: var(--white-color);
+}
+
+.contain-loading {
+    padding: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--bg-loading-color);
+    /* Menggunakan rgba dengan alpha transparency */
+    position: fixed;
+}
+
+
+#img-loading {
+    width: 35%;
+    animation: zoomOut 1s infinite; /* Mengatur animasi zoom out dengan durasi 2 detik dan berjalan terus-menerus */
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1); /* Awal skala elemen */
+    }
+    100% {
+        transform: scale(0.7); /* Skala elemen pada akhir animasi */
+    }
 }

@@ -38,6 +38,7 @@ Route::prefix('login')->middleware(['auth'])->group(function () {
         Route::post('/vlookup', [SuperAdminController::class, 'vlookup'])->name('vlookup.perform');
         Route::post('/vlookup/checkFile1', [SuperAdminController::class, 'checkFile1'])->name('vlookup.checkFile1');
         Route::post('/vlookup/checkFile2', [SuperAdminController::class, 'checkFile2'])->name('vlookup.checkFile2');
+        Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroyPranpcs'])->name('destroy-pranpcs');
     });
 
 

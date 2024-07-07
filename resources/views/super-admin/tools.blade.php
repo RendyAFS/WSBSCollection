@@ -1,5 +1,16 @@
 @extends('layouts.app-super-admin')
 
+<div class="contain-loading d-none" id="loadingScreen">
+    <div class="content-loading">
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
+            <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="" id="img-loading">
+            <span class="ms-2 fs-4 fw-bold">
+                Proses Vlook Up Data
+            </span>
+        </div>
+    </div>
+</div>
+
 @section('content')
     <div class="px-3 py-4">
         <div class="mb-4">
@@ -12,8 +23,9 @@
             @csrf
             <div class="row">
                 <div class="d-flex justify-content-end mb-3">
-                    <a href="{{ route('tools.index') }}" class="text-danger fw-bold link-underline link-underline-opacity-0">
-                        <i class="bi bi-x-lg"></i> Hapus
+                    <a href="{{ route('tools.index') }}"
+                        class="text-danger fw-bold link-underline link-underline-opacity-0">
+                        <i class="bi bi-x-lg"></i> Reset
                     </a>
                 </div>
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
@@ -58,13 +70,177 @@
             </div>
         </form>
 
-        <div class="">
+
+        <div class="mb-4 pt-4">
+            <span class="fw-bold fs-2">
+                Preview data
+            </span>
+
+            <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcs" style="width: 100%">
+                <thead class="fw-bold">
+                    <tr>
+                        <th id = "th" class="w-20">Nama</th>
+                        <th id = "th" class="w-15">No. Inet</th>
+                        <th id = "th" class="w-10">Saldo</th>
+                        <th id = "th" class="w-15">No. Tlf</th>
+                        <th id = "th" class="w-20">Email</th>
+                        <th id = "th" class="w-10">STO</th>
+                        <th id = "th" class="w-10">Umur Customer</th>
+                        <th id = "th" class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($temp_pranpcs as $data)
+                        <tr data-id="{{ $data->id }}">
+                            <td>
+                                <span class="fw-normal">{{ $data->nama }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->no_inet }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->saldo }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->no_tlf }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->email }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->sto }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-normal">{{ $data->umur_customer }}</span>
+                            </td>
+                            <td class="text-center">
+                                <form action="{{ route('destroy-pranpcs', ['id' => $data->id]) }}" method="POST"
+                                    class="delete-form">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger btn-sm me-2 btn-delete shadow">
+                                        <i class="bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
         </div>
     </div>
 @endsection
 @push('scripts')
     <script type="module">
+        // Table
+        $(document).ready(function() {
+            new DataTable('#tabelpranpcs', {
+                responsive: true
+            });
+            $('.form-select').change(function() {
+                var status = $(this).val();
+                var userId = $(this).closest('tr').data('id');
+
+                $.ajax({
+                    url: '{{ route('updatestatus') }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: userId,
+                        status: status
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Status Memperbaharui',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function(response) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to update status',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });
+
+        // modal delete
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-delete').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: "Apakah Anda Yakin Menghapus Data?",
+                        text: "Anda tidak akan dapat mengembalikannya!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya, hapus!",
+                        cancelButtonText: "Batal",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+
+        // Show loading screen on form submit
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            document.getElementById('loadingScreen').classList.remove('d-none');
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            // Show the loading screen
+            showLoading();
+
+            fetch(this.action, {
+                    method: 'POST',
+                    body: new FormData(this),
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    // Create a link element to download the file
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'result.xlsx';
+                    link.click();
+
+                    // Hide the loading screen
+                    hideLoading();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Hide the loading screen
+                    hideLoading();
+                });
+
+            // Prevent the default form submission
+            event.preventDefault();
+        });
+
+        function showLoading() {
+            document.getElementById('loadingScreen').classList.remove('d-none');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingScreen').classList.add('d-none');
+        }
+
         // Cek file SND
         document.getElementById('checkFile1').addEventListener('click', function() {
             let formData = new FormData();
@@ -81,11 +257,11 @@
             let loadingElement = document.createElement('div');
             loadingElement.classList.add('loading', 'd-block'); // Show loading indicator
             loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
+            <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Proses
+        `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile1') }}', {
@@ -136,11 +312,11 @@
             let loadingElement = document.createElement('div');
             loadingElement.classList.add('loading2', 'd-block'); // Show loading indicator
             loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
+            <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Proses
+        `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile2') }}', {
@@ -201,8 +377,6 @@
                 checkFileButton.classList.add('d-none');
             }
         });
-
-
 
         // VlookUp Data
         function enableVlookupButton() {

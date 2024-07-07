@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TempPranpcs;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -22,7 +24,8 @@ class SuperAdminController extends Controller
     public function indextool()
     {
         $title = 'Tool';
-        return view('super-admin.tools', compact('title'));
+        $temp_pranpcs = TempPranpcs::all();
+        return view('super-admin.tools', compact('title', 'temp_pranpcs'));
     }
 
     public function checkFile1(Request $request)
@@ -66,7 +69,7 @@ class SuperAdminController extends Controller
     public function vlookup(Request $request)
     {
         ini_set('memory_limit', '2048M');  // Increase memory limit
-        set_time_limit(300);
+        set_time_limit(300);  // max_execution_time=300
 
         $request->validate([
             'file1' => 'required|file|mimes:xlsx',
@@ -107,6 +110,7 @@ class SuperAdminController extends Controller
             }
         }
 
+        // Save the result to a new spreadsheet
         $newSpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $newSheet = $newSpreadsheet->getActiveSheet();
         $newSheet->fromArray(array_merge([['NAMA', 'No. Inet', 'SALDO', 'No. Tlf', 'Email', 'STO', 'UMUR_CUSTOMER']], $result));
@@ -115,7 +119,30 @@ class SuperAdminController extends Controller
         $writer = IOFactory::createWriter($newSpreadsheet, 'Xlsx');
         $writer->save($resultFilePath);
 
+        // Insert the result into the database
+        foreach ($result as $row) {
+            DB::table('temp_pranpcs')->insert([
+                'nama' => $row['NAMA'],
+                'no_inet' => $row['No. Inet'],
+                'saldo' => $row['SALDO'],
+                'no_tlf' => $row['No. Tlf'],
+                'email' => $row['Email'],
+                'sto' => $row['STO'],
+                'umur_customer' => $row['UMUR_CUSTOMER'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         return response()->download($resultFilePath);
+    }
+
+    public function destroyPranpcs($id)
+    {
+        $data = TempPranpcs::findOrFail($id);
+        $data->delete();
+
+        return redirect()->route('tools.index');
     }
 
 

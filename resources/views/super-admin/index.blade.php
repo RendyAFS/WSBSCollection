@@ -2,52 +2,10 @@
 
 @section('content')
     <div class="px-3 py-4">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Dashboard
+            </span>
+        </div>
     </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-    <div class="p-3">
-        <h2>Super Admin Dashboard</h2>
-        <p>Welcome to the super admin dashboard.</p>
-    </div>
-
 @endsection

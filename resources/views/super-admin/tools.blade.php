@@ -2,53 +2,10 @@
 
 @section('content')
     <div class="px-3 py-4">
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div>
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
-        </div>
-        <div class="p-3">
-            <h2>Tools</h2>
-            <p>Welcome to the Tools.</p>
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Tools
+            </span>
         </div>
     </div>
 @endsection

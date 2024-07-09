@@ -1,15 +1,6 @@
 @extends('layouts.app-super-admin')
 
-<div class="contain-loading d-none" id="loadingScreen">
-    <div class="content-loading">
-        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
-            <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="" id="img-loading">
-            <span class="ms-2 fs-4 fw-bold">
-                Proses Vlook Up Data
-            </span>
-        </div>
-    </div>
-</div>
+@include('layouts.loading')
 
 @section('content')
     <div class="px-3 py-4">
@@ -23,8 +14,7 @@
             @csrf
             <div class="row">
                 <div class="d-flex justify-content-end mb-3">
-                    <a href="{{ route('tools.index') }}"
-                        class="text-danger fw-bold link-underline link-underline-opacity-0">
+                    <a href="{{ route('tools.index') }}" class="text-danger fw-bold link-underline link-underline-opacity-0">
                         <i class="bi bi-x-lg"></i> Reset
                     </a>
                 </div>
@@ -72,49 +62,80 @@
 
 
         <div class="mb-4 pt-4">
-            <span class="fw-bold fs-2">
-                Preview data
-            </span>
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
+                <span class="fw-bold fs-2 mb-3 mb-md-0">
+                    Preview data
+                </span>
+                <div class="contain-btn-save">
+                    @if ($temp_billpers->isEmpty())
+                        {{-- None --}}
+                    @else
+                        <form action="{{ route('savebillpers') }}" method="POST" style="display:inline;">
+                            @csrf
+                            <div class="form-group mb-3">
+                                <label for="bulan_tahun">Bulan/Tahun</label>
+                                <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control" required>
+                            </div>
 
-            <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcs" style="width: 100%">
+                            <!-- Tambahkan input lainnya sesuai kebutuhan -->
+
+                            <button type="submit" class="btn btn-submit btn-save" id="btn-save">
+                                <i class="bi bi-floppy2-fill"></i> Simpan
+                            </button>
+                        </form>
+                        <form action="{{ route('deleteAllTempBillpers') }}" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-delete-all">
+                                <i class="bi bi-trash-fill"></i> Hapus Semua
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+
+            <table class="table table-hover table-bordered datatable shadow" id="tabeltempbillpers" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
-                        <th id = "th" class="w-20">Nama</th>
-                        <th id = "th" class="w-15">No. Inet</th>
-                        <th id = "th" class="w-10">Saldo</th>
-                        <th id = "th" class="w-15">No. Tlf</th>
-                        <th id = "th" class="w-20">Email</th>
-                        <th id = "th" class="w-10">STO</th>
-                        <th id = "th" class="w-10">Umur Customer</th>
-                        <th id = "th" class="text-center">Opsi</th>
+                        <th id = "th" class="align-middle">Nama</th>
+                        <th id = "th" class="align-middle text-center">No. Inet</th>
+                        <th id = "th" class="align-middle text-center">Saldo</th>
+                        <th id = "th" class="align-middle text-center">No. Tlf</th>
+                        <th id = "th" class="align-middle ">Email</th>
+                        <th id = "th" class="align-middle text-center">STO</th>
+                        <th id = "th" class="align-middle text-center">Umur Customer</th>
+                        <th id = "th" class="align-middle text-center">Produk</th>
+                        <th id = "th" class="align-middle text-center">Opsi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($temp_pranpcs as $data)
+                    @foreach ($temp_billpers as $data)
                         <tr data-id="{{ $data->id }}">
-                            <td>
+                            <td class="align-middle ">
                                 <span class="fw-normal">{{ $data->nama }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle text-center">
                                 <span class="fw-normal">{{ $data->no_inet }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle text-center">
                                 <span class="fw-normal">{{ $data->saldo }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle text-center">
                                 <span class="fw-normal">{{ $data->no_tlf }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle ">
                                 <span class="fw-normal">{{ $data->email }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle text-center">
                                 <span class="fw-normal">{{ $data->sto }}</span>
                             </td>
-                            <td>
+                            <td class="align-middle text-center">
                                 <span class="fw-normal">{{ $data->umur_customer }}</span>
                             </td>
-                            <td class="text-center">
-                                <form action="{{ route('destroy-pranpcs', ['id' => $data->id]) }}" method="POST"
+                            <td class="align-middle text-center">
+                                <span class="fw-normal">{{ $data->produk }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <form action="{{ route('destroy-tempbillpers', ['id' => $data->id]) }}" method="POST"
                                     class="delete-form">
                                     @csrf
                                     @method('delete')
@@ -127,7 +148,6 @@
                     @endforeach
                 </tbody>
             </table>
-
         </div>
     </div>
 @endsection
@@ -135,38 +155,12 @@
     <script type="module">
         // Table
         $(document).ready(function() {
-            new DataTable('#tabelpranpcs', {
+            new DataTable('#tabeltempbillpers', {
                 responsive: true
             });
             $('.form-select').change(function() {
                 var status = $(this).val();
                 var userId = $(this).closest('tr').data('id');
-
-                $.ajax({
-                    url: '{{ route('updatestatus') }}',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: userId,
-                        status: status
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: 'Status Memperbaharui',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to update status',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
             });
         });
 
@@ -195,6 +189,77 @@
             });
         });
 
+        // Script untuk modal simpan
+        document.querySelectorAll('.btn-save').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const form = this.closest('form');
+                const bulanTahun = form.querySelector('#bulan_tahun').value; // Ambil nilai bulan/tahun
+
+                Swal.fire({
+                    title: "Simpan Data?",
+                    text: "Anda yakin ingin menyimpan data ini?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, simpan!",
+                    cancelButtonText: "Batal",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Tambahkan nilai bulan/tahun ke form data sebelum submit
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'bulan_tahun';
+                        hiddenInput.value = bulanTahun;
+                        form.appendChild(hiddenInput);
+
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSave = document.getElementById('btn-save');
+            const bulanTahunInput = document.getElementById('bulan_tahun');
+
+            btnSave.addEventListener('click', function(event) {
+                if (!bulanTahunInput.value) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
+                    });
+                }
+            });
+        });
+
+
+        // Script untuk modal hapus semua temp_billpers
+        document.querySelectorAll('.btn-delete-all').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin Menghapus Semua Data?",
+                    text: "Anda tidak akan dapat mengembalikannya!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, hapus semua!",
+                    cancelButtonText: "Batal",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
         // Show loading screen on form submit
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             document.getElementById('loadingScreen').classList.remove('d-none');
@@ -211,20 +276,20 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }
                 })
-                .then(response => response.blob())
-                .then(blob => {
-                    // Create a link element to download the file
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = 'result.xlsx';
-                    link.click();
-
-                    // Hide the loading screen
-                    hideLoading();
+                .then(response => {
+                    if (response.ok) {
+                        // Redirect to another page or update UI
+                        window.location.href = '{{ route('tools.index') }}'; // Redirect to tools.index
+                    } else {
+                        throw new Error('Network response was not ok.');
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
 
+                    // Optionally show error message or handle error UI
+                })
+                .finally(() => {
                     // Hide the loading screen
                     hideLoading();
                 });
@@ -232,6 +297,8 @@
             // Prevent the default form submission
             event.preventDefault();
         });
+
+
 
         function showLoading() {
             document.getElementById('loadingScreen').classList.remove('d-none');

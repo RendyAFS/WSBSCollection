@@ -20,6 +20,6 @@ class UserMiddleware
             return $next($request);
         }
 
-        return redirect()->back();
+        return redirect()->route('user.index')->with('error', 'Data Terinput!');
     }
 }

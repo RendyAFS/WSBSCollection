@@ -11,7 +11,7 @@
                 Dashboard
             </a>
         </li>
-        
+
         <span class="fw-bold">Operasional</span>
 
         <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
@@ -20,6 +20,16 @@
                 Tool
             </a>
         </li>
+
+        <li class="{{ Route::is('billper.index') ? 'active' : '' }}">
+            <a href="{{ route('billper.index') }}">
+                <i class="bi bi-database{{ Route::is('billper.index') ? '-fill' : '' }}"></i>
+                Billper
+            </a>
+        </li>
+
+        <span class="fw-bold">Profil</span>
+
         <li class="{{ Route::is('data-akun.index') ? 'active' : '' }}">
             <a href="{{ route('data-akun.index') }}">
                 <i class="bi bi-people{{ Route::is('data-akun.index') ? '-fill' : '' }}"></i>

@@ -4,9 +4,11 @@
     --grey-color: #727375;
     --soft-grey-color: #e0e0e0;
     --white-color: #FFFFFF;
-    --bg-loading-color: rgb(255, 255, 255, 0.85);
-    /* Tambahkan variabel RGB */
+    --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
+
+    
+
 }
 
 /* Super Admin */
@@ -18,6 +20,7 @@
 .contain-loading {
     padding: 0;
     left: 0;
+    top: 0;
     display: flex;
     justify-content: center;
     align-items: center;

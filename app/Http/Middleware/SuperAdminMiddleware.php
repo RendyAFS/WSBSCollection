@@ -20,6 +20,6 @@ class SuperAdminMiddleware
             return $next($request);
         }
 
-        return redirect()->back();
+        return redirect()->route('super-admin.index')->with('error', 'Data Terinput!');
     }
 }

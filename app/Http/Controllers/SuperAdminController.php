@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TempPranpcs;
+use App\Exports\BillperExport;
+use App\Models\Billpers;
+use App\Models\TempBillpers;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Log;
 
 class SuperAdminController extends Controller
 {
@@ -24,8 +28,8 @@ class SuperAdminController extends Controller
     public function indextool()
     {
         $title = 'Tool';
-        $temp_pranpcs = TempPranpcs::all();
-        return view('super-admin.tools', compact('title', 'temp_pranpcs'));
+        $temp_billpers = TempBillpers::all();
+        return view('super-admin.tools', compact('title', 'temp_billpers'));
     }
 
     public function checkFile1(Request $request)
@@ -88,6 +92,7 @@ class SuperAdminController extends Controller
         $data1 = $sheet1->toArray();
         $data2 = $sheet2->toArray();
 
+
         $result = [];
 
         foreach ($data2 as $index2 => $row2) {
@@ -97,54 +102,132 @@ class SuperAdminController extends Controller
                 if ($index1 == 0) continue; // Skip header row
                 if ($row1[array_search('SND', $data1[0])] == $lookupValue) {
                     $result[] = [
-                        'NAMA' => $row2[array_search('PELANGGAN', $data2[0])],
-                        'No. Inet' => $row2[array_search('EVENT_SOURCE', $data2[0])],
-                        'SALDO' => $row1[array_search('SALDO', $data1[0])],
-                        'No. Tlf' => $row2[array_search('MOBILE_CONTACT_TEL', $data2[0])],
-                        'Email' => $row2[array_search('EMAIL_ADDRESS', $data2[0])],
-                        'STO' => $row2[array_search('CSTO', $data2[0])],
-                        'UMUR_CUSTOMER' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
+                        'nama' => $row2[array_search('PELANGGAN', $data2[0])],
+                        'no_inet' => $row2[array_search('EVENT_SOURCE', $data2[0])],
+                        'saldo' => $row1[array_search('SALDO', $data1[0])],
+                        'no_tlf' => $row2[array_search('MOBILE_CONTACT_TEL', $data2[0])],
+                        'email' => $row2[array_search('EMAIL_ADDRESS', $data2[0])],
+                        'sto' => $row2[array_search('CSTO', $data2[0])],
+                        'umur_customer' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
+                        'produk' => $row1[array_search('INDIHOME', $data1[0])],
                     ];
                     break;
                 }
             }
         }
-
-        // Save the result to a new spreadsheet
-        $newSpreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $newSheet = $newSpreadsheet->getActiveSheet();
-        $newSheet->fromArray(array_merge([['NAMA', 'No. Inet', 'SALDO', 'No. Tlf', 'Email', 'STO', 'UMUR_CUSTOMER']], $result));
-
-        $resultFilePath = storage_path('app/public/result.xlsx');
-        $writer = IOFactory::createWriter($newSpreadsheet, 'Xlsx');
-        $writer->save($resultFilePath);
-
         // Insert the result into the database
         foreach ($result as $row) {
-            DB::table('temp_pranpcs')->insert([
-                'nama' => $row['NAMA'],
-                'no_inet' => $row['No. Inet'],
-                'saldo' => $row['SALDO'],
-                'no_tlf' => $row['No. Tlf'],
-                'email' => $row['Email'],
-                'sto' => $row['STO'],
-                'umur_customer' => $row['UMUR_CUSTOMER'],
+            DB::table('temp_billpers')->insert([
+                'nama' => $row['nama'] ?: 'N/A',
+                'no_inet' => $row['no_inet'] ?: 'N/A',
+                'saldo' => $row['saldo'] ?: 'N/A',
+                'no_tlf' => $row['no_tlf'] ?: 'N/A',
+                'email' => $row['email'] ?: 'N/A',
+                'sto' => $row['sto'] ?: 'N/A',
+                'umur_customer' => $row['umur_customer'] ?: 'N/A',
+                'produk' => $row['produk'] ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
 
-        return response()->download($resultFilePath);
-    }
-
-    public function destroyPranpcs($id)
-    {
-        $data = TempPranpcs::findOrFail($id);
-        $data->delete();
-
         return redirect()->route('tools.index');
     }
 
+
+    public function savetempbillpers(Request $request)
+    {
+        // Ambil data dari temp_billpers
+        $tempBillpers = TempBillpers::all();
+
+        // Ambil bulan dan tahun dari request
+        $bulanTahun = $request->input('bulan_tahun');
+
+        // Insert data ke billpers
+        foreach ($tempBillpers as $row) {
+            DB::table('billpers')->insert([
+                'nama' => $row->nama ?: 'N/A',
+                'no_inet' => $row->no_inet ?: 'N/A',
+                'saldo' => $row->saldo ?: 'N/A',
+                'no_tlf' => $row->no_tlf ?: 'N/A',
+                'email' => $row->email ?: 'N/A',
+                'sto' => $row->sto ?: 'N/A',
+                'umur_customer' => $row->umur_customer ?: 'N/A',
+                'produk' => $row->produk ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'bulan_tahun' => $bulanTahun, // Set date month/year
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Kosongkan table temp_billpers
+        TempBillpers::truncate();
+
+        // Tambahkan notifikasi atau alert di sini jika diperlukan
+        // Alert::success('Data Berhasil Tersimpan');
+
+        // Redirect ke halaman tools.index atau halaman lainnya
+        Alert::success('Data Berhasil Tersimpan');
+        return redirect()->route('tools.index')->with('success', 'Data Berhasil Tersimpan');
+    }
+
+
+    public function deleteAllTempBillpers()
+    {
+        // Kosongkan table temp_billpers
+        TempBillpers::truncate();
+
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('tools.index');
+    }
+
+    public function destroyTempBillpers($id)
+    {
+        $data = TempBillpers::findOrFail($id);
+        $data->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('tools.index');
+    }
+
+    // Billpers
+    public function indexbillper()
+    {
+        $title = 'Data Billper';
+        $billpers = Billpers::all();
+        return view('super-admin.data-billper', compact('title', 'billpers'));
+    }
+    public function destroyBillpers($id)
+    {
+        $data = Billpers::findOrFail($id);
+        $data->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('billper.index');
+    }
+
+    public function export()
+    {
+        $allData = Billpers::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')->get();
+
+        return Excel::download(new BillperExport($allData), 'data-billpers-all.xlsx');
+    }
+
+    public function downloadFilteredExcel(Request $request)
+    {
+        $bulanTahun = $request->input('bulan_tahun');
+
+        // Format input bulan_tahun ke format yang sesuai dengan kebutuhan database
+        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+
+        // Query untuk mengambil data berdasarkan rentang bulan_tahun
+        $filteredData = Billpers::where('bulan_tahun', 'like', substr($formattedBulanTahun, 0, 7) . '%')
+            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')
+            ->get();
+
+        // Export data menggunakan BillperExport dengan data yang sudah difilter
+        return Excel::download(new BillperExport($filteredData), 'billpers_filtered_'.$bulanTahun.'.xlsx');
+    }
 
 
     // AKUN

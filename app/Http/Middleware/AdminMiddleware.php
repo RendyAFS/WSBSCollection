@@ -20,6 +20,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect()->back();
+        return redirect()->route('admin.index')->with('error', 'Data Terinput!');
     }
 }

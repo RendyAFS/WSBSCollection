@@ -32,11 +32,6 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
-                                        <label for="saldo" class="form-label fw-bold">Saldo</label>
-                                        <input type="text" class="form-control" id="saldo" name="saldo"
-                                            value="{{ $billper->saldo }}">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
                                         <select class="form-select" id="status_pembayaran" name="status_pembayaran">
                                             <option value="Paid" {{ $billper->status_pembayaran == 'Paid' ? 'selected' : '' }}>Paid</option>
@@ -53,31 +48,31 @@
                                         <input type="email" class="form-control" id="email" name="email"
                                             value="{{ $billper->email }}">
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="saldo" class="form-label fw-bold">Saldo</label>
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="saldo" name="saldo"
+                                            value="{{ $billper->saldo }}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label for="sto" class="form-label fw-bold">STO</label>
-                                        <input type="text" class="form-control" id="sto" name="sto"
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="sto" name="sto"
                                             value="{{ $billper->sto }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="umur_customer" class="form-label fw-bold">Status Pembayaran</label>
-                                        <select class="form-select" id="umur_customer" name="umur_customer">
-                                            <option value="00-03 Bln" {{ $billper->umur_customer == '00-03 Bln' ? 'selected' : '' }}>00-03 Bln</option>
-                                            <option value="04-06 Bln" {{ $billper->umur_customer == '04-06 Bln' ? 'selected' : '' }}>04-06 Bln</option>
-                                            <option value="07-09 Bln" {{ $billper->umur_customer == '07-09 Bln' ? 'selected' : '' }}>07-09 Bln</option>
-                                            <option value="10-12 Bln" {{ $billper->umur_customer == '10-12 Bln' ? 'selected' : '' }}>10-12 Bln</option>
-                                            <option value="> 12 Bln" {{ $billper->umur_customer == '> 12 Bln' ? 'selected' : '' }}>> 12 Bln</option>
-                                        </select>
+                                        <label for="umur_customer" class="form-label fw-bold">Umur Customer</label>
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="umur_customer" name="umur_customer"
+                                            value="{{ $billper->umur_customer }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="produk" class="form-label fw-bold">Produk</label>
-                                        <input type="text" class="form-control" id="produk" name="produk"
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="produk" name="produk"
                                             value="{{ $billper->produk }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="bulan_tahun" class="form-label fw-bold">Bulan-Tahun</label>
-                                        <input type="text" class="form-control" id="bulan_tahun" name="bulan_tahun"
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="bulan_tahun" name="bulan_tahun"
                                             value="{{ $billper->bulan_tahun }}">
                                     </div>
                                 </div>

@@ -1,19 +1,52 @@
 :root {
     --primary-color: #EF352B;
-    --secondary-color: #831a15;
+    --secondary-color: #831a16;
     --grey-color: #727375;
     --soft-grey-color: #e0e0e0;
     --white-color: #FFFFFF;
+    --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
+    --green-color: #005e43;
+    --blue-color: #00467a;
 }
 
 
-.btn.btn-submit{
+.btn.btn-secondary{
     background-color: var(--secondary-color);
     color: var(--white-color);
     transition: 0.5s;
 }
-.btn.btn-submit:hover{
+.btn.btn-secondary:hover{
     background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+.btn.btn-green{
+    background-color: var(--green-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn.btn-green:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+.btn.btn-blue{
+    background-color: var(--blue-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn.btn-blue:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+.btn.btn-grey{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.btn.btn-grey:hover{
+    background-color: var(--dark-color);
     color: var(--white-color);
 }

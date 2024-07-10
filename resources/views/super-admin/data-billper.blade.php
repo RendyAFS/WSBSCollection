@@ -9,34 +9,50 @@
 
             <div class="d-flex">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-submit me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <i class="bi bi-arrow-repeat"></i> Cek Pembayaran
                 </button>
 
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Cek Pembayaran</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                                ...
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                            </div>
+                            <form action="{{ route('cek-pembayaran') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="bulan_tahun">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="formFile" class="form-label">Upload File SND</label>
+                                        <input class="form-control" type="file" id="formFile" name="file" required>
+                                        <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button type="button" id="checkFilePembayaran" class="btn btn-warning d-none">
+                                                <i class="bi bi-file-earmark-break-fill"></i> Cek File
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek Pembayaran</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="btn-group">
-                    <a href="{{ route('download.excel') }}" class="btn btn-submit"> <i
-                            class="bi bi-file-earmark-spreadsheet-fill"></i> Download</a>
-                    <button type="button" class="btn btn-submit dropdown-toggle dropdown-toggle-split"
+                    <a href="{{ route('download.excel') }}" class="btn btn-green"> <i
+                            class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua</a>
+                    <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="visually-hidden">Toggle Dropdown</span>
                     </button>
@@ -48,7 +64,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form action="{{ route('download.filtered.excel') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excel') }}" method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
@@ -58,7 +74,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-submit">
+                                        <button type="submit" id="btn-save" class="btn btn-green btn-filter-download"
+                                            id="btn-filter-download">
                                             <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
                                         </button>
                                     </div>
@@ -69,7 +86,6 @@
                 </div>
             </div>
         </div>
-
 
         <table class="table table-hover table-bordered datatable shadow" id="tabelbillpers" style="width: 100%">
             <thead class="fw-bold">
@@ -83,74 +99,175 @@
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
+                    <th id="th" class="align-middle text-center">Tahun-Bulan</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
+
                 </tr>
             </thead>
-            <tbody>
-                @foreach ($billpers as $data)
-                    <tr data-id="{{ $data->id }}">
-                        <td class="align-middle">
-                            <span class="fw-normal">{{ $data->nama }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->no_inet }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->saldo }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->no_tlf }}</span>
-                        </td>
-                        <td class="align-middle">
-                            <span class="fw-normal">{{ $data->email }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->sto }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->umur_customer }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            <span class="fw-normal">{{ $data->produk }}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                            @if ($data->status_pembayaran == 'Unpaid')
-                                <span class="fw-normal badge text-bg-warning">{{ $data->status_pembayaran }}</span>
-                            @elseif($data->status_pembayaran == 'Paid')
-                                <span class="fw-normal badge text-bg-success">{{ $data->status_pembayaran }}</span>
-                            @endif
-                        </td>
-                        <td class="align-middle text-center">
-                            <form action="{{ route('destroy-billpers', ['id' => $data->id]) }}" method="POST"
-                                class="delete-form">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger btn-sm me-2 btn-delete shadow">
-                                    <i class="bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-
-            </tbody>
         </table>
+
     </div>
 @endsection
 @push('scripts')
-    <script type="module">
-        // Table
+    <script>
+        // Table initialization
         $(document).ready(function() {
-            new DataTable('#tabelbillpers', {
-                responsive: true
-            });
-            $('.form-select').change(function() {
-                var status = $(this).val();
-                var userId = $(this).closest('tr').data('id');
+            var dataTable = new DataTable('#tabelbillpers', {
+                serverSide: true,
+                processing: true,
+                pagingType: "simple_numbers",
+                responsive: true,
+                ajax: {
+                    url: "{{ route('gettabelbillpers') }}",
+                    type: 'GET',
+                },
+                columns: [{
+                        data: 'nama',
+                        name: 'nama',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'no_inet',
+                        name: 'no_inet',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'saldo',
+                        name: 'saldo',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'no_tlf',
+                        name: 'no_tlf',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'sto',
+                        name: 'sto',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'umur_customer',
+                        name: 'umur_customer',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'status_pembayaran',
+                        name: 'status_pembayaran',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'bulan_tahun',
+                        name: 'bulan_tahun',
+                        visible: false,
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'opsi-tabel-databillper',
+                        name: 'opsi-tabel-databillper',
+                        className: 'align-middle',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [
+                    [9, 'asc']
+                ],
+                lengthMenu: [
+                    [100, 500, 1000, -1],
+                    [100, 500, 1000, "All"]
+                ],
+                language: {
+                    search: "Cari"
+                }
             });
         });
 
-        // modal delete
+        // Validate filter download
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSave = document.getElementById('btn-save');
+            const bulanTahunInput = document.getElementById('bulan_tahun');
+
+            btnSave.addEventListener('click', function(event) {
+                if (!bulanTahunInput.value) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
+                    });
+                }
+            });
+        });
+
+        // Check file pembayaran
+        document.getElementById('formFile').addEventListener('change', function() {
+            document.getElementById('checkFilePembayaran').classList.remove('d-none');
+        });
+
+        document.getElementById('checkFilePembayaran').addEventListener('click', function() {
+            let formData = new FormData();
+            formData.append('file', document.getElementById('formFile').files[0]);
+
+            let fileStatusElement = document.getElementById('filecekpembayaran');
+            fileStatusElement.innerText = '';
+            fileStatusElement.classList.remove('text-success', 'text-danger');
+
+            let checkFileButton = document.getElementById('checkFilePembayaran');
+            checkFileButton.classList.add('d-none');
+            let loadingElement = document.createElement('div');
+            loadingElement.classList.add('loading', 'd-block');
+            loadingElement.innerHTML = `
+        <div class="spinner-border text-dark" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        Proses
+    `;
+            checkFileButton.parentElement.appendChild(loadingElement);
+
+            fetch('{{ route('cek.filepembayaran') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    fileStatusElement.innerText = data.message;
+                    fileStatusElement.classList.remove('text-success', 'text-danger');
+
+                    loadingElement.remove();
+                    checkFileButton.classList.remove('d-none');
+                    checkFileButton.disabled = false;
+
+                    if (data.status === 'success') {
+                        fileStatusElement.classList.add('text-success');
+                        document.getElementById('cekPembayaranButton').disabled = false;
+                    } else {
+                        fileStatusElement.classList.add('text-danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    fileStatusElement.innerText = 'An error occurred. Please try again.';
+                    fileStatusElement.classList.add('text-danger');
+                    loadingElement.remove();
+                    checkFileButton.classList.remove('d-none');
+                });
+        });
+
+        // Modal delete confirmation
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.btn-delete').forEach(function(button) {
                 button.addEventListener('click', function(event) {

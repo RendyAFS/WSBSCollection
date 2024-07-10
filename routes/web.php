@@ -39,30 +39,26 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('/vlookup', [SuperAdminController::class, 'vlookup'])->name('vlookup.perform');
         Route::post('/vlookup/checkFile1', [SuperAdminController::class, 'checkFile1'])->name('vlookup.checkFile1');
         Route::post('/vlookup/checkFile2', [SuperAdminController::class, 'checkFile2'])->name('vlookup.checkFile2');
-        Route::get('gettabeltempbillpers', [SuperAdminController::class, 'getDataTempBillpers'])->name('gettabeltempbillpers');
-        Route::post('/savebillpers', [SuperAdminController::class, 'savetempbillpers'])->name('savebillpers');
-        Route::post('deleteAllTempBillpers', [SuperAdminController::class, 'deleteAllTempBillpers'])->name('deleteAllTempBillpers');
-        Route::delete('/destroy-tempbillpers/{id}', [SuperAdminController::class, 'destroyTempBillpers'])->name('destroy-tempbillpers');
+        Route::get('gettabeltempalls', [SuperAdminController::class, 'getDataTempalls'])->name('gettabeltempalls');
+        Route::post('/savealls', [SuperAdminController::class, 'savetempalls'])->name('savealls');
+        Route::post('deleteAllTempalls', [SuperAdminController::class, 'deleteAllTempalls'])->name('deleteAllTempalls');
+        Route::delete('/destroy-tempalls/{id}', [SuperAdminController::class, 'destroyTempalls'])->name('destroy-tempalls');
 
 
-        // Data Bilper
-        Route::get('/data-billper', [SuperAdminController::class, 'indexbillper'])->name('billper.index');
-        Route::get('gettabelbillpers', [SuperAdminController::class, 'getDataBillpers'])->name('gettabelbillpers');
-        Route::get('edit-billpers/{id}', [SuperAdminController::class, 'editBillpers'])->name('edit-billpers');
-        Route::post('update-billpers/{id}', [SuperAdminController::class, 'updateBillpers'])->name('update-billpers');
+        // Data All
+        Route::get('/data-billper', [SuperAdminController::class, 'indexall'])->name('all.index');
+        Route::get('gettabelalls', [SuperAdminController::class, 'getDataalls'])->name('gettabelalls');
+        Route::get('edit-alls/{id}', [SuperAdminController::class, 'editalls'])->name('edit-alls');
+        Route::post('update-alls/{id}', [SuperAdminController::class, 'updatealls'])->name('update-alls');
         Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
         Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
         Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
         Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
-        Route::delete('/destroy-billpers/{id}', [SuperAdminController::class, 'destroyBillpers'])->name('destroy-billpers');
+        Route::delete('/destroy-alls/{id}', [SuperAdminController::class, 'destroyalls'])->name('destroy-alls');
 
 
-        // Report Billper
+        // Report Data
         Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
-
-
-        // riwayat Billper
-        Route::get('/riwayat-data', [SuperAdminController::class, 'indexriwayat'])->name('riwayatdata.index');
 
 
         // Data Akun

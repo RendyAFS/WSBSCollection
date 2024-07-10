@@ -8,6 +8,7 @@
     --dark-color: #1a1a1a;
     --green-color: #005e43;
     --blue-color: #00467a;
+    --yellow-color: #FFCE20;
 }
 
 /* Super Admin */
@@ -34,14 +35,18 @@
 
 #img-loading {
     width: 35%;
-    animation: zoomOut 1s infinite; /* Mengatur animasi zoom out dengan durasi 2 detik dan berjalan terus-menerus */
+    animation: zoomOut 1s infinite;
+    /* Mengatur animasi zoom out dengan durasi 2 detik dan berjalan terus-menerus */
 }
 
 @keyframes zoomOut {
     0% {
-        transform: scale(1); /* Awal skala elemen */
+        transform: scale(1);
+        /* Awal skala elemen */
     }
+
     100% {
-        transform: scale(0.7); /* Skala elemen pada akhir animasi */
+        transform: scale(0.7);
+        /* Skala elemen pada akhir animasi */
     }
 }

@@ -28,7 +28,7 @@
                             <input class="form-control" type="file" name="file1" id="file1" required>
                             <div id="file1Status" class="fw-bold fst-italic"></div>
                             <div class="d-flex justify-content-end mt-3">
-                                <button type="button" id="checkFile1" class="btn btn-warning d-none">
+                                <button type="button" id="checkFile1" class="btn btn-yellow d-none">
                                     <i class="bi bi-file-earmark-break-fill"></i> Cek File
                                 </button>
                             </div>
@@ -45,7 +45,7 @@
                             <input class="form-control" type="file" name="file2" id="file2" required>
                             <div id="file2Status" class="fw-bold fst-italic"></div>
                             <div class="d-flex justify-content-end mt-3">
-                                <button type="button" id="checkFile2" class="btn btn-warning d-none">
+                                <button type="button" id="checkFile2" class="btn btn-yellow d-none">
                                     <i class="bi bi-file-earmark-break-fill"></i> Cek File
                                 </button>
                             </div>
@@ -67,10 +67,10 @@
                     Preview data
                 </span>
                 <div class="contain-btn-save">
-                    @if ($temp_billpers->isEmpty())
+                    @if ($temp_alls->isEmpty())
                         {{-- None --}}
                     @else
-                        <form action="{{ route('savebillpers') }}" method="POST" style="display:inline;">
+                        <form action="{{ route('savealls') }}" method="POST" style="display:inline;">
                             @csrf
                             <div class="form-group mb-3">
                                 <label for="bulan_tahun">Bulan/Tahun</label>
@@ -78,12 +78,11 @@
                             </div>
 
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
-
                             <button type="submit" class="btn btn-secondary btn-save" id="btn-save">
                                 <i class="bi bi-floppy2-fill"></i> Simpan
                             </button>
                         </form>
-                        <form action="{{ route('deleteAllTempBillpers') }}" method="POST" style="display:inline;">
+                        <form action="{{ route('deleteAllTempalls') }}" method="POST" style="display:inline;">
                             @csrf
                             <button type="submit" class="btn btn-danger btn-delete-all">
                                 <i class="bi bi-trash-fill"></i> Hapus Semua
@@ -93,7 +92,7 @@
                 </div>
             </div>
 
-            <table class="table table-hover table-bordered datatable shadow" id="tabeltempbillpers" style="width: 100%">
+            <table class="table table-hover table-bordered datatable shadow" id="tabeltempalls" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
                         <th id="th" class="align-middle">Nama</th>
@@ -114,14 +113,15 @@
 @push('scripts')
     <script>
         // DataTable initialization
+        // DataTable initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabeltempbillpers', {
+            var dataTable = new DataTable('#tabeltempalls', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabeltempbillpers') }}",
+                    url: "{{ route('gettabeltempalls') }}",
                     type: 'GET',
                 },
                 columns: [{
@@ -145,7 +145,8 @@
                     },
                     {
                         data: 'email',
-                        name: 'email'
+                        name: 'email',
+                        className: 'align-middle'
                     },
                     {
                         data: 'sto',
@@ -163,8 +164,8 @@
                         className: 'align-middle'
                     },
                     {
-                        data: 'opsi-tabel-datatempbillper',
-                        name: 'opsi-tabel-datatempbillper',
+                        data: 'opsi-tabel-datatempall',
+                        name: 'opsi-tabel-datatempall',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
@@ -175,64 +176,71 @@
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],
-                    [100, 500, 1000, "All"]
+                    [100, 500, 1000, "Semua"]
                 ],
                 language: {
-                    search: "Cari"
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_ data",
                 }
             });
         });
 
         // Modal delete confirmation
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.btn-delete').forEach(function(button) {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
+        $(".datatable").on("click", ".btn-delete", function(e) {
+            e.preventDefault();
 
-                    const form = this.closest('form');
+            var form = $(this).closest("form");
 
-                    Swal.fire({
-                        title: "Apakah Anda Yakin Menghapus Data?",
-                        text: "Anda tidak akan dapat mengembalikannya!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya, hapus!",
-                        cancelButtonText: "Batal",
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
+            Swal.fire({
+                title: "Apakah Anda Yakin Menghapus Data " + "?",
+                text: "Anda tidak akan dapat mengembalikannya!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "bg-primary",
+                confirmButtonText: "Ya, hapus!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         });
 
         // Modal save confirmation
-        document.querySelectorAll('.btn-save').forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-save').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
 
-                const form = this.closest('form');
-                const bulanTahun = form.querySelector('#bulan_tahun').value;
+                    const form = this.closest('form');
+                    const bulanTahun = form.querySelector('#bulan_tahun').value;
 
-                Swal.fire({
-                    title: "Simpan Data?",
-                    text: "Anda yakin ingin menyimpan data ini?",
-                    icon: "info",
-                    showCancelButton: true,
-                    confirmButtonText: "Ya, simpan!",
-                    cancelButtonText: "Batal",
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = 'bulan_tahun';
-                        hiddenInput.value = bulanTahun;
-                        form.appendChild(hiddenInput);
+                    if (!bulanTahun) {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Harap isi Bulan/Tahun terlebih dahulu!",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Simpan Data?",
+                            text: "Anda yakin ingin menyimpan data ini?",
+                            icon: "info",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya, simpan!",
+                            cancelButtonText: "Batal",
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = 'bulan_tahun';
+                                hiddenInput.value = bulanTahun;
+                                form.appendChild(hiddenInput);
 
-                        form.submit();
+                                form.submit();
+                            }
+                        });
                     }
                 });
             });

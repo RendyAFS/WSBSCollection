@@ -8,6 +8,7 @@
     --dark-color: #1a1a1a;
     --green-color: #005e43;
     --blue-color: #00467a;
+    --yellow-color: #FFCE20;
 }
 
 
@@ -48,5 +49,27 @@
 }
 .btn.btn-grey:hover{
     background-color: var(--dark-color);
+    color: var(--white-color);
+}
+
+.btn.btn-yellow{
+    background-color: var(--yellow-color);
+    color: var(--dark-color);
+    transition: 0.5s;
+}
+.btn.btn-yellow:hover{
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
+
+.btn.btn-white{
+    background-color: var(--white-color);
+    border: solid 1px var(--secondary-color);
+    border-radius: 8px;
+    color: var(--secondary-color);
+    transition: 0.5s;
+}
+.btn.btn-white:hover{
+    background-color: var(--grey-color);
     color: var(--white-color);
 }

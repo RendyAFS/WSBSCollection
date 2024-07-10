@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('billpers', function (Blueprint $table) {
+        Schema::create('temp_alls', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->nullable();
             $table->string('no_inet')->nullable();
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('umur_customer')->nullable();
             $table->string('produk')->nullable();
             $table->string('status_pembayaran')->nullable();
-            $table->string('bulan_tahun')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('billpers');
+        Schema::dropIfExists('temp_billpers');
     }
 };

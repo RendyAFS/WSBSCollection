@@ -6,18 +6,18 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BillperExport implements FromCollection, WithHeadings
+class AllExport implements FromCollection, WithHeadings
 {
-    protected $billpers;
+    protected $alls;
 
-    public function __construct($billpers)
+    public function __construct($alls)
     {
-        $this->billpers = $billpers;
+        $this->alls = $alls;
     }
 
     public function collection()
     {
-        return $this->billpers;
+        return $this->alls;
     }
 
     public function headings(): array

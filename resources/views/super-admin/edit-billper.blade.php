@@ -61,9 +61,14 @@
                                             value="{{ $billper->sto }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="umur_customer" class="form-label fw-bold">Umur Customer</label>
-                                        <input type="text" class="form-control" id="umur_customer" name="umur_customer"
-                                            value="{{ $billper->umur_customer }}">
+                                        <label for="umur_customer" class="form-label fw-bold">Status Pembayaran</label>
+                                        <select class="form-select" id="umur_customer" name="umur_customer">
+                                            <option value="00-03 Bln" {{ $billper->umur_customer == '00-03 Bln' ? 'selected' : '' }}>00-03 Bln</option>
+                                            <option value="04-06 Bln" {{ $billper->umur_customer == '04-06 Bln' ? 'selected' : '' }}>04-06 Bln</option>
+                                            <option value="07-09 Bln" {{ $billper->umur_customer == '07-09 Bln' ? 'selected' : '' }}>07-09 Bln</option>
+                                            <option value="10-12 Bln" {{ $billper->umur_customer == '10-12 Bln' ? 'selected' : '' }}>10-12 Bln</option>
+                                            <option value="> 12 Bln" {{ $billper->umur_customer == '> 12 Bln' ? 'selected' : '' }}>> 12 Bln</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="produk" class="form-label fw-bold">Produk</label>

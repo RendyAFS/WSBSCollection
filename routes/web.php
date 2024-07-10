@@ -58,11 +58,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
         // Report Billper
-        Route::get('/report-billper', [SuperAdminController::class, 'indexreport'])->name('reportbillper.index');
+        Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
 
 
         // riwayat Billper
-        Route::get('/riwayat-billper', [SuperAdminController::class, 'indexriwayat'])->name('riwayatbillper.index');
+        Route::get('/riwayat-data', [SuperAdminController::class, 'indexriwayat'])->name('riwayatdata.index');
 
 
         // Data Akun

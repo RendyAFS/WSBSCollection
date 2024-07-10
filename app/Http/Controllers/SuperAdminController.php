@@ -342,7 +342,7 @@ class SuperAdminController extends Controller
     public function indexreport()
     {
         $title = 'Report Billper';
-        return view('super-admin.report-billper', compact('title'));
+        return view('super-admin.report-data', compact('title'));
     }
 
 
@@ -350,7 +350,7 @@ class SuperAdminController extends Controller
     public function indexriwayat()
     {
         $title = 'Riwayat Billper';
-        return view('super-admin.riwayat-billper', compact('title'));
+        return view('super-admin.riwayat-data', compact('title'));
     }
 
 

@@ -101,7 +101,6 @@
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Tahun-Bulan</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
-
                 </tr>
             </thead>
         </table>

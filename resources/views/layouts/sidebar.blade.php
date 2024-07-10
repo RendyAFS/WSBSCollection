@@ -12,7 +12,7 @@
             </a>
         </li>
 
-        <span class="fw-bold">Billper</span>
+        <span class="fw-bold">Manajer Data</span>
 
         <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
             <a href="{{ route('tools.index') }}">
@@ -27,16 +27,16 @@
                 Data Billper
             </a>
         </li>
-        <li class="{{ Route::is('reportbillper.index') ? 'active' : '' }}">
-            <a href="{{ route('reportbillper.index') }}">
-                <i class="bi bi-flag{{ Route::is('reportbillper.index') ? '-fill' : '' }}"></i>
-                Report Billper
+        <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
+            <a href="{{ route('reportdata.index') }}">
+                <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
+                Report
             </a>
         </li>
-        <li class="{{ Route::is('riwayatbillper.index') ? 'active' : '' }}">
-            <a href="{{ route('riwayatbillper.index') }}">
-                <i class="bi bi-clock{{ Route::is('riwayatbillper.index') ? '-fill' : '' }}"></i>
-                Riwayat Billper
+        <li class="{{ Route::is('riwayatdata.index') ? 'active' : '' }}">
+            <a href="{{ route('riwayatdata.index') }}">
+                <i class="bi bi-clock{{ Route::is('riwayatdata.index') ? '-fill' : '' }}"></i>
+                Riwayat
             </a>
         </li>
 

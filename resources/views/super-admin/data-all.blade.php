@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data Billper
+                Data All
             </span>
 
             <div class="d-flex">
@@ -28,14 +28,15 @@
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="bulan_tahun">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control" required>
+                                        <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="formFile" class="form-label">Upload File SND</label>
                                         <input class="form-control" type="file" id="formFile" name="file" required>
                                         <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
                                         <div class="d-flex justify-content-end mt-3">
-                                            <button type="button" id="checkFilePembayaran" class="btn btn-warning d-none">
+                                            <button type="button" id="checkFilePembayaran" class="btn btn-yellow d-none">
                                                 <i class="bi bi-file-earmark-break-fill"></i> Cek File
                                             </button>
                                         </div>
@@ -43,15 +44,17 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek Pembayaran</button>
+                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek
+                                        Pembayaran</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div class="btn-group">
-                    <a href="{{ route('download.excel') }}" class="btn btn-green"> <i
-                            class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua</a>
+                    <a href="{{ route('download.excel') }}" class="btn btn-green">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
+                    </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="visually-hidden">Toggle Dropdown</span>
@@ -69,13 +72,13 @@
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
                                             <label for="bulan_tahun">Pilih Bulan-Tahun</label>
-                                            <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control"
-                                                required>
+                                            <input type="month" id="bulan_tahun_download" name="bulan_tahun"
+                                                class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" id="btn-save" class="btn btn-green btn-filter-download"
-                                            id="btn-filter-download">
+                                        <button type="submit" id="btn-filter-download"
+                                            class="btn btn-green btn-filter-download">
                                             <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
                                         </button>
                                     </div>
@@ -87,7 +90,7 @@
             </div>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelbillpers" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nama</th>
@@ -111,13 +114,13 @@
     <script>
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelbillpers', {
+            var dataTable = new DataTable('#tabelalls', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelbillpers') }}",
+                    url: "{{ route('gettabelalls') }}",
                     type: 'GET',
                 },
                 columns: [{
@@ -172,8 +175,8 @@
                         className: 'align-middle'
                     },
                     {
-                        data: 'opsi-tabel-databillper',
-                        name: 'opsi-tabel-databillper',
+                        data: 'opsi-tabel-dataall',
+                        name: 'opsi-tabel-dataall',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
@@ -184,18 +187,19 @@
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],
-                    [100, 500, 1000, "All"]
+                    [100, 500, 1000, "Semua"]
                 ],
                 language: {
-                    search: "Cari"
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_ data",
                 }
             });
         });
 
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {
-            const btnSave = document.getElementById('btn-save');
-            const bulanTahunInput = document.getElementById('bulan_tahun');
+            const btnSave = document.getElementById('btn-filter-download');
+            const bulanTahunInput = document.getElementById('bulan_tahun_download');
 
             btnSave.addEventListener('click', function(event) {
                 if (!bulanTahunInput.value) {
@@ -267,27 +271,23 @@
         });
 
         // Modal delete confirmation
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.btn-delete').forEach(function(button) {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
+        // Modal delete confirmation
+        $(".datatable").on("click", ".btn-delete", function(e) {
+            e.preventDefault();
 
-                    const form = this.closest('form');
+            var form = $(this).closest("form");
 
-                    Swal.fire({
-                        title: "Apakah Anda Yakin Menghapus Data?",
-                        text: "Anda tidak akan dapat mengembalikannya!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya, hapus!",
-                        cancelButtonText: "Batal",
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
+            Swal.fire({
+                title: "Apakah Anda Yakin Menghapus Data " + "?",
+                text: "Anda tidak akan dapat mengembalikannya!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "bg-primary",
+                confirmButtonText: "Ya, hapus!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         });
     </script>

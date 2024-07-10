@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\BillperExport;
-use App\Models\Billpers;
-use App\Models\TempBillpers;
+use App\Exports\AllExport;
+use App\Models\All;
+use App\Models\TempAll;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,9 +27,10 @@ class SuperAdminController extends Controller
     // TOOL
     public function indextool()
     {
+        confirmDelete();
         $title = 'Tool';
-        $temp_billpers = TempBillpers::all();
-        return view('super-admin.tools', compact('title', 'temp_billpers'));
+        $temp_alls = TempAll::all();
+        return view('super-admin.tools', compact('title', 'temp_alls'));
     }
 
     public function checkFile1(Request $request)
@@ -117,7 +118,7 @@ class SuperAdminController extends Controller
         }
         // Insert the result into the database
         foreach ($result as $row) {
-            DB::table('temp_billpers')->insert([
+            DB::table('temp_alls')->insert([
                 'nama' => $row['nama'] ?: 'N/A',
                 'no_inet' => $row['no_inet'] ?: 'N/A',
                 'saldo' => $row['saldo'] ?: 'N/A',
@@ -135,30 +136,30 @@ class SuperAdminController extends Controller
         return redirect()->route('tools.index');
     }
 
-    public function getDataTempBillpers(Request $request)
+    public function getDataTempalls(Request $request)
     {
         if ($request->ajax()) {
-            $data_tempbillpers = TempBillpers::all();
-            return datatables()->of($data_tempbillpers)
+            $data_tempalls = TempAll::all();
+            return datatables()->of($data_tempalls)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-datatempbillper', function ($tempbillper) {
-                    return view('components.opsi-tabel-tempbilper', compact('tempbillper'));
+                ->addColumn('opsi-tabel-datatempall', function ($tempall) {
+                    return view('components.opsi-tabel-tempall', compact('tempall'));
                 })
                 ->toJson();
         }
     }
 
-    public function savetempbillpers(Request $request)
+    public function savetempalls(Request $request)
     {
-        // Ambil data dari temp_billpers
-        $tempBillpers = TempBillpers::all();
+        // Ambil data dari temp_alls
+        $tempAlls = TempAll::all();
 
         // Ambil bulan dan tahun dari request
         $bulanTahun = $request->input('bulan_tahun');
 
-        // Insert data ke billpers
-        foreach ($tempBillpers as $row) {
-            DB::table('billpers')->insert([
+        // Insert data ke alls
+        foreach ($tempAlls as $row) {
+            DB::table('alls')->insert([
                 'nama' => $row->nama ?: 'N/A',
                 'no_inet' => $row->no_inet ?: 'N/A',
                 'saldo' => $row->saldo ?: 'N/A',
@@ -174,8 +175,8 @@ class SuperAdminController extends Controller
             ]);
         }
 
-        // Kosongkan table temp_billpers
-        TempBillpers::truncate();
+        // Kosongkan table temp_alls
+        TempAll::truncate();
 
 
         // Redirect ke halaman tools.index atau halaman lainnya
@@ -184,18 +185,18 @@ class SuperAdminController extends Controller
     }
 
 
-    public function deleteAllTempBillpers()
+    public function deleteAllTempalls()
     {
-        // Kosongkan table temp_billpers
-        TempBillpers::truncate();
+        // Kosongkan table temp_alls
+        TempAll::truncate();
 
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('tools.index');
     }
 
-    public function destroyTempBillpers($id)
+    public function destroyTempalls($id)
     {
-        $data = TempBillpers::findOrFail($id);
+        $data = TempAll::findOrFail($id);
         $data->delete();
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('tools.index');
@@ -203,32 +204,33 @@ class SuperAdminController extends Controller
 
 
 
-    // Billpers
-    public function indexbillper()
+    // All
+    public function indexall()
     {
-        $title = 'Data Billper';
-        $billpers = Billpers::all();
-        return view('super-admin.data-billper', compact('title', 'billpers'));
+        confirmDelete();
+        $title = 'Data All';
+        $alls = All::all();
+        return view('super-admin.data-all', compact('title', 'alls'));
     }
 
-    public function getDataBillpers(Request $request)
+    public function getDataalls(Request $request)
     {
         if ($request->ajax()) {
-            $data_billpers = Billpers::all();
-            return datatables()->of($data_billpers)
+            $data_alls = All::all();
+            return datatables()->of($data_alls)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-databillper', function ($billper) {
-                    return view('components.opsi-tabel-databillper', compact('billper'));
+                ->addColumn('opsi-tabel-dataall', function ($all) {
+                    return view('components.opsi-tabel-dataall', compact('all'));
                 })
                 ->toJson();
         }
     }
 
-    public function editBillpers($id)
+    public function editalls($id)
     {
-        $title = 'Edit Data Billper';
-        $billper = Billpers::findOrFail($id);
-        return view('super-admin.edit-billper', compact('title', 'billper'));
+        $title = 'Edit Data All';
+        $all = All::findOrFail($id);
+        return view('super-admin.edit-all', compact('title', 'all'));
     }
 
     public function checkFilePembayaran(Request $request)
@@ -272,7 +274,7 @@ class SuperAdminController extends Controller
         }
 
         // Fetch records from the database
-        $records = Billpers::where('bulan_tahun', $bulan_tahun)->get();
+        $records = All::where('bulan_tahun', $bulan_tahun)->get();
 
         foreach ($records as $record) {
             if (in_array($record->no_inet, $sndList)) {
@@ -286,30 +288,30 @@ class SuperAdminController extends Controller
         return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
 
-    public function updateBillpers(Request $request, $id)
+    public function updatealls(Request $request, $id)
     {
-        $billper = Billpers::findOrFail($id);
-        $billper->nama = $request->input('nama');
-        $billper->no_inet = $request->input('no_inet');
-        $billper->saldo = $request->input('saldo');
-        $billper->no_tlf = $request->input('no_tlf');
-        $billper->email = $request->input('email');
-        $billper->sto = $request->input('sto');
-        $billper->produk = $request->input('produk');
-        $billper->umur_customer = $request->input('umur_customer');
-        $billper->status_pembayaran = $request->input('status_pembayaran');
-        $billper->save();
+        $all = All::findOrFail($id);
+        $all->nama = $request->input('nama');
+        $all->no_inet = $request->input('no_inet');
+        $all->saldo = $request->input('saldo');
+        $all->no_tlf = $request->input('no_tlf');
+        $all->email = $request->input('email');
+        $all->sto = $request->input('sto');
+        $all->produk = $request->input('produk');
+        $all->umur_customer = $request->input('umur_customer');
+        $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->save();
 
         Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('billper.index');
+        return redirect()->route('all.index');
     }
 
 
     public function export()
     {
-        $allData = Billpers::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')->get();
+        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')->get();
 
-        return Excel::download(new BillperExport($allData), 'data-billpers-all.xlsx');
+        return Excel::download(new AllExport($allData), 'data-semua.xlsx');
     }
 
     public function downloadFilteredExcel(Request $request)
@@ -320,37 +322,57 @@ class SuperAdminController extends Controller
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
         // Query untuk mengambil data berdasarkan rentang bulan_tahun
-        $filteredData = Billpers::where('bulan_tahun', 'like', substr($formattedBulanTahun, 0, 7) . '%')
+        $filteredData = All::where('bulan_tahun', 'like', substr($formattedBulanTahun, 0, 7) . '%')
             ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')
             ->get();
 
-        // Export data menggunakan BillperExport dengan data yang sudah difilter
-        return Excel::download(new BillperExport($filteredData), 'billpers_filtered_' . $bulanTahun . '.xlsx');
+        // Export data menggunakan AllExport dengan data yang sudah difilter
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '.xlsx');
     }
 
 
-    public function destroyBillpers($id)
+    public function destroyalls($id)
     {
-        $billper = Billpers::findOrFail($id);
-        $billper->delete();
+        $all = All::findOrFail($id);
+        $all->delete();
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('billper.index');
+        return redirect()->route('all.index');
     }
 
 
-    // Report Billper
-    public function indexreport()
+    // Report Data
+    public function indexreport(Request $request)
     {
-        $title = 'Report Billper';
-        return view('super-admin.report-data', compact('title'));
-    }
+        $title = 'Report All';
 
+        // Fetch filter values
+        $filter_type = $request->input('filter_type', 'sto');
+        $bulan_tahun = $request->input('bulan_tahun');
 
-    // Report Billper
-    public function indexriwayat()
-    {
-        $title = 'Riwayat Billper';
-        return view('super-admin.riwayat-data', compact('title'));
+        // Determine the column to group by based on the filter type
+        $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
+
+        // Query with optional filter
+        $query = All::select(
+            $group_column,
+            DB::raw('COUNT(*) as total_ssl'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_saldo'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid')
+        );
+
+        if ($bulan_tahun) {
+            $query->where('bulan_tahun', $bulan_tahun);
+        }
+
+        $reports = $query->groupBy($group_column)->get();
+
+        $total_ssl = $reports->sum('total_ssl');
+        $total_saldo = $reports->sum('total_saldo');
+        $total_paid = $reports->sum('total_paid');
+        $total_unpaid = $reports->sum('total_unpaid');
+
+        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'bulan_tahun', 'filter_type'));
     }
 
 

@@ -21,22 +21,16 @@
             </a>
         </li>
 
-        <li class="{{ Route::is('billper.index') ? 'active' : '' }}">
-            <a href="{{ route('billper.index') }}">
-                <i class="bi bi-database{{ Route::is('billper.index') ? '-fill' : '' }}"></i>
-                Data Billper
+        <li class="{{ Route::is('all.index') ? 'active' : '' }}">
+            <a href="{{ route('all.index') }}">
+                <i class="bi bi-database{{ Route::is('all.index') ? '-fill' : '' }}"></i>
+                Data All
             </a>
         </li>
         <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
             <a href="{{ route('reportdata.index') }}">
                 <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
                 Report
-            </a>
-        </li>
-        <li class="{{ Route::is('riwayatdata.index') ? 'active' : '' }}">
-            <a href="{{ route('riwayatdata.index') }}">
-                <i class="bi bi-clock{{ Route::is('riwayatdata.index') ? '-fill' : '' }}"></i>
-                Riwayat
             </a>
         </li>
 

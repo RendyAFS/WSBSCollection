@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-submit mt-3 w-50" id="vlookupBtn" disabled>
+                    <button type="submit" class="btn btn-secondary mt-3 w-50" id="vlookupBtn" disabled>
                         <i class="bi bi-intersect"></i> Vlookup Data
                     </button>
                 </div>
@@ -79,7 +79,7 @@
 
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
 
-                            <button type="submit" class="btn btn-submit btn-save" id="btn-save">
+                            <button type="submit" class="btn btn-secondary btn-save" id="btn-save">
                                 <i class="bi bi-floppy2-fill"></i> Simpan
                             </button>
                         </form>
@@ -96,75 +96,94 @@
             <table class="table table-hover table-bordered datatable shadow" id="tabeltempbillpers" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
-                        <th id = "th" class="align-middle">Nama</th>
-                        <th id = "th" class="align-middle text-center">No. Inet</th>
-                        <th id = "th" class="align-middle text-center">Saldo</th>
-                        <th id = "th" class="align-middle text-center">No. Tlf</th>
-                        <th id = "th" class="align-middle ">Email</th>
-                        <th id = "th" class="align-middle text-center">STO</th>
-                        <th id = "th" class="align-middle text-center">Umur Customer</th>
-                        <th id = "th" class="align-middle text-center">Produk</th>
-                        <th id = "th" class="align-middle text-center">Opsi</th>
+                        <th id="th" class="align-middle">Nama</th>
+                        <th id="th" class="align-middle text-center">No. Inet</th>
+                        <th id="th" class="align-middle text-center">Saldo</th>
+                        <th id="th" class="align-middle text-center">No. Tlf</th>
+                        <th id="th" class="align-middle">Email</th>
+                        <th id="th" class="align-middle text-center">STO</th>
+                        <th id="th" class="align-middle text-center">Umur Customer</th>
+                        <th id="th" class="align-middle text-center">Produk</th>
+                        <th id="th" class="align-middle text-center">Opsi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($temp_billpers as $data)
-                        <tr data-id="{{ $data->id }}">
-                            <td class="align-middle ">
-                                <span class="fw-normal">{{ $data->nama }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->no_inet }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->saldo }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->no_tlf }}</span>
-                            </td>
-                            <td class="align-middle ">
-                                <span class="fw-normal">{{ $data->email }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->sto }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->umur_customer }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <span class="fw-normal">{{ $data->produk }}</span>
-                            </td>
-                            <td class="align-middle text-center">
-                                <form action="{{ route('destroy-tempbillpers', ['id' => $data->id]) }}" method="POST"
-                                    class="delete-form">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="submit" class="btn btn-danger btn-sm me-2 btn-delete shadow">
-                                        <i class="bi-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
             </table>
         </div>
     </div>
 @endsection
 @push('scripts')
-    <script type="module">
-        // Table
+    <script>
+        // DataTable initialization
         $(document).ready(function() {
-            new DataTable('#tabeltempbillpers', {
-                responsive: true
-            });
-            $('.form-select').change(function() {
-                var status = $(this).val();
-                var userId = $(this).closest('tr').data('id');
+            var dataTable = new DataTable('#tabeltempbillpers', {
+                serverSide: true,
+                processing: true,
+                pagingType: "simple_numbers",
+                responsive: true,
+                ajax: {
+                    url: "{{ route('gettabeltempbillpers') }}",
+                    type: 'GET',
+                },
+                columns: [{
+                        data: 'nama',
+                        name: 'nama'
+                    },
+                    {
+                        data: 'no_inet',
+                        name: 'no_inet',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'saldo',
+                        name: 'saldo',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'no_tlf',
+                        name: 'no_tlf',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'sto',
+                        name: 'sto',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'umur_customer',
+                        name: 'umur_customer',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
+                        className: 'align-middle'
+                    },
+                    {
+                        data: 'opsi-tabel-datatempbillper',
+                        name: 'opsi-tabel-datatempbillper',
+                        className: 'align-middle',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [
+                    [0, 'asc']
+                ],
+                lengthMenu: [
+                    [100, 500, 1000, -1],
+                    [100, 500, 1000, "All"]
+                ],
+                language: {
+                    search: "Cari"
+                }
             });
         });
 
-        // modal delete
+        // Modal delete confirmation
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.btn-delete').forEach(function(button) {
                 button.addEventListener('click', function(event) {
@@ -189,13 +208,13 @@
             });
         });
 
-        // Script untuk modal simpan
+        // Modal save confirmation
         document.querySelectorAll('.btn-save').forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
 
                 const form = this.closest('form');
-                const bulanTahun = form.querySelector('#bulan_tahun').value; // Ambil nilai bulan/tahun
+                const bulanTahun = form.querySelector('#bulan_tahun').value;
 
                 Swal.fire({
                     title: "Simpan Data?",
@@ -207,7 +226,6 @@
                     reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Tambahkan nilai bulan/tahun ke form data sebelum submit
                         const hiddenInput = document.createElement('input');
                         hiddenInput.type = 'hidden';
                         hiddenInput.name = 'bulan_tahun';
@@ -220,24 +238,7 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnSave = document.getElementById('btn-save');
-            const bulanTahunInput = document.getElementById('bulan_tahun');
-
-            btnSave.addEventListener('click', function(event) {
-                if (!bulanTahunInput.value) {
-                    event.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
-                    });
-                }
-            });
-        });
-
-
-        // Script untuk modal hapus semua temp_billpers
+        // Modal delete all confirmation
         document.querySelectorAll('.btn-delete-all').forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -266,7 +267,6 @@
         });
 
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            // Show the loading screen
             showLoading();
 
             fetch(this.action, {
@@ -278,27 +278,20 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        // Redirect to another page or update UI
-                        window.location.href = '{{ route('tools.index') }}'; // Redirect to tools.index
+                        window.location.href = '{{ route('tools.index') }}';
                     } else {
                         throw new Error('Network response was not ok.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-
-                    // Optionally show error message or handle error UI
                 })
                 .finally(() => {
-                    // Hide the loading screen
                     hideLoading();
                 });
 
-            // Prevent the default form submission
             event.preventDefault();
         });
-
-
 
         function showLoading() {
             document.getElementById('loadingScreen').classList.remove('d-none');
@@ -308,27 +301,25 @@
             document.getElementById('loadingScreen').classList.add('d-none');
         }
 
-        // Cek file SND
+        // Check file 1
         document.getElementById('checkFile1').addEventListener('click', function() {
             let formData = new FormData();
             formData.append('file1', document.getElementById('file1').files[0]);
 
-            // Clear previous message
             let file1StatusElement = document.getElementById('file1Status');
             file1StatusElement.innerText = '';
             file1StatusElement.classList.remove('text-success', 'text-danger');
 
-            // Hide the "Cek File" button and show loading indicator
             let checkFileButton = document.getElementById('checkFile1');
-            checkFileButton.classList.add('d-none'); // Hide button
+            checkFileButton.classList.add('d-none');
             let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading', 'd-block'); // Show loading indicator
+            loadingElement.classList.add('loading', 'd-block');
             loadingElement.innerHTML = `
-            <div class="spinner-border text-dark" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            Proses
-        `;
+                <div class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                Proses
+            `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile1') }}', {
@@ -341,18 +332,12 @@
                 .then(response => response.json())
                 .then(data => {
                     file1StatusElement.innerText = data.message;
-
-                    // Clear existing classes
                     file1StatusElement.classList.remove('text-success', 'text-danger');
 
-                    // Remove loading indicator
                     loadingElement.remove();
-
-                    // Show the "Cek File" button
                     checkFileButton.classList.remove('d-none');
                     checkFileButton.disabled = false;
 
-                    // Add appropriate class based on status
                     if (data.status === 'success') {
                         file1StatusElement.classList.add('text-success');
                         checkFileButton.disabled = true;
@@ -363,27 +348,25 @@
                 });
         });
 
-        // Cek file EVENT_SOURCE
+        // Check file 2
         document.getElementById('checkFile2').addEventListener('click', function() {
             let formData = new FormData();
             formData.append('file2', document.getElementById('file2').files[0]);
 
-            // Clear previous message
             let file2StatusElement = document.getElementById('file2Status');
             file2StatusElement.innerText = '';
             file2StatusElement.classList.remove('text-success', 'text-danger');
 
-            // Hide the "Cek File" button and show loading indicator
             let checkFileButton = document.getElementById('checkFile2');
-            checkFileButton.classList.add('d-none'); // Hide button
+            checkFileButton.classList.add('d-none');
             let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading2', 'd-block'); // Show loading indicator
+            loadingElement.classList.add('loading2', 'd-block');
             loadingElement.innerHTML = `
-            <div class="spinner-border text-dark" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            Proses
-        `;
+                <div class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                Proses
+            `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile2') }}', {
@@ -396,18 +379,12 @@
                 .then(response => response.json())
                 .then(data => {
                     file2StatusElement.innerText = data.message;
-
-                    // Clear existing classes
                     file2StatusElement.classList.remove('text-success', 'text-danger');
 
-                    // Remove loading indicator
                     loadingElement.remove();
-
-                    // Show the "Cek File" button
                     checkFileButton.classList.remove('d-none');
                     checkFileButton.disabled = false;
 
-                    // Add appropriate class based on status
                     if (data.status === 'success') {
                         file2StatusElement.classList.add('text-success');
                         checkFileButton.disabled = true;
@@ -418,7 +395,7 @@
                 });
         });
 
-        // Menampilkan tombol "Cek File" jika file terpilih
+        // Show "Check File" button if file selected
         document.getElementById('file1').addEventListener('change', function() {
             let fileInput = document.getElementById('file1');
             let checkFileButton = document.getElementById('checkFile1');
@@ -445,7 +422,7 @@
             }
         });
 
-        // VlookUp Data
+        // Enable Vlookup button
         function enableVlookupButton() {
             if (document.getElementById('checkFile1').disabled && document.getElementById('checkFile2').disabled) {
                 document.getElementById('vlookupBtn').disabled = false;

@@ -135,6 +135,18 @@ class SuperAdminController extends Controller
         return redirect()->route('tools.index');
     }
 
+    public function getDataTempBillpers(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_tempbillpers = TempBillpers::all();
+            return datatables()->of($data_tempbillpers)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-datatempbillper', function ($tempbillper) {
+                    return view('components.opsi-tabel-tempbilper', compact('tempbillper'));
+                })
+                ->toJson();
+        }
+    }
 
     public function savetempbillpers(Request $request)
     {
@@ -165,8 +177,6 @@ class SuperAdminController extends Controller
         // Kosongkan table temp_billpers
         TempBillpers::truncate();
 
-        // Tambahkan notifikasi atau alert di sini jika diperlukan
-        // Alert::success('Data Berhasil Tersimpan');
 
         // Redirect ke halaman tools.index atau halaman lainnya
         Alert::success('Data Berhasil Tersimpan');
@@ -191,6 +201,8 @@ class SuperAdminController extends Controller
         return redirect()->route('tools.index');
     }
 
+
+
     // Billpers
     public function indexbillper()
     {
@@ -198,13 +210,100 @@ class SuperAdminController extends Controller
         $billpers = Billpers::all();
         return view('super-admin.data-billper', compact('title', 'billpers'));
     }
-    public function destroyBillpers($id)
+
+    public function getDataBillpers(Request $request)
     {
-        $data = Billpers::findOrFail($id);
-        $data->delete();
-        Alert::success('Data Berhasil Terhapus');
+        if ($request->ajax()) {
+            $data_billpers = Billpers::all();
+            return datatables()->of($data_billpers)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-databillper', function ($billper) {
+                    return view('components.opsi-tabel-databillper', compact('billper'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function editBillpers($id)
+    {
+        $title = 'Edit Data Billper';
+        $billper = Billpers::findOrFail($id);
+        return view('super-admin.edit-billper', compact('title', 'billper'));
+    }
+
+    public function checkFilePembayaran(Request $request)
+    {
+        $request->validate(['file' => 'required|file|mimes:xlsx']);
+        $file = $request->file('file')->getRealPath();
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $firstRow = $sheet->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+        if (in_array('SND', $firstRow)) {
+            return response()->json(['status' => 'success', 'message' => '*Kolom SND ditemukan dalam file.']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => '*Kolom SND tidak ditemukan dalam file.']);
+        }
+    }
+
+    public function cekPembayaran(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
+
+        // Validate the request
+        $request->validate([
+            'bulan_tahun' => 'required|date_format:Y-m',
+            'file' => 'required|file|mimes:xlsx'
+        ]);
+
+        $bulan_tahun = $request->input('bulan_tahun');
+        $file = $request->file('file')->getRealPath();
+
+        // Load the Excel file
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray();
+
+        $sndList = [];
+        foreach ($data as $index => $row) {
+            if ($index == 0) continue; // Skip header row
+            $sndList[] = $row[array_search('SND', $data[0])];
+        }
+
+        // Fetch records from the database
+        $records = Billpers::where('bulan_tahun', $bulan_tahun)->get();
+
+        foreach ($records as $record) {
+            if (in_array($record->no_inet, $sndList)) {
+                $record->status_pembayaran = 'Unpaid';
+            } else {
+                $record->status_pembayaran = 'Paid';
+            }
+            $record->save();
+        }
+
+        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+    }
+
+    public function updateBillpers(Request $request, $id)
+    {
+        $billper = Billpers::findOrFail($id);
+        $billper->nama = $request->input('nama');
+        $billper->no_inet = $request->input('no_inet');
+        $billper->saldo = $request->input('saldo');
+        $billper->no_tlf = $request->input('no_tlf');
+        $billper->email = $request->input('email');
+        $billper->sto = $request->input('sto');
+        $billper->produk = $request->input('produk');
+        $billper->umur_customer = $request->input('umur_customer');
+        $billper->status_pembayaran = $request->input('status_pembayaran');
+        $billper->save();
+
+        Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('billper.index');
     }
+
 
     public function export()
     {
@@ -226,8 +325,34 @@ class SuperAdminController extends Controller
             ->get();
 
         // Export data menggunakan BillperExport dengan data yang sudah difilter
-        return Excel::download(new BillperExport($filteredData), 'billpers_filtered_'.$bulanTahun.'.xlsx');
+        return Excel::download(new BillperExport($filteredData), 'billpers_filtered_' . $bulanTahun . '.xlsx');
     }
+
+
+    public function destroyBillpers($id)
+    {
+        $billper = Billpers::findOrFail($id);
+        $billper->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('billper.index');
+    }
+
+
+    // Report Billper
+    public function indexreport()
+    {
+        $title = 'Report Billper';
+        return view('super-admin.report-billper', compact('title'));
+    }
+
+
+    // Report Billper
+    public function indexriwayat()
+    {
+        $title = 'Riwayat Billper';
+        return view('super-admin.riwayat-billper', compact('title'));
+    }
+
 
 
     // AKUN

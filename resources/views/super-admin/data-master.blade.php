@@ -78,6 +78,18 @@
                 ajax: {
                     url: "{{ route('gettabeldatamaster') }}",
                     type: 'GET',
+                    beforeSend: function() {
+                        // Tampilkan loading screen sebelum ajax request
+                        $('#loadingScreen').removeClass('d-none');
+                    },
+                    complete: function() {
+                        // Sembunyikan loading screen setelah ajax request selesai
+                        $('#loadingScreen').addClass('d-none');
+                    },
+                    error: function() {
+                        // Sembunyikan loading screen jika terjadi error pada ajax request
+                        $('#loadingScreen').addClass('d-none');
+                    }
                 },
                 columns: [{
                         data: 'id',
@@ -142,8 +154,6 @@
             });
         });
 
-
-
         // Cek File Data Master
         document.getElementById('formFile').addEventListener('change', function() {
             document.getElementById('checkFileDataMaster').classList.remove('d-none');
@@ -202,18 +212,24 @@
                     checkFileButton.classList.remove('d-none');
                 });
         });
+        // Modal delete confirmation
+        $(".datatable").on("click", ".btn-delete", function(e) {
+            e.preventDefault();
 
-        // Ambil elemen loading screen
-        const loadingScreen = document.getElementById('loadingScreen');
+            var form = $(this).closest("form");
 
-        // Tampilkan loading screen
-        function showLoadingScreen() {
-            loadingScreen.classList.remove('d-none');
-        }
-
-        // Sembunyikan loading screen
-        function hideLoadingScreen() {
-            loadingScreen.classList.add('d-none');
-        }
+            Swal.fire({
+                title: "Apakah Anda Yakin Menghapus Data " + "?",
+                text: "Anda tidak akan dapat mengembalikannya!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "bg-primary",
+                confirmButtonText: "Ya, hapus!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
     </script>
 @endpush

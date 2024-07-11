@@ -13,11 +13,6 @@
         <form id="uploadForm" action="{{ route('vlookup.perform') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <div class="d-flex justify-content-end mb-3">
-                    <a href="{{ route('tools.index') }}" class="text-danger fw-bold link-underline link-underline-opacity-0">
-                        <i class="bi bi-x-lg"></i> Reset
-                    </a>
-                </div>
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
                     <div class="card w-100 shadow-sm px-2 py-3">
                         <div class="card-body">
@@ -35,20 +30,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
-                    <div class="card w-100 shadow-sm px-2 py-3">
-                        <div class="card-body">
-                            <div class="header-card mb-3">
-                                <h5 class="card-title">Upload File</h5>
-                                <h6 class="card-subtitle mb-2 text-body-secondary">EVENT_SOURCE</h6>
-                            </div>
-                            <input class="form-control" type="file" name="file2" id="file2" required>
-                            <div id="file2Status" class="fw-bold fst-italic"></div>
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" id="checkFile2" class="btn btn-yellow d-none">
-                                    <i class="bi bi-file-earmark-break-fill"></i> Cek File
-                                </button>
-                            </div>
+                <div class="col-12 col-md-6 mb-3 mb-md-0">
+                    <div class="header-desc">
+                        <div class="d-flex justify-content-between">
+                            <span class="fs-5 fw-bold mb-3">Deskripsi File</span>
+                            <a href="{{ route('tools.index') }}" id="resetLink"
+                                class="text-danger fw-bold link-underline link-underline-opacity-0 d-none">
+                                <i class="bi bi-x-lg"></i> Reset
+                            </a>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="text-secondary text-center mt-2" id="fileNotUploaded">File Belum di Upload!</span>
+                            <span class="text-secondary d-none" id="fileNameLabel">Nama File</span>
+                            <span class="text-secondary d-none mb-3" id="fileSizeLabel">Ukuran File</span>
                         </div>
                     </div>
                 </div>
@@ -59,7 +53,6 @@
                 </div>
             </div>
         </form>
-
 
         <div class="mb-4 pt-4">
             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
@@ -72,16 +65,12 @@
                     @else
                         <form action="{{ route('savealls') }}" method="POST" style="display:inline;">
                             @csrf
-                            <div class="form-group mb-3">
-                                <label for="bulan_tahun">Bulan/Tahun</label>
-                                <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control" required>
-                            </div>
-
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
                             <button type="submit" class="btn btn-secondary btn-save" id="btn-save">
                                 <i class="bi bi-floppy2-fill"></i> Simpan
                             </button>
                         </form>
+
                         <form action="{{ route('deleteAllTempalls') }}" method="POST" style="display:inline;">
                             @csrf
                             <button type="submit" class="btn btn-danger btn-delete-all">
@@ -95,6 +84,7 @@
             <table class="table table-hover table-bordered datatable shadow" id="tabeltempalls" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
+                        <th id="th" class="align-middle">Nper</th>
                         <th id="th" class="align-middle">Nama</th>
                         <th id="th" class="align-middle text-center">No. Inet</th>
                         <th id="th" class="align-middle text-center">Saldo</th>
@@ -113,7 +103,6 @@
 @push('scripts')
     <script>
         // DataTable initialization
-        // DataTable initialization
         $(document).ready(function() {
             var dataTable = new DataTable('#tabeltempalls', {
                 serverSide: true,
@@ -123,10 +112,29 @@
                 ajax: {
                     url: "{{ route('gettabeltempalls') }}",
                     type: 'GET',
+                    beforeSend: function() {
+                        // Tampilkan loading screen sebelum ajax request
+                        $('#loadingScreen').removeClass('d-none');
+                    },
+                    complete: function() {
+                        // Sembunyikan loading screen setelah ajax request selesai
+                        $('#loadingScreen').addClass('d-none');
+                    },
+                    error: function() {
+                        // Sembunyikan loading screen jika terjadi error pada ajax request
+                        $('#loadingScreen').addClass('d-none');
+                    }
                 },
                 columns: [{
+                        data: 'nper',
+                        name: 'nper',
+                        className: 'align-middle',
+                        visible: false
+                    },
+                    {
                         data: 'nama',
-                        name: 'nama'
+                        name: 'nama',
+                        className: 'align-middle'
                     },
                     {
                         data: 'no_inet',
@@ -161,7 +169,8 @@
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        visible: false
                     },
                     {
                         data: 'opsi-tabel-datatempall',
@@ -212,39 +221,24 @@
                     event.preventDefault();
 
                     const form = this.closest('form');
-                    const bulanTahun = form.querySelector('#bulan_tahun').value;
 
-                    if (!bulanTahun) {
-                        Swal.fire({
-                            title: "Error!",
-                            text: "Harap isi Bulan/Tahun terlebih dahulu!",
-                            icon: "error",
-                            confirmButtonText: "OK"
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Simpan Data?",
-                            text: "Anda yakin ingin menyimpan data ini?",
-                            icon: "info",
-                            showCancelButton: true,
-                            confirmButtonText: "Ya, simpan!",
-                            cancelButtonText: "Batal",
-                            reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const hiddenInput = document.createElement('input');
-                                hiddenInput.type = 'hidden';
-                                hiddenInput.name = 'bulan_tahun';
-                                hiddenInput.value = bulanTahun;
-                                form.appendChild(hiddenInput);
-
-                                form.submit();
-                            }
-                        });
-                    }
+                    Swal.fire({
+                        title: "Simpan Data?",
+                        text: "Anda yakin ingin menyimpan data ini?",
+                        icon: "info",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya, simpan!",
+                        cancelButtonText: "Batal",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
             });
         });
+
 
         // Modal delete all confirmation
         document.querySelectorAll('.btn-delete-all').forEach(function(button) {
@@ -356,51 +350,30 @@
                 });
         });
 
-        // Check file 2
-        document.getElementById('checkFile2').addEventListener('click', function() {
-            let formData = new FormData();
-            formData.append('file2', document.getElementById('file2').files[0]);
+        // Deskripsi File
+        document.getElementById('file1').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const fileNameLabel = document.getElementById('fileNameLabel');
+            const fileSizeLabel = document.getElementById('fileSizeLabel');
+            const fileNotUploaded = document.getElementById('fileNotUploaded');
+            const resetLink = document.getElementById('resetLink');
+            const vlookupBtn = document.getElementById('vlookupBtn');
 
-            let file2StatusElement = document.getElementById('file2Status');
-            file2StatusElement.innerText = '';
-            file2StatusElement.classList.remove('text-success', 'text-danger');
-
-            let checkFileButton = document.getElementById('checkFile2');
-            checkFileButton.classList.add('d-none');
-            let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading2', 'd-block');
-            loadingElement.innerHTML = `
-                <div class="spinner-border text-dark" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                Proses
-            `;
-            checkFileButton.parentElement.appendChild(loadingElement);
-
-            fetch('{{ route('vlookup.checkFile2') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    file2StatusElement.innerText = data.message;
-                    file2StatusElement.classList.remove('text-success', 'text-danger');
-
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                    checkFileButton.disabled = false;
-
-                    if (data.status === 'success') {
-                        file2StatusElement.classList.add('text-success');
-                        checkFileButton.disabled = true;
-                        enableVlookupButton();
-                    } else {
-                        file2StatusElement.classList.add('text-danger');
-                    }
-                });
+            if (file) {
+                fileNotUploaded.classList.add('d-none');
+                fileNameLabel.classList.remove('d-none');
+                fileSizeLabel.classList.remove('d-none');
+                fileNameLabel.innerHTML = `Nama File: ${file.name}`;
+                fileSizeLabel.innerHTML = `Ukuran File: ${(file.size / 1024).toFixed(2)} KB`;
+                resetLink.classList.remove('d-none');
+                vlookupBtn.disabled = false;
+            } else {
+                fileNotUploaded.classList.remove('d-none');
+                fileNameLabel.classList.add('d-none');
+                fileSizeLabel.classList.add('d-none');
+                resetLink.classList.add('d-none');
+                vlookupBtn.disabled = true;
+            }
         });
 
         // Show "Check File" button if file selected
@@ -417,22 +390,9 @@
             }
         });
 
-        document.getElementById('file2').addEventListener('change', function() {
-            let fileInput = document.getElementById('file2');
-            let checkFileButton = document.getElementById('checkFile2');
-
-            if (fileInput.files.length > 0) {
-                checkFileButton.classList.remove('d-none');
-                checkFileButton.classList.add('d-block');
-            } else {
-                checkFileButton.classList.remove('d-block');
-                checkFileButton.classList.add('d-none');
-            }
-        });
-
         // Enable Vlookup button
         function enableVlookupButton() {
-            if (document.getElementById('checkFile1').disabled && document.getElementById('checkFile2').disabled) {
+            if (document.getElementById('checkFile1').disabled) {
                 document.getElementById('vlookupBtn').disabled = false;
             }
         }

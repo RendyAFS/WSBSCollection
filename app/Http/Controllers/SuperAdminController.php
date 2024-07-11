@@ -6,6 +6,7 @@ use App\Exports\AllExport;
 use App\Imports\DataMasterImport;
 use App\Models\All;
 use App\Models\DataMaster;
+use App\Models\Riwayat;
 use App\Models\TempAll;
 use App\Models\User;
 use Carbon\Carbon;
@@ -81,56 +82,55 @@ class SuperAdminController extends Controller
 
         $request->validate([
             'file1' => 'required|file|mimes:xlsx',
-            'file2' => 'required|file|mimes:xlsx',
         ]);
 
         $file1 = $request->file('file1')->getRealPath();
-        $file2 = $request->file('file2')->getRealPath();
 
         $spreadsheet1 = IOFactory::load($file1);
-        $spreadsheet2 = IOFactory::load($file2);
-
         $sheet1 = $spreadsheet1->getActiveSheet();
-        $sheet2 = $spreadsheet2->getActiveSheet();
-
         $data1 = $sheet1->toArray();
-        $data2 = $sheet2->toArray();
-
 
         $result = [];
 
-        foreach ($data2 as $index2 => $row2) {
-            if ($index2 == 0) continue; // Skip header row
-            $lookupValue = $row2[array_search('EVENT_SOURCE', $data2[0])];
-            foreach ($data1 as $index1 => $row1) {
-                if ($index1 == 0) continue; // Skip header row
-                if ($row1[array_search('SND', $data1[0])] == $lookupValue) {
-                    $result[] = [
-                        'nama' => $row2[array_search('PELANGGAN', $data2[0])],
-                        'no_inet' => $row2[array_search('EVENT_SOURCE', $data2[0])],
-                        'saldo' => $row1[array_search('SALDO', $data1[0])],
-                        'no_tlf' => $row2[array_search('MOBILE_CONTACT_TEL', $data2[0])],
-                        'email' => $row2[array_search('EMAIL_ADDRESS', $data2[0])],
-                        'sto' => $row2[array_search('CSTO', $data2[0])],
-                        'umur_customer' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
-                        'produk' => $row1[array_search('INDIHOME', $data1[0])],
-                    ];
-                    break;
-                }
+        foreach ($data1 as $index1 => $row1) {
+            if ($index1 == 0) continue; // Skip header row
+
+            $lookupValue = $row1[array_search('SND', $data1[0])];
+
+            // Fetch from database
+            $dataMaster = DB::table('data_masters')->where('event_source', $lookupValue)->first();
+
+            if ($dataMaster) {
+                $nper = $row1[array_search('NPER', $data1[0])];
+                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
+
+                $result[] = [
+                    'nama' => $dataMaster->pelanggan,
+                    'no_inet' => $dataMaster->event_source,
+                    'saldo' => $row1[array_search('SALDO', $data1[0])],
+                    'no_tlf' => $dataMaster->mobile_contact_tel,
+                    'email' => $dataMaster->email_address,
+                    'sto' => $dataMaster->csto,
+                    'umur_customer' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
+                    'produk' => $row1[array_search('INDIHOME', $data1[0])],
+                    'nper' => $nperFormatted,
+                ];
             }
         }
+
         // Insert the result into the database
         foreach ($result as $row) {
             DB::table('temp_alls')->insert([
-                'nama' => $row['nama'] ?: 'N/A',
-                'no_inet' => $row['no_inet'] ?: 'N/A',
-                'saldo' => $row['saldo'] ?: 'N/A',
-                'no_tlf' => $row['no_tlf'] ?: 'N/A',
-                'email' => $row['email'] ?: 'N/A',
-                'sto' => $row['sto'] ?: 'N/A',
-                'umur_customer' => $row['umur_customer'] ?: 'N/A',
-                'produk' => $row['produk'] ?: 'N/A',
+                'nama' => $row['nama'] ?: '-',
+                'no_inet' => $row['no_inet'] ?: '-',
+                'saldo' => $row['saldo'] ?: '-',
+                'no_tlf' => $row['no_tlf'] ?: '-',
+                'email' => $row['email'] ?: '-',
+                'sto' => $row['sto'] ?: '-',
+                'umur_customer' => $row['umur_customer'] ?: '-',
+                'produk' => $row['produk'] ?: '-',
                 'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'nper' => $row['nper'] ?: '-',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -138,6 +138,7 @@ class SuperAdminController extends Controller
 
         return redirect()->route('tools.index');
     }
+
 
     public function getDataTempalls(Request $request)
     {
@@ -152,13 +153,11 @@ class SuperAdminController extends Controller
         }
     }
 
-    public function savetempalls(Request $request)
+    public function savetempalls()
     {
         // Ambil data dari temp_alls
         $tempAlls = TempAll::all();
 
-        // Ambil bulan dan tahun dari request
-        $bulanTahun = $request->input('bulan_tahun');
 
         // Insert data ke alls
         foreach ($tempAlls as $row) {
@@ -172,7 +171,7 @@ class SuperAdminController extends Controller
                 'umur_customer' => $row->umur_customer ?: 'N/A',
                 'produk' => $row->produk ?: 'N/A',
                 'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
-                'bulan_tahun' => $bulanTahun, // Set date month/year
+                'nper' => $row->nper ?: 'N/A',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -251,7 +250,9 @@ class SuperAdminController extends Controller
             Excel::import(new DataMasterImport, $file);
         });
 
-        return redirect()->back()->with('success', 'Data pelanggan berhasil diupload.');
+        Alert::success('Data Berhasil Terinput');
+
+        return redirect()->route('datamaster.index');
     }
 
     public function cekFileDataMaster(Request $request)
@@ -297,33 +298,32 @@ class SuperAdminController extends Controller
 
     public function updatedatamasters(Request $request, $id)
     {
-        $all = DataMaster::findOrFail($id);
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
-        $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->save();
+        $data_master = DataMaster::findOrFail($id);
+        $data_master->event_source = $request->input('event_source');
+        $data_master->kwadran = $request->input('kwadran');
+        $data_master->csto = $request->input('csto');
+        $data_master->mobile_contact_tel = $request->input('mobile_contact_tel');
+        $data_master->email_address = $request->input('email_address');
+        $data_master->pelanggan = $request->input('pelanggan');
+        $data_master->alamat_pelanggan = $request->input('alamat_pelanggan');
+        $data_master->save();
 
         Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('all.index');
+        return redirect()->route('datamaster.index');
     }
+
 
     public function destroydatamasters($id)
     {
-        $all = All::findOrFail($id);
-        $all->delete();
+        $data_master = DataMaster::findOrFail($id);
+        $data_master->delete();
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('all.index');
+        return redirect()->route('datamaster.index');
     }
 
 
 
-    // All
+    // Data All
     public function indexall()
     {
         confirmDelete();
@@ -375,11 +375,11 @@ class SuperAdminController extends Controller
 
         // Validate the request
         $request->validate([
-            'bulan_tahun' => 'required|date_format:Y-m',
+            'nper' => 'required|date_format:Y-m',
             'file' => 'required|file|mimes:xlsx'
         ]);
 
-        $bulan_tahun = $request->input('bulan_tahun');
+        $nper = $request->input('nper');
         $file = $request->file('file')->getRealPath();
 
         // Load the Excel file
@@ -394,8 +394,15 @@ class SuperAdminController extends Controller
         }
 
         // Fetch records from the database
-        $records = All::where('bulan_tahun', $bulan_tahun)->get();
+        $records = All::where('nper', $nper)->get();
 
+        // Save riwayat entry
+        $riwayat = new Riwayat();
+        $riwayat->deskripsi_riwayat = $request->file('file')->getClientOriginalName();
+        $riwayat->tanggal_riwayat = $nper;
+        $riwayat->save();
+
+        // Process each record
         foreach ($records as $record) {
             if (in_array($record->no_inet, $sndList)) {
                 $record->status_pembayaran = 'Unpaid';
@@ -405,7 +412,8 @@ class SuperAdminController extends Controller
             $record->save();
         }
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+        Alert::success('Data Berhasil Terupdate');
+        return redirect()->route('all.index');
     }
 
     public function updatealls(Request $request, $id)
@@ -429,21 +437,21 @@ class SuperAdminController extends Controller
 
     public function export()
     {
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')->get();
+        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         return Excel::download(new AllExport($allData), 'data-semua.xlsx');
     }
 
     public function downloadFilteredExcel(Request $request)
     {
-        $bulanTahun = $request->input('bulan_tahun');
+        $bulanTahun = $request->input('nper');
 
-        // Format input bulan_tahun ke format yang sesuai dengan kebutuhan database
+        // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
-        // Query untuk mengambil data berdasarkan rentang bulan_tahun
-        $filteredData = All::where('bulan_tahun', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'bulan_tahun')
+        // Query untuk mengambil data berdasarkan rentang nper
+        $filteredData = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
+            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
             ->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
@@ -465,9 +473,14 @@ class SuperAdminController extends Controller
     {
         $title = 'Report All';
 
+        // History
+        $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
+            ->orderBy('id', 'desc')
+            ->get();
+
         // Fetch filter values
         $filter_type = $request->input('filter_type', 'sto');
-        $bulan_tahun = $request->input('bulan_tahun');
+        $nper = $request->input('nper');
 
         // Determine the column to group by based on the filter type
         $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
@@ -481,8 +494,8 @@ class SuperAdminController extends Controller
             DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid')
         );
 
-        if ($bulan_tahun) {
-            $query->where('bulan_tahun', $bulan_tahun);
+        if ($nper) {
+            $query->where('nper', $nper);
         }
 
         $reports = $query->groupBy($group_column)->get();
@@ -492,7 +505,7 @@ class SuperAdminController extends Controller
         $total_paid = $reports->sum('total_paid');
         $total_unpaid = $reports->sum('total_unpaid');
 
-        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'bulan_tahun', 'filter_type'));
+        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'riwayats'));
     }
 
 

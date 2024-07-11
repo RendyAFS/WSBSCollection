@@ -32,7 +32,7 @@ class AllExport implements FromCollection, WithHeadings
             'Umur Customer',
             'Produk',
             'Status Pembayaran',
-            'Tahun-Bulan', // Tambahkan ini jika perlu
+            'Nper', // Tambahkan ini jika perlu
         ];
     }
 }

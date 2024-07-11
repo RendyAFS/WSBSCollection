@@ -71,9 +71,9 @@
                                             value="{{ $all->produk }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bulan_tahun" class="form-label fw-bold">Bulan-Tahun</label>
-                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="bulan_tahun" name="bulan_tahun"
-                                            value="{{ $all->bulan_tahun }}">
+                                        <label for="nper" class="form-label fw-bold">Bulan-Tahun</label>
+                                        <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="nper" name="nper"
+                                            value="{{ $all->nper }}">
                                     </div>
                                 </div>
                             </div>

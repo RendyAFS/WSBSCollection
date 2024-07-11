@@ -51,8 +51,4 @@
     }
 }
 
-#btn-opsi{
-    /* Atur z-index yang lebih tinggi dari elemen loading jika diperlukan */
-    z-index: 1100;
-}
 

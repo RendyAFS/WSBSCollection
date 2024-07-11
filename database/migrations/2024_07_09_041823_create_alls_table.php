@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('umur_customer')->nullable();
             $table->string('produk')->nullable();
             $table->string('status_pembayaran')->nullable();
-            $table->string('bulan_tahun')->nullable();
+            $table->string('nper')->nullable();
             $table->timestamps();
         });
     }

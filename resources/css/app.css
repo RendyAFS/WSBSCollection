@@ -24,13 +24,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1;
+    z-index: 1000; /* Ubah nilai z-index menjadi lebih tinggi dari z-index lainnya */
     height: 100vh;
     width: 100%;
     background-color: var(--bg-loading-color);
-    /* Menggunakan rgba dengan alpha transparency */
     position: fixed;
 }
+
 
 
 #img-loading {
@@ -50,3 +50,9 @@
         /* Skala elemen pada akhir animasi */
     }
 }
+
+#btn-opsi{
+    /* Atur z-index yang lebih tinggi dari elemen loading jika diperlukan */
+    z-index: 1100;
+}
+

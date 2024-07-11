@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
+use App\Imports\DataMasterImport;
 use App\Models\All;
+use App\Models\DataMaster;
 use App\Models\TempAll;
 use App\Models\User;
 use Carbon\Carbon;
@@ -13,6 +15,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class SuperAdminController extends Controller
 {
@@ -202,6 +205,122 @@ class SuperAdminController extends Controller
         return redirect()->route('tools.index');
     }
 
+    // Data Master
+    public function indexdatamaster()
+    {
+        confirmDelete();
+        $title = 'Data Master';
+        $data_masters = DataMaster::all();
+        return view('super-admin.data-master', compact('title', 'data_masters'));
+    }
+
+    public function getDatamasters(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_masters = DataMaster::all();
+            return datatables()->of($data_masters)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-datamaster', function ($masters) {
+                    return view('components.opsi-tabel-datamaster', compact('masters'));
+                })
+                ->toJson();
+        }
+    }
+
+
+    public function tambahPelanggan(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $file = $request->file('file');
+
+        // Tambahkan log untuk debugging
+        // \Log::info('Uploaded file:', ['file' => $file]);
+
+        // Import the data with chunking and without events
+        DataMaster::withoutEvents(function () use ($file) {
+            Excel::import(new DataMasterImport, $file);
+        });
+
+        return redirect()->back()->with('success', 'Data pelanggan berhasil diupload.');
+    }
+
+    public function cekFileDataMaster(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
+        }
+
+        $file = $request->file('file')->getRealPath();
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray();
+
+        $headerRow = $data[0];
+        $requiredHeaders = ['EVENT_SOURCE', 'KWADRAN', 'CSTO', 'MOBILE_CONTACT_TEL', 'EMAIL_ADDRESS', 'PELANGGAN', 'ALAMAT_PELANGGAN'];
+        $missingHeaders = array_diff($requiredHeaders, $headerRow);
+
+        if (!empty($missingHeaders)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Missing headers: ' . implode(', ', $missingHeaders),
+            ]);
+        }
+
+        return response()->json(['status' => 'success', 'message' => '*Kolom Sesuai dengan database.']);
+    }
+
+
+
+    public function editdatamasters($id)
+    {
+        $title = 'Edit Data Master';
+        $data_master = DataMaster::findOrFail($id);
+        return view('super-admin.edit-datamaster', compact('title', 'data_master'));
+    }
+
+    public function updatedatamasters(Request $request, $id)
+    {
+        $all = DataMaster::findOrFail($id);
+        $all->nama = $request->input('nama');
+        $all->no_inet = $request->input('no_inet');
+        $all->saldo = $request->input('saldo');
+        $all->no_tlf = $request->input('no_tlf');
+        $all->email = $request->input('email');
+        $all->sto = $request->input('sto');
+        $all->produk = $request->input('produk');
+        $all->umur_customer = $request->input('umur_customer');
+        $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('all.index');
+    }
+
+    public function destroydatamasters($id)
+    {
+        $all = All::findOrFail($id);
+        $all->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('all.index');
+    }
+
 
 
     // All
@@ -232,6 +351,7 @@ class SuperAdminController extends Controller
         $all = All::findOrFail($id);
         return view('super-admin.edit-all', compact('title', 'all'));
     }
+
 
     public function checkFilePembayaran(Request $request)
     {

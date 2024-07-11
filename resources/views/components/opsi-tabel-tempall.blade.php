@@ -2,8 +2,10 @@
     <form action="{{ route('destroy-tempalls', ['id' => $tempall->id]) }}" method="POST" class="delete-form">
         @csrf
         @method('delete')
-        <button type="submit" class="btn btn-danger btn-sm me-2 btn-delete shadow" style="padding: 7px 7px; font-size: 14px;">
-            <i class="bi-trash"></i>
+        <button type="submit" class="btn border border-0 btn-delete text-red" id="btn-opsi">
+            <div class="d-flex align-items-center text-red">
+                <i class="bi bi-trash me-1 "></i>
+                Hapus
         </button>
     </form>
 </div>

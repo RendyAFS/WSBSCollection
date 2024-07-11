@@ -12,64 +12,93 @@
 }
 
 
-.btn.btn-secondary{
+.btn.btn-secondary {
     background-color: var(--secondary-color);
     color: var(--white-color);
     transition: 0.5s;
 }
-.btn.btn-secondary:hover{
+
+.btn.btn-secondary:hover {
     background-color: var(--grey-color);
     color: var(--white-color);
 }
 
-.btn.btn-green{
+.btn.btn-green {
     background-color: var(--green-color);
     color: var(--white-color);
     transition: 0.5s;
 }
-.btn.btn-green:hover{
+
+.btn.btn-green:hover {
     background-color: var(--grey-color);
     color: var(--white-color);
 }
 
-.btn.btn-blue{
+.btn.btn-blue {
     background-color: var(--blue-color);
     color: var(--white-color);
     transition: 0.5s;
 }
-.btn.btn-blue:hover{
+
+.btn.btn-blue:hover {
     background-color: var(--grey-color);
     color: var(--white-color);
 }
 
-.btn.btn-grey{
+.btn.btn-grey {
     background-color: var(--grey-color);
     color: var(--white-color);
     transition: 0.5s;
 }
-.btn.btn-grey:hover{
+
+.btn.btn-grey:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
 
-.btn.btn-yellow{
+.btn.btn-yellow {
     background-color: var(--yellow-color);
     color: var(--dark-color);
     transition: 0.5s;
 }
-.btn.btn-yellow:hover{
+
+.btn.btn-yellow:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
 
-.btn.btn-white{
+.btn.btn-white {
     background-color: var(--white-color);
     border: solid 1px var(--secondary-color);
     border-radius: 8px;
     color: var(--secondary-color);
     transition: 0.5s;
 }
-.btn.btn-white:hover{
+
+.btn.btn-white:hover {
     background-color: var(--grey-color);
     color: var(--white-color);
+}
+
+
+.text-blue {
+    color: var(--blue-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.text-blue:hover {
+    text-decoration: underline;
+}
+
+.text-red {
+    color: var(--primary-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.text-red:hover {
+    text-decoration: underline;
 }

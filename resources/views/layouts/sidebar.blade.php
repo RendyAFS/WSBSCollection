@@ -21,9 +21,16 @@
             </a>
         </li>
 
+        <li class="{{ Route::is('datamaster.index') ? 'active' : '' }}">
+            <a href="{{ route('datamaster.index') }}">
+                <i class="bi bi-database{{ Route::is('datamaster.index') ? '-fill' : '' }}"></i>
+                Data Master
+            </a>
+        </li>
+
         <li class="{{ Route::is('all.index') ? 'active' : '' }}">
             <a href="{{ route('all.index') }}">
-                <i class="bi bi-database{{ Route::is('all.index') ? '-fill' : '' }}"></i>
+                <i class="bi bi-clipboard2-data{{ Route::is('all.index') ? '-fill' : '' }}"></i>
                 Data All
             </a>
         </li>

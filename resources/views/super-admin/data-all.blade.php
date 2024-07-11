@@ -107,7 +107,6 @@
                 </tr>
             </thead>
         </table>
-
     </div>
 @endsection
 @push('scripts')
@@ -259,6 +258,8 @@
                         document.getElementById('cekPembayaranButton').disabled = false;
                     } else {
                         fileStatusElement.classList.add('text-danger');
+                        // Menonaktifkan tombol Cek Pembayaran jika file tidak sesuai
+                        document.getElementById('cekPembayaranButton').disabled = true;
                     }
                 })
                 .catch(error => {
@@ -270,7 +271,7 @@
                 });
         });
 
-        // Modal delete confirmation
+
         // Modal delete confirmation
         $(".datatable").on("click", ".btn-delete", function(e) {
             e.preventDefault();

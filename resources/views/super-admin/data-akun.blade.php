@@ -55,7 +55,11 @@
     <script type="module">
         $(document).ready(function() {
             new DataTable('#tabelakun', {
-                responsive: true
+                responsive: true,
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                }
             });
             $('.form-select').change(function() {
                 var status = $(this).val();
@@ -86,6 +90,7 @@
                         });
                     }
                 });
+
             });
         });
         document.addEventListener('DOMContentLoaded', function() {

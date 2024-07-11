@@ -1,5 +1,7 @@
 @extends('layouts.app-super-admin')
 
+@include('layouts.loading')
+
 @section('content')
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
@@ -27,9 +29,8 @@
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
-                                        <label for="bulan_tahun">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control"
-                                            required>
+                                        <label for="nper">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="nper" name="nper" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="formFile" class="form-label">Upload File SND</label>
@@ -71,9 +72,9 @@
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
-                                            <label for="bulan_tahun">Pilih Bulan-Tahun</label>
-                                            <input type="month" id="bulan_tahun_download" name="bulan_tahun"
-                                                class="form-control" required>
+                                            <label for="nper">Pilih Bulan-Tahun</label>
+                                            <input type="month" id="nper_download" name="nper" class="form-control"
+                                                required>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -93,6 +94,7 @@
         <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
+                    <th id="th" class="align-middle">Nper</th>
                     <th id="th" class="align-middle">Nama</th>
                     <th id="th" class="align-middle text-center">No. Inet</th>
                     <th id="th" class="align-middle text-center">Saldo</th>
@@ -121,8 +123,26 @@
                 ajax: {
                     url: "{{ route('gettabelalls') }}",
                     type: 'GET',
+                    beforeSend: function() {
+                        // Tampilkan loading screen sebelum ajax request
+                        $('#loadingScreen').removeClass('d-none');
+                    },
+                    complete: function() {
+                        // Sembunyikan loading screen setelah ajax request selesai
+                        $('#loadingScreen').addClass('d-none');
+                    },
+                    error: function() {
+                        // Sembunyikan loading screen jika terjadi error pada ajax request
+                        $('#loadingScreen').addClass('d-none');
+                    }
                 },
                 columns: [{
+                        data: 'nper',
+                        name: 'nper',
+                        className: 'align-middle',
+                        visible: false
+                    },
+                    {
                         data: 'nama',
                         name: 'nama',
                         className: 'align-middle'
@@ -160,16 +180,26 @@
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        visible: false
+
                     },
                     {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        render: function(data, type, row) {
+                            if (data === 'Unpaid') {
+                                return '<span class="badge text-bg-warning">Unpaid</span>';
+                            } else if (data === 'Paid') {
+                                return '<span class="badge text-bg-success">Paid</span>';
+                            }
+                            return data;
+                        }
                     },
                     {
-                        data: 'bulan_tahun',
-                        name: 'bulan_tahun',
+                        data: 'nper',
+                        name: 'nper',
                         visible: false,
                         className: 'align-middle'
                     },
@@ -198,7 +228,7 @@
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {
             const btnSave = document.getElementById('btn-filter-download');
-            const bulanTahunInput = document.getElementById('bulan_tahun_download');
+            const bulanTahunInput = document.getElementById('nper_download');
 
             btnSave.addEventListener('click', function(event) {
                 if (!bulanTahunInput.value) {

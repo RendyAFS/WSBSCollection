@@ -33,9 +33,8 @@
                                         </select>
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="bulan_tahun">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="bulan_tahun" name="bulan_tahun" class="form-control"
-                                            required>
+                                        <label for="nper">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="nper" name="nper" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -63,10 +62,15 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                @if (session('deskripsi_riwayat') && session('tanggal_riwayat'))
-                                    <p>{{ session('deskripsi_riwayat') }}</p>
-                                    <p>{{ session('tanggal_riwayat')->format('d M Y H:i:s') }}</p>
-                                @endif
+                                <ul>
+                                    @foreach ($riwayats as $riwayat)
+                                        <li>
+                                            Perubahan status pembayaran Nama File:
+                                            <strong>{{ $riwayat->deskripsi_riwayat }}</strong> Bulan-Tahun NPER:
+                                            <strong>{{ $riwayat->tanggal_riwayat}}</strong>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -74,47 +78,51 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
-        <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
-            <thead class="table-warning">
+    </div>
+    <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
+        <thead class="table-warning">
+            <tr>
+                <th id="th" class="align-middle">{{ $filter_type === 'umur_customer' ? 'Umur Customer' : 'STO' }}
+                </th>
+                <th id="th" class="align-middle text-center">Total SSL</th>
+                <th id="th" class="align-middle text-center">Saldo Awal</th>
+                <th id="th" class="align-middle text-center">Paid</th>
+                <th id="th" class="align-middle text-center">Unpaid</th>
+            </tr>
+        </thead>
+        <tbody id="tabel-report-body">
+            @foreach ($reports as $data)
                 <tr>
-                    <th id="th" class="align-middle">{{ $filter_type === 'umur_customer' ? 'Umur Customer' : 'STO' }}
-                    </th>
-                    <th id="th" class="align-middle text-center">Total SSL</th>
-                    <th id="th" class="align-middle text-center">Saldo Awal</th>
-                    <th id="th" class="align-middle text-center">Paid</th>
-                    <th id="th" class="align-middle text-center">Unpaid</th>
+                    <td class="align-middle">{{ $filter_type === 'umur_customer' ? $data->umur_customer : $data->sto }}
+                    </td>
+                    <td class="align-middle text-center">{{ $data->total_ssl }}</td>
+                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_saldo, 0, ',', '.') }}
+                    </td>
+                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_paid, 0, ',', '.') }}</td>
+                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_unpaid, 0, ',', '.') }}
+                    </td>
                 </tr>
-            </thead>
-            <tbody id="tabel-report-body">
-                @foreach ($reports as $data)
-                    <tr>
-                        <td class="align-middle">{{ $filter_type === 'umur_customer' ? $data->umur_customer : $data->sto }}
-                        </td>
-                        <td class="align-middle text-center">{{ $data->total_ssl }}</td>
-                        <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_saldo, 0, ',', '.') }}
-                        </td>
-                        <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_paid, 0, ',', '.') }}</td>
-                        <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_unpaid, 0, ',', '.') }}
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr class="table-secondary">
-                    <td class="align-middle"><strong>Total</strong></td>
-                    <td class="align-middle text-center"><strong>{{ $total_ssl }}</strong></td>
-                    <td class="align-middle text-center">
-                        <strong>{{ 'Rp' . number_format($total_saldo, 0, ',', '.') }}</strong></td>
-                    <td class="align-middle text-center">
-                        <strong>{{ 'Rp' . number_format($total_paid, 0, ',', '.') }}</strong></td>
-                    <td class="align-middle text-center">
-                        <strong>{{ 'Rp' . number_format($total_unpaid, 0, ',', '.') }}</strong></td>
-                </tr>
-            </tfoot>
-        </table>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr class="table-secondary">
+                <td class="align-middle"><strong>Total</strong></td>
+                <td class="align-middle text-center"><strong>{{ $total_ssl }}</strong></td>
+                <td class="align-middle text-center">
+                    <strong>{{ 'Rp' . number_format($total_saldo, 0, ',', '.') }}</strong>
+                </td>
+                <td class="align-middle text-center">
+                    <strong>{{ 'Rp' . number_format($total_paid, 0, ',', '.') }}</strong>
+                </td>
+                <td class="align-middle text-center">
+                    <strong>{{ 'Rp' . number_format($total_unpaid, 0, ',', '.') }}</strong>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
     </div>
 @endsection
 @push('scripts')
@@ -135,14 +143,14 @@
             });
         });
 
-        
+
         // Default Date Filter
         document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const defaultValue = `${year}-${month}`;
-            document.getElementById('bulan_tahun').value = defaultValue;
+            document.getElementById('nper').value = defaultValue;
         });
     </script>
 @endpush

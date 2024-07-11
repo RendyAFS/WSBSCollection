@@ -14,17 +14,17 @@
 
         <span class="fw-bold">Manajer Data</span>
 
-        <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
-            <a href="{{ route('tools.index') }}">
-                <i class="bi bi-wrench-adjustable-circle{{ Route::is('tools.index') ? '-fill' : '' }}"></i>
-                Tool
-            </a>
-        </li>
-
         <li class="{{ Route::is('datamaster.index') ? 'active' : '' }}">
             <a href="{{ route('datamaster.index') }}">
                 <i class="bi bi-database{{ Route::is('datamaster.index') ? '-fill' : '' }}"></i>
                 Data Master
+            </a>
+        </li>
+
+        <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
+            <a href="{{ route('tools.index') }}">
+                <i class="bi bi-wrench-adjustable-circle{{ Route::is('tools.index') ? '-fill' : '' }}"></i>
+                Tool
             </a>
         </li>
 

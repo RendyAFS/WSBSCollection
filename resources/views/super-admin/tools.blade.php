@@ -361,6 +361,7 @@
             let fileNameLabel = document.getElementById('fileNameLabel');
             let fileSizeLabel = document.getElementById('fileSizeLabel');
             let resetLink = document.getElementById('resetLink');
+            let file1StatusElement = document.getElementById('file1Status');
 
             if (file1) {
                 fileNotUploaded.classList.add('d-none');
@@ -373,13 +374,22 @@
                     fileSizeLabel.innerText = `Ukuran File: ${(file1.size / 1024).toFixed(2)} KB`;
                 }
                 checkFileButton.classList.remove('d-none');
+                checkFileButton.disabled = false;
                 resetLink.classList.remove('d-none');
+
+                // Mengosongkan konten file1Status
+                file1StatusElement.innerText = '';
+                file1StatusElement.classList.remove('text-success', 'text-danger');
             } else {
                 fileNotUploaded.classList.remove('d-none');
                 fileNameLabel.classList.add('d-none');
                 fileSizeLabel.classList.add('d-none');
                 checkFileButton.classList.add('d-none');
                 resetLink.classList.add('d-none');
+
+                // Mengosongkan konten file1Status
+                file1StatusElement.innerText = '';
+                file1StatusElement.classList.remove('text-success', 'text-danger');
             }
         });
     </script>

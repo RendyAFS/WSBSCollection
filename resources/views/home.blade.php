@@ -41,14 +41,29 @@
                                 {{-- Opsi 2 --}}
                                 @if (Auth::user()->status === 'Aktif')
                                     @if (Auth::user()->level === 'Super Admin')
+                                        <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                        </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('super-admin.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
                                     @elseif (Auth::user()->level === 'Admin')
+                                        <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                        </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('admin.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
                                     @elseif (Auth::user()->level === 'User')
+                                        <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                        </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('user.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>

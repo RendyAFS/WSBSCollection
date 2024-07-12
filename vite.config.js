@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/auth.js',
                 'resources/css/app.css',
+                'resources/css/bootstrap.css',
                 'resources/css/landing-page.css',
                 'resources/css/nav-side-bar.css',
             ],

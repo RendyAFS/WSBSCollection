@@ -1,15 +1,54 @@
 :root {
     --primary-color: #EF352B;
-    --secondary-color: #831a15;
+    --secondary-color: #831a16;
     --grey-color: #727375;
     --soft-grey-color: #e0e0e0;
     --white-color: #FFFFFF;
+    --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
+    --green-color: #005e43;
+    --blue-color: #00467a;
+    --yellow-color: #FFCE20;
 }
 
-
 /* Super Admin */
-#th{
+#th {
     background-color: var(--secondary-color);
     color: var(--white-color);
 }
+
+.contain-loading {
+    padding: 0;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ubah nilai z-index menjadi lebih tinggi dari z-index lainnya */
+    height: 100vh;
+    width: 100%;
+    background-color: var(--bg-loading-color);
+    position: fixed;
+}
+
+
+
+#img-loading {
+    width: 35%;
+    animation: zoomOut 1s infinite;
+    /* Mengatur animasi zoom out dengan durasi 2 detik dan berjalan terus-menerus */
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1);
+        /* Awal skala elemen */
+    }
+
+    100% {
+        transform: scale(0.7);
+        /* Skala elemen pada akhir animasi */
+    }
+}
+
+

@@ -26,7 +26,7 @@
                             <span class="fw-normal">{{ $user->level }}</span>
                         </th>
                         <th>
-                            <select class="form-select form-select-sm user-status" aria-label="Small select example">
+                            <select class="form-select form-select-sm user-status border border-0" aria-label="Small select example">
                                 <option value="Aktif" class="text-success fw-bold"
                                     {{ $user->status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                                 <option value="Belum Aktif" class="text-danger fw-bold"
@@ -55,7 +55,11 @@
     <script type="module">
         $(document).ready(function() {
             new DataTable('#tabelakun', {
-                responsive: true
+                responsive: true,
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                }
             });
             $('.form-select').change(function() {
                 var status = $(this).val();
@@ -86,6 +90,7 @@
                         });
                     }
                 });
+
             });
         });
         document.addEventListener('DOMContentLoaded', function() {

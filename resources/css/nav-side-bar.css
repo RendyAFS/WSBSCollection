@@ -1,10 +1,14 @@
 :root {
     --primary-color: #EF352B;
-    --secondary-color: #831a15;
+    --secondary-color: #831a16;
     --grey-color: #727375;
     --soft-grey-color: #e0e0e0;
     --white-color: #FFFFFF;
+    --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
+    --green-color: #005e43;
+    --blue-color: #00467a;
+    --yellow-color: #FFCE20;
 }
 
 /* Wrapper */

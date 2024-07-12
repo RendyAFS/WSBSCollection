@@ -33,6 +33,6 @@ class DataMasterImport implements ToModel, WithHeadingRow, WithChunkReading
 
     public function chunkSize(): int
     {
-        return 300; // Sesuaikan ukuran chunk sesuai kebutuhan
+        return 500; // Sesuaikan ukuran chunk sesuai kebutuhan
     }
 }

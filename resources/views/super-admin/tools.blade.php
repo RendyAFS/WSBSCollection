@@ -66,14 +66,14 @@
                         <form action="{{ route('savealls') }}" method="POST" style="display:inline;">
                             @csrf
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
-                            <button type="submit" class="btn btn-secondary btn-save" id="btn-save">
+                            <button type="submit" class="btn btn-green btn-save" id="btn-save">
                                 <i class="bi bi-floppy2-fill"></i> Simpan
                             </button>
                         </form>
 
                         <form action="{{ route('deleteAllTempalls') }}" method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="btn btn-danger btn-delete-all">
+                            <button type="submit" class="btn btn-primary btn-delete-all">
                                 <i class="bi bi-trash-fill"></i> Hapus Semua
                             </button>
                         </form>
@@ -362,6 +362,7 @@
             let fileSizeLabel = document.getElementById('fileSizeLabel');
             let resetLink = document.getElementById('resetLink');
             let file1StatusElement = document.getElementById('file1Status');
+            let vlookupButton = document.getElementById('vlookupBtn'); // Tambahkan ini
 
             if (file1) {
                 fileNotUploaded.classList.add('d-none');
@@ -380,6 +381,9 @@
                 // Mengosongkan konten file1Status
                 file1StatusElement.innerText = '';
                 file1StatusElement.classList.remove('text-success', 'text-danger');
+
+                // Tambahkan ini untuk menonaktifkan tombol vlookup
+                vlookupButton.disabled = true;
             } else {
                 fileNotUploaded.classList.remove('d-none');
                 fileNameLabel.classList.add('d-none');
@@ -390,6 +394,9 @@
                 // Mengosongkan konten file1Status
                 file1StatusElement.innerText = '';
                 file1StatusElement.classList.remove('text-success', 'text-danger');
+
+                // Tambahkan ini untuk menonaktifkan tombol vlookup
+                vlookupButton.disabled = true;
             }
         });
     </script>

@@ -4,8 +4,7 @@
         @method('delete')
         <button type="submit" class="btn border border-0 btn-delete text-red">
             <div class="d-flex align-items-center text-red">
-                <i class="bi bi-trash me-1 "></i>
-                Hapus
+                <i class="bi bi-trash-fill fs-5"></i>
         </button>
     </form>
 </div>

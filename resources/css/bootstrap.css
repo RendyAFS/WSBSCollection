@@ -12,6 +12,19 @@
 }
 
 
+.btn.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: solid 1px var(--primary-color);
+    transition: 0.5s;
+}
+
+.btn.btn-primary:hover {
+    background-color: var(--grey-color);
+    border: solid 1px var(--grey-color);
+    color: var(--white-color);
+}
+
 .btn.btn-secondary {
     background-color: var(--secondary-color);
     color: var(--white-color);
@@ -20,6 +33,19 @@
 
 .btn.btn-secondary:hover {
     background-color: var(--grey-color);
+    color: var(--white-color);
+}
+
+.btn.btn-secondary-outline {
+    background-color: var(--white-color);
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    transition: 0.5s;
+}
+
+.btn.btn-secondary-outline:hover {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
     color: var(--white-color);
 }
 
@@ -102,3 +128,31 @@
 .text-red:hover {
     text-decoration: underline;
 }
+
+
+#label-semua,
+#label-bilper,
+#label-existing {
+    background-color: var(--white-color);
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    transition: 0.5s;
+}
+
+#label-semua:hover,
+#label-bilper:hover,
+#label-existing:hover {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    border: 1px solid var(--secondary-color);
+}
+
+/* Gaya untuk label terkait dengan radio button yang dicentang */
+#semua:checked + #label-semua,
+#bilper:checked + #label-bilper,
+#existing:checked + #label-existing {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    color: var(--white-color);
+}
+

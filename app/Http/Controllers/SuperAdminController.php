@@ -280,7 +280,7 @@ class SuperAdminController extends Controller
         if (!empty($missingHeaders)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Missing headers: ' . implode(', ', $missingHeaders),
+                'message' => 'Kolom: ' . implode(', ', $missingHeaders) . 'Tidak Ditemukan',
             ]);
         }
 
@@ -345,7 +345,7 @@ class SuperAdminController extends Controller
                     $query->where('nper', '=', $currentMonth);
                 } elseif ($filterType == 'existing') {
                     $query->where('nper', '<', $currentMonth);
-                } 
+                }
             }
 
             $data_alls = $query->get();

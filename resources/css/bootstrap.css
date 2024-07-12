@@ -131,7 +131,7 @@
 
 
 #label-semua,
-#label-bilper,
+#label-billper,
 #label-existing {
     background-color: var(--white-color);
     color: var(--secondary-color);
@@ -140,7 +140,7 @@
 }
 
 #label-semua:hover,
-#label-bilper:hover,
+#label-billper:hover,
 #label-existing:hover {
     background-color: var(--secondary-color);
     color: var(--white-color);
@@ -149,7 +149,7 @@
 
 /* Gaya untuk label terkait dengan radio button yang dicentang */
 #semua:checked + #label-semua,
-#bilper:checked + #label-bilper,
+#billper:checked + #label-billper,
 #existing:checked + #label-existing {
     background-color: var(--secondary-color);
     border: 1px solid var(--secondary-color);

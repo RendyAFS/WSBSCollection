@@ -103,9 +103,9 @@
                                 autocomplete="off" checked>
                             <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
 
-                            <input type="radio" class="btn-check" name="filter_type" id="bilper" value="bilper"
+                            <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
                                 autocomplete="off">
-                            <label class="btn btn-outline" id="label-bilper" for="bilper">Bilper</label>
+                            <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
 
                             <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
                                 autocomplete="off">

@@ -303,7 +303,7 @@
             document.getElementById('loadingScreen').classList.add('d-none');
         }
 
-        // Check file 1
+        // Check file 1 dan Vlookup
         document.getElementById('checkFile1').addEventListener('click', function() {
             let formData = new FormData();
             formData.append('file1', document.getElementById('file1').files[0]);
@@ -312,16 +312,18 @@
             file1StatusElement.innerText = '';
             file1StatusElement.classList.remove('text-success', 'text-danger');
 
+            let vlookupButton = document.getElementById('vlookupBtn');
+
             let checkFileButton = document.getElementById('checkFile1');
             checkFileButton.classList.add('d-none');
             let loadingElement = document.createElement('div');
             loadingElement.classList.add('loading', 'd-block');
             loadingElement.innerHTML = `
-                <div class="spinner-border text-dark" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                Proses
-            `;
+        <div class="spinner-border text-dark" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        Proses
+    `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile1') }}', {
@@ -338,63 +340,47 @@
 
                     loadingElement.remove();
                     checkFileButton.classList.remove('d-none');
-                    checkFileButton.disabled = false;
 
                     if (data.status === 'success') {
                         file1StatusElement.classList.add('text-success');
                         checkFileButton.disabled = true;
-                        enableVlookupButton();
+                        vlookupButton.disabled = false;
                     } else {
                         file1StatusElement.classList.add('text-danger');
+                        checkFileButton.disabled = false;
+                        vlookupButton.disabled = true;
                     }
                 });
         });
 
         // Deskripsi File
-        document.getElementById('file1').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const fileNameLabel = document.getElementById('fileNameLabel');
-            const fileSizeLabel = document.getElementById('fileSizeLabel');
-            const fileNotUploaded = document.getElementById('fileNotUploaded');
-            const resetLink = document.getElementById('resetLink');
-            const vlookupBtn = document.getElementById('vlookupBtn');
+        document.getElementById('file1').addEventListener('change', function() {
+            let file1 = document.getElementById('file1').files[0];
+            let checkFileButton = document.getElementById('checkFile1');
+            let fileNotUploaded = document.getElementById('fileNotUploaded');
+            let fileNameLabel = document.getElementById('fileNameLabel');
+            let fileSizeLabel = document.getElementById('fileSizeLabel');
+            let resetLink = document.getElementById('resetLink');
 
-            if (file) {
+            if (file1) {
                 fileNotUploaded.classList.add('d-none');
                 fileNameLabel.classList.remove('d-none');
                 fileSizeLabel.classList.remove('d-none');
-                fileNameLabel.innerHTML = `Nama File: ${file.name}`;
-                fileSizeLabel.innerHTML = `Ukuran File: ${(file.size / 1024).toFixed(2)} KB`;
+                fileNameLabel.innerText = `Nama File: ${file1.name}`;
+                if (file1.size > 1024 * 1024) {
+                    fileSizeLabel.innerText = `Ukuran File: ${(file1.size / (1024 * 1024)).toFixed(2)} MB`;
+                } else {
+                    fileSizeLabel.innerText = `Ukuran File: ${(file1.size / 1024).toFixed(2)} KB`;
+                }
+                checkFileButton.classList.remove('d-none');
                 resetLink.classList.remove('d-none');
-                vlookupBtn.disabled = false;
             } else {
                 fileNotUploaded.classList.remove('d-none');
                 fileNameLabel.classList.add('d-none');
                 fileSizeLabel.classList.add('d-none');
-                resetLink.classList.add('d-none');
-                vlookupBtn.disabled = true;
-            }
-        });
-
-        // Show "Check File" button if file selected
-        document.getElementById('file1').addEventListener('change', function() {
-            let fileInput = document.getElementById('file1');
-            let checkFileButton = document.getElementById('checkFile1');
-
-            if (fileInput.files.length > 0) {
-                checkFileButton.classList.remove('d-none');
-                checkFileButton.classList.add('d-block');
-            } else {
-                checkFileButton.classList.remove('d-block');
                 checkFileButton.classList.add('d-none');
+                resetLink.classList.add('d-none');
             }
         });
-
-        // Enable Vlookup button
-        function enableVlookupButton() {
-            if (document.getElementById('checkFile1').disabled) {
-                document.getElementById('vlookupBtn').disabled = false;
-            }
-        }
     </script>
 @endpush

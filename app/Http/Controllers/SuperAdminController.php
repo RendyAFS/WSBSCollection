@@ -341,7 +341,7 @@ class SuperAdminController extends Controller
                 $filterType = $request->input('filter_type');
                 $currentMonth = Carbon::now()->format('Y-m');
 
-                if ($filterType == 'bilper') {
+                if ($filterType == 'billper') {
                     $query->where('nper', '=', $currentMonth);
                 } elseif ($filterType == 'existing') {
                     $query->where('nper', '<', $currentMonth);

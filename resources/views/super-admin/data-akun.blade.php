@@ -26,7 +26,8 @@
                             <span class="fw-normal">{{ $user->level }}</span>
                         </th>
                         <th>
-                            <select class="form-select form-select-sm user-status border border-0" aria-label="Small select example">
+                            <select class="form-select form-select-sm user-status border border-0"
+                                aria-label="Small select example">
                                 <option value="Aktif" class="text-success fw-bold"
                                     {{ $user->status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                                 <option value="Belum Aktif" class="text-danger fw-bold"
@@ -38,8 +39,9 @@
                                 class="delete-form">
                                 @csrf
                                 @method('delete')
-                                <button type="submit" class="btn btn-danger btn-sm me-2 btn-delete shadow">
-                                    <i class="bi-trash"></i>
+                                <button type="submit" class="btn border border-0 btn-delete text-red">
+                                    <div class="d-flex align-items-center text-red">
+                                        <i class="bi bi-trash-fill fs-5 "></i>
                                 </button>
                             </form>
                             </form>

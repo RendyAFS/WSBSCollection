@@ -24,7 +24,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('tambah-pelanggan') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('tambah-pelanggan') }}" method="POST" enctype="multipart/form-data"
+                                id="tambahPelangganForm">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="mb-3">
@@ -40,7 +41,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekDataMasterButton"
+                                    <button type="submit" class="btn btn-secondary" id="cekDataMasterButton" data-bs-dismiss="modal"
                                         disabled>Tambah Pelanggan</button>
                                 </div>
                             </form>
@@ -68,7 +69,6 @@
 @endsection
 @push('scripts')
     <script type="module">
-        // DataTable initialization
         $(document).ready(function() {
             var dataTable = new DataTable('#tabeldatamaster', {
                 serverSide: true,
@@ -79,15 +79,12 @@
                     url: "{{ route('gettabeldatamaster') }}",
                     type: 'GET',
                     beforeSend: function() {
-                        // Tampilkan loading screen sebelum ajax request
                         $('#loadingScreen').removeClass('d-none');
                     },
                     complete: function() {
-                        // Sembunyikan loading screen setelah ajax request selesai
                         $('#loadingScreen').addClass('d-none');
                     },
                     error: function() {
-                        // Sembunyikan loading screen jika terjadi error pada ajax request
                         $('#loadingScreen').addClass('d-none');
                     }
                 },
@@ -154,7 +151,6 @@
             });
         });
 
-        // Cek File Data Master
         document.getElementById('formFile').addEventListener('change', function() {
             document.getElementById('checkFileDataMaster').classList.remove('d-none');
         });
@@ -172,11 +168,11 @@
             let loadingElement = document.createElement('div');
             loadingElement.classList.add('loading', 'd-block');
             loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
+            <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Proses
+        `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('cek.filedatamaster') }}', {
@@ -200,7 +196,6 @@
                         document.getElementById('cekDataMasterButton').disabled = false;
                     } else {
                         fileStatusElement.classList.add('text-danger');
-                        // Menonaktifkan tombol Tambah Pelanggan jika file tidak sesuai
                         document.getElementById('cekDataMasterButton').disabled = true;
                     }
                 })
@@ -212,7 +207,12 @@
                     checkFileButton.classList.remove('d-none');
                 });
         });
-        // Modal delete confirmation
+
+        // Event listener untuk menampilkan loading screen saat form disubmit
+        document.getElementById('tambahPelangganForm').addEventListener('submit', function(event) {
+            document.getElementById('loadingScreen').classList.remove('d-none');
+        });
+
         $(".datatable").on("click", ".btn-delete", function(e) {
             e.preventDefault();
 

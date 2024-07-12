@@ -10,45 +10,12 @@
             </span>
 
             <div class="d-flex">
-                <!-- Button trigger modal Filter Data-->
-                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
-                    <i class="bi bi-funnel-fill"></i> Filter Data
-                </button>
 
-                <!-- Modal Filter Data-->
-                <div class="modal fade" id="modalFilterdata" tabindex="-1" aria-labelledby="modalFilterdataLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalFilterdataLabel">Filter Data</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <form id="filterForm" action="" method="GET">
-                                <div class="modal-body">
-                                    <div class="form-group mb-3">
-                                        <label for="filter_type">Jenis Filter</label>
-                                        <select id="filter_type" name="filter_type" class="form-select" required>
-                                            <option value="semua" selected>Semua</option>
-                                            <option value="bilper">Bilper</option>
-                                            <option value="existing">Existing</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary">Filter</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Button trigger modal Pembayaran-->
                 <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
                     data-bs-target="#modalCekPembayaran">
-                    <i class="bi bi-arrow-repeat"></i> Cek Pembayaran
+                    <i class="bi bi-capslock-fill"></i> Cek Pembayaran
                 </button>
 
                 <!-- Modal -->
@@ -127,6 +94,27 @@
                 </div>
             </div>
         </div>
+        <div class="wraper-btn-group my-3 d-flex justify-content-center">
+            <form id="filterForm" action="" method="GET">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <div class="btn-group" role="group" aria-label="Jenis Filter">
+                            <input type="radio" class="btn-check" name="filter_type" id="semua" value="semua"
+                                autocomplete="off" checked>
+                            <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
+
+                            <input type="radio" class="btn-check" name="filter_type" id="bilper" value="bilper"
+                                autocomplete="off">
+                            <label class="btn btn-outline" id="label-bilper" for="bilper">Bilper</label>
+
+                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
+                                autocomplete="off">
+                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">
@@ -161,7 +149,7 @@
                     url: "{{ route('gettabelalls') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.filter_type = $('#filter_type').val();
+                        d.filter_type = $('input[name="filter_type"]:checked').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -260,8 +248,7 @@
                 }
             });
 
-            $('#filterForm').on('submit', function(e) {
-                e.preventDefault();
+            $('input[name="filter_type"]').on('change', function() {
                 dataTable.ajax.reload();
             });
         });

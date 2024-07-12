@@ -335,7 +335,20 @@ class SuperAdminController extends Controller
     public function getDataalls(Request $request)
     {
         if ($request->ajax()) {
-            $data_alls = All::all();
+            $query = All::query();
+
+            if ($request->has('filter_type')) {
+                $filterType = $request->input('filter_type');
+                $currentMonth = Carbon::now()->format('Y-m');
+
+                if ($filterType == 'bilper') {
+                    $query->where('nper', '=', $currentMonth);
+                } elseif ($filterType == 'existing') {
+                    $query->where('nper', '<', $currentMonth);
+                } 
+            }
+
+            $data_alls = $query->get();
             return datatables()->of($data_alls)
                 ->addIndexColumn()
                 ->addColumn('opsi-tabel-dataall', function ($all) {
@@ -344,6 +357,7 @@ class SuperAdminController extends Controller
                 ->toJson();
         }
     }
+
 
     public function editalls($id)
     {

@@ -10,18 +10,54 @@
             </span>
 
             <div class="d-flex">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <!-- Button trigger modal Filter Data-->
+                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                    <i class="bi bi-funnel-fill"></i> Filter Data
+                </button>
+
+                <!-- Modal Filter Data-->
+                <div class="modal fade" id="modalFilterdata" tabindex="-1" aria-labelledby="modalFilterdataLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modalFilterdataLabel">Filter Data</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="filterForm" action="" method="GET">
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="filter_type">Jenis Filter</label>
+                                        <select id="filter_type" name="filter_type" class="form-select" required>
+                                            <option value="semua" selected>Semua</option>
+                                            <option value="bilper">Bilper</option>
+                                            <option value="existing">Existing</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-secondary">Filter</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button trigger modal Pembayaran-->
+                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
+                    data-bs-target="#modalCekPembayaran">
                     <i class="bi bi-arrow-repeat"></i> Cek Pembayaran
                 </button>
 
                 <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                <div class="modal fade" id="modalCekPembayaran" tabindex="-1" aria-labelledby="modalCekPembayaranLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Cek Pembayaran</h1>
+                                <h1 class="modal-title fs-5" id="modalCekPembayaranLabel">Cek Pembayaran</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -52,6 +88,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="btn-group">
                     <a href="{{ route('download.excel') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
@@ -123,16 +160,16 @@
                 ajax: {
                     url: "{{ route('gettabelalls') }}",
                     type: 'GET',
+                    data: function(d) {
+                        d.filter_type = $('#filter_type').val();
+                    },
                     beforeSend: function() {
-                        // Tampilkan loading screen sebelum ajax request
                         $('#loadingScreen').removeClass('d-none');
                     },
                     complete: function() {
-                        // Sembunyikan loading screen setelah ajax request selesai
                         $('#loadingScreen').addClass('d-none');
                     },
                     error: function() {
-                        // Sembunyikan loading screen jika terjadi error pada ajax request
                         $('#loadingScreen').addClass('d-none');
                     }
                 },
@@ -182,7 +219,6 @@
                         name: 'produk',
                         className: 'align-middle',
                         visible: false
-
                     },
                     {
                         data: 'status_pembayaran',
@@ -222,6 +258,11 @@
                     search: "Cari",
                     lengthMenu: "Tampilkan _MENU_ data",
                 }
+            });
+
+            $('#filterForm').on('submit', function(e) {
+                e.preventDefault();
+                dataTable.ajax.reload();
             });
         });
 

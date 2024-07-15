@@ -59,19 +59,19 @@
                 <span class="fw-bold fs-2 mb-3 mb-md-0">
                     Preview data
                 </span>
-                <div class="contain-btn-save">
+                <div class="contain-btn-save d-flex">
                     @if ($temp_alls->isEmpty())
                         {{-- None --}}
                     @else
-                        <form action="{{ route('savealls') }}" method="POST" style="display:inline;">
+                        <form action="{{ route('savealls') }}" method="POST">
                             @csrf
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
-                            <button type="submit" class="btn btn-green btn-save" id="btn-save">
+                            <button type="submit" class="btn btn-green btn-save me-2" id="btn-save">
                                 <i class="bi bi-floppy2-fill"></i> Simpan
                             </button>
                         </form>
 
-                        <form action="{{ route('deleteAllTempalls') }}" method="POST" style="display:inline;">
+                        <form action="{{ route('deleteAllTempalls') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-delete-all">
                                 <i class="bi bi-trash-fill"></i> Hapus Semua

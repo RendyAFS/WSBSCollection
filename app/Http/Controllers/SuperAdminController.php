@@ -8,6 +8,7 @@ use App\Models\All;
 use App\Models\DataMaster;
 use App\Models\Riwayat;
 use App\Models\TempAll;
+use App\Models\TempDataMaster;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -91,6 +92,7 @@ class SuperAdminController extends Controller
         $data1 = $sheet1->toArray();
 
         $result = [];
+        $notFound = [];
 
         foreach ($data1 as $index1 => $row1) {
             if ($index1 == 0) continue; // Skip header row
@@ -104,6 +106,36 @@ class SuperAdminController extends Controller
                 $nper = $row1[array_search('NPER', $data1[0])];
                 $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
 
+                // Process UMUR_CUSTOMER
+                $umurCustomerRaw = $row1[array_search('DATMS', $data1[0])];
+                $umurCustomerFormatted = date('Y-m-d', strtotime(substr($umurCustomerRaw, 0, 4) . '-' . substr($umurCustomerRaw, 4, 2) . '-' . substr($umurCustomerRaw, 6, 2)));
+
+                // Calculate age in full months including days
+                $dateNow = \Carbon\Carbon::now();
+                $umurCustomerDate = \Carbon\Carbon::createFromFormat('Y-m-d', $umurCustomerFormatted);
+                $ageInYears = $dateNow->diffInYears($umurCustomerDate);
+                $ageInMonths = $dateNow->diffInMonths($umurCustomerDate) % 12;
+                $ageInDays = $dateNow->diffInDays($umurCustomerDate) % 30;
+                $totalMonths = ($ageInYears * 12) + $ageInMonths;
+
+                // Adjust total months for days
+                if ($ageInDays >= 30) {
+                    $totalMonths++;
+                }
+
+                // Determine age range
+                if ($totalMonths <= 3) {
+                    $ageRange = '00-03 Bln';
+                } elseif ($totalMonths <= 6) {
+                    $ageRange = '04-06 Bln';
+                } elseif ($totalMonths <= 9) {
+                    $ageRange = '07-09 Bln';
+                } elseif ($totalMonths <= 12) {
+                    $ageRange = '10-12 Bln';
+                } else {
+                    $ageRange = '>12 Bln';
+                }
+
                 $result[] = [
                     'nama' => $dataMaster->pelanggan,
                     'no_inet' => $dataMaster->event_source,
@@ -111,10 +143,12 @@ class SuperAdminController extends Controller
                     'no_tlf' => $dataMaster->mobile_contact_tel,
                     'email' => $dataMaster->email_address,
                     'sto' => $dataMaster->csto,
-                    'umur_customer' => $row1[array_search('UMUR_CUSTOMER', $data1[0])],
+                    'umur_customer' => $ageRange,
                     'produk' => $row1[array_search('INDIHOME', $data1[0])],
                     'nper' => $nperFormatted,
                 ];
+            } else {
+                $notFound[] = $result;
             }
         }
 
@@ -136,8 +170,18 @@ class SuperAdminController extends Controller
             ]);
         }
 
+        // Use SweetAlert for success and error alerts
+        if (!empty($notFound)) {
+            Alert::error('Error', 'SND tidak ditemukan pada EVENT_SOURCE');
+        } else {
+            Alert::success('Success, Data SND dan EVENT_SOURCE Berhasil di Merge');
+        }
+
         return redirect()->route('tools.index');
     }
+
+
+
 
 
     public function getDataTempalls(Request $request)
@@ -185,7 +229,6 @@ class SuperAdminController extends Controller
         Alert::success('Data Berhasil Tersimpan');
         return redirect()->route('tools.index')->with('success', 'Data Berhasil Tersimpan');
     }
-
 
     public function deleteAllTempalls()
     {
@@ -242,17 +285,14 @@ class SuperAdminController extends Controller
 
         $file = $request->file('file');
 
-        // Tambahkan log untuk debugging
-        // \Log::info('Uploaded file:', ['file' => $file]);
-
         // Import the data with chunking and without events
-        DataMaster::withoutEvents(function () use ($file) {
+        TempDataMaster::withoutEvents(function () use ($file) {
             Excel::import(new DataMasterImport, $file);
         });
 
         Alert::success('Data Berhasil Terinput');
 
-        return redirect()->route('datamaster.index');
+        return redirect()->route('previewdatamaster.index');
     }
 
     public function cekFileDataMaster(Request $request)
@@ -274,7 +314,7 @@ class SuperAdminController extends Controller
         $data = $sheet->toArray();
 
         $headerRow = $data[0];
-        $requiredHeaders = ['EVENT_SOURCE', 'KWADRAN', 'CSTO', 'MOBILE_CONTACT_TEL', 'EMAIL_ADDRESS', 'PELANGGAN', 'ALAMAT_PELANGGAN'];
+        $requiredHeaders = ['EVENT_SOURCE', 'CSTO', 'MOBILE_CONTACT_TEL', 'EMAIL_ADDRESS', 'PELANGGAN', 'ALAMAT_PELANGGAN'];
         $missingHeaders = array_diff($requiredHeaders, $headerRow);
 
         if (!empty($missingHeaders)) {
@@ -300,7 +340,6 @@ class SuperAdminController extends Controller
     {
         $data_master = DataMaster::findOrFail($id);
         $data_master->event_source = $request->input('event_source');
-        $data_master->kwadran = $request->input('kwadran');
         $data_master->csto = $request->input('csto');
         $data_master->mobile_contact_tel = $request->input('mobile_contact_tel');
         $data_master->email_address = $request->input('email_address');
@@ -316,6 +355,98 @@ class SuperAdminController extends Controller
     public function destroydatamasters($id)
     {
         $data_master = DataMaster::findOrFail($id);
+        $data_master->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('datamaster.index');
+    }
+
+
+    // Preview Data Master
+    public function indexpreviewdatamaster()
+    {
+        confirmDelete();
+        $title = 'Preview Data Master';
+        $temp_data_masters = TempDataMaster::all();
+        return view('super-admin.preview-data-master', compact('title', 'temp_data_masters'));
+    }
+
+    public function getPreviewDatamasters(Request $request)
+    {
+        if ($request->ajax()) {
+            $temp_data_masters = TempDataMaster::all();
+            return datatables()->of($temp_data_masters)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-previewdatamaster', function ($masters) {
+                    return view('components.opsi-tabel-previewdatamaster', compact('masters'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function editpreviewdatamasters($id)
+    {
+        $title = 'Edit Preview Data Master';
+        $preview_data_master = TempDataMaster::findOrFail($id);
+        return view('super-admin.edit-previewdatamaster', compact('title', 'preview_data_master'));
+    }
+
+    public function updatepreviewdatamasters(Request $request, $id)
+    {
+        $preview_data_master = TempDataMaster::findOrFail($id);
+        $preview_data_master->event_source = $request->input('event_source');
+        $preview_data_master->csto = $request->input('csto');
+        $preview_data_master->mobile_contact_tel = $request->input('mobile_contact_tel');
+        $preview_data_master->email_address = $request->input('email_address');
+        $preview_data_master->pelanggan = $request->input('pelanggan');
+        $preview_data_master->alamat_pelanggan = $request->input('alamat_pelanggan');
+        $preview_data_master->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('previewdatamaster.index');
+    }
+
+    public function savetempdatamasters()
+    {
+        // Ambil data dari temp_alls
+        $tempDataMaster = TempDataMaster::all();
+
+
+        // Insert data ke alls
+        foreach ($tempDataMaster as $row) {
+            DB::table('data_masters')->insert([
+                'event_source' => $row->event_source ?: 'N/A',
+                'csto' => $row->csto ?: 'N/A',
+                'mobile_contact_tel' => $row->mobile_contact_tel ?: 'N/A',
+                'email_address' => $row->email_address ?: 'N/A',
+                'pelanggan' => $row->pelanggan ?: 'N/A',
+                'alamat_pelanggan' => $row->alamat_pelanggan ?: 'N/A',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Kosongkan table temp_alls
+        TempDataMaster::truncate();
+
+
+        // Redirect ke halaman tools.index atau halaman lainnya
+        Alert::success('Data Berhasil Tersimpan');
+        return redirect()->route('datamaster.index')->with('success', 'Data Berhasil Tersimpan');
+    }
+
+
+    public function deleteAllTempdatamasters()
+    {
+        // Kosongkan table temp_alls
+        TempDataMaster::truncate();
+
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('datamaster.index');
+    }
+
+    public function destroytempdatamasters($id)
+    {
+        $data_master = TempDataMaster::findOrFail($id);
         $data_master->delete();
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('datamaster.index');

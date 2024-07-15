@@ -41,13 +41,19 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekDataMasterButton" data-bs-dismiss="modal"
-                                        disabled>Tambah Pelanggan</button>
+                                    <button type="submit" class="btn btn-secondary" id="cekDataMasterButton"
+                                        data-bs-dismiss="modal" disabled>Tambah Pelanggan</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+
+                {{-- BTN download Template --}}
+                <a href="{{ asset('storage/file_template/Template_Tambah_Pelanggan.xlsx') }}" class="btn btn-green"
+                    download>
+                    <i class="bi bi-file-earmark-arrow-down-fill"></i> Template
+                </a>
             </div>
         </div>
         <table class="table table-hover table-bordered datatable shadow" id="tabeldatamaster" style="width: 100%">
@@ -107,12 +113,12 @@
                     {
                         data: 'csto',
                         name: 'csto',
-                        className: 'align-middle text-center'
+                        className: 'align-middle'
                     },
                     {
                         data: 'mobile_contact_tel',
                         name: 'mobile_contact_tel',
-                        className: 'align-middle text-center'
+                        className: 'align-middle'
                     },
                     {
                         data: 'email_address',
@@ -122,7 +128,7 @@
                     {
                         data: 'kwadran',
                         name: 'kwadran',
-                        className: 'align-middle text-center'
+                        className: 'align-middle'
                     },
                     {
                         data: 'alamat_pelanggan',
@@ -132,7 +138,7 @@
                     {
                         data: 'opsi-tabel-datamaster',
                         name: 'opsi-tabel-datamaster',
-                        className: 'align-middle text-center',
+                        className: 'align-middle',
                         orderable: false,
                         searchable: false
                     }

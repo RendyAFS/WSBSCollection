@@ -19,10 +19,10 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr data-id="{{ $user->id }}">
-                        <th>
+                        <th class="align-middle">
                             <span class="fw-normal">{{ $user->name }}</span>
                         </th>
-                        <th class="text-center">
+                        <th class="align-middle text-center">
                             <span class="fw-normal">{{ $user->level }}</span>
                         </th>
                         <th>
@@ -34,7 +34,7 @@
                                     {{ $user->status == 'Belum Aktif' ? 'selected' : '' }}>Belum Aktif</option>
                             </select>
                         </th>
-                        <th class="text-center">
+                        <th class="align-middle text-center">
                             <form action="{{ route('destroy-akun', ['id' => $user->id]) }}" method="POST"
                                 class="delete-form">
                                 @csrf
@@ -43,7 +43,6 @@
                                     <div class="d-flex align-items-center text-red">
                                         <i class="bi bi-trash-fill fs-5 "></i>
                                 </button>
-                            </form>
                             </form>
                         </th>
                     </tr>

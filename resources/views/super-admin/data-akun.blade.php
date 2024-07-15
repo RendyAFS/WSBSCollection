@@ -10,7 +10,8 @@
         <table class="table table-hover table-bordered datatable shadow" id="tabelakun" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
-                    <th id="th" class="w-50">Nama</th>
+                    <th id="th" class="w-25">Nama</th>
+                    <th id="th" class="w-25">Nomor Karyawan</th>
                     <th id="th" class="text-center w-25">Jenis Akun</th>
                     <th id="th" class="text-center w-25">Status</th>
                     <th id="th" class="text-center">Opsi</th>
@@ -23,9 +24,12 @@
                             <span class="fw-normal">{{ $user->name }}</span>
                         </th>
                         <th class="align-middle text-center">
+                            <span class="fw-normal">{{ $user->nik }}</span>
+                        </th>
+                        <th class="align-middle text-center">
                             <span class="fw-normal">{{ $user->level }}</span>
                         </th>
-                        <th>
+                            <th>
                             <select class="form-select form-select-sm user-status border border-0"
                                 aria-label="Small select example">
                                 <option value="Aktif" class="text-success fw-bold"

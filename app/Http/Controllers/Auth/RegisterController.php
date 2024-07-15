@@ -61,14 +61,20 @@ class RegisterController extends Controller
             'password.string' => 'Kata sandi harus berupa string.',
             'password.min' => 'Kata sandi harus minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.regex' => 'NIK harus berupa angka dan memiliki panjang 5-6 digit.',
+            'nik.min' => 'NIK harus minimal 5 digit.',
+            'nik.max' => 'NIK tidak boleh lebih dari 6 digit.',
         ];
 
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
+            'nik' => ['required', 'regex:/^\d{5,6}$/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], $messages);
     }
+
 
     /**
      * Create a new user instance after a valid registration.
@@ -82,6 +88,7 @@ class RegisterController extends Controller
             'level' => $data['level'],
             'status' => $data['status'],
             'name' => $data['name'],
+            'nik' => $data['nik'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

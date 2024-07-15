@@ -20,6 +20,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect()->route('admin.index')->with('error', 'Data Terinput!');
+        return redirect()->route('admin.index')->with('error', 'Tidak Memiliki Previllage!');
     }
 }

@@ -20,6 +20,6 @@ class SuperAdminMiddleware
             return $next($request);
         }
 
-        return redirect()->route('super-admin.index')->with('error', 'Data Terinput!');
+        return redirect()->route('super-admin.index')->with('error', 'Tidak Memiliki Previllage!');
     }
 }

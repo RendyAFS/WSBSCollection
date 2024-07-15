@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\DataMaster;
+use App\Models\TempDataMaster;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -20,7 +20,7 @@ class DataMasterImport implements ToModel, WithHeadingRow, WithChunkReading
         $pelanggan = $row['pelanggan'] ?? 'N/A';
         $alamatPelanggan = $row['alamat_pelanggan'] ?? 'N/A';
 
-        return new DataMaster([
+        return new TempDataMaster([
             'event_source' => $eventSource,
             'kwadran' => $kwadran,
             'csto' => $csto,

@@ -65,7 +65,6 @@
                     <th id="th" class="align-middle text-center">CSTO</th>
                     <th id="th" class="align-middle text-center">Mobile Contact Tel</th>
                     <th id="th" class="align-middle">Email Address</th>
-                    <th id="th" class="align-middle text-center">Kwadran</th>
                     <th id="th" class="align-middle w-25">Alamat Pelanggan</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
@@ -123,11 +122,6 @@
                     {
                         data: 'email_address',
                         name: 'email_address',
-                        className: 'align-middle'
-                    },
-                    {
-                        data: 'kwadran',
-                        name: 'kwadran',
                         className: 'align-middle'
                     },
                     {

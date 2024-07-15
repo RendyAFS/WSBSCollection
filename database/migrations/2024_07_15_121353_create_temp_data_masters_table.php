@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('data_masters', function (Blueprint $table) {
+        Schema::create('temp_data_masters', function (Blueprint $table) {
             $table->id();
             $table->string('event_source')->nullable();
+            $table->string('kwadran')->nullable();
             $table->string('csto')->nullable();
             $table->string('mobile_contact_tel')->nullable();
             $table->string('email_address')->nullable();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('data_masters');
+        Schema::dropIfExists('temp_data_master');
     }
 };

@@ -54,6 +54,15 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('update-datamasters/{id}', [SuperAdminController::class, 'updatedatamasters'])->name('update-datamasters');
         Route::delete('/destroy-datamasters/{id}', [SuperAdminController::class, 'destroydatamasters'])->name('destroy-datamasters');
 
+        // Preview Data Master
+        Route::get('/preview-data-master', [SuperAdminController::class, 'indexpreviewdatamaster'])->name('previewdatamaster.index');
+        Route::get('gettabelpreviewdatamaster', [SuperAdminController::class, 'getPreviewDatamasters'])->name('gettabelpreviewdatamaster');
+        Route::get('edit-previewdatamasters/{id}', [SuperAdminController::class, 'editpreviewdatamasters'])->name('edit-tempdatamasters');
+        Route::post('update-previewdatamasters/{id}', [SuperAdminController::class, 'updatepreviewdatamasters'])->name('update-previewdatamasters');
+        Route::post('/savedatamasters', [SuperAdminController::class, 'savetempdatamasters'])->name('savedatamasters');
+        Route::post('deleteAllTempdatamasters', [SuperAdminController::class, 'deleteAllTempdatamasters'])->name('deleteAllTempdatamasters');
+        Route::delete('/destroy-tempdatamasters/{id}', [SuperAdminController::class, 'destroytempdatamasters'])->name('destroy-tempdatamasters');
+
 
 
         // Data All
@@ -81,6 +90,13 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
     // Route Admin
     Route::middleware(['AD'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+
+        // Data All Admin
+        Route::get('/data-all-admin', [AdminController::class, 'indexalladmin'])->name('all-admin.index');
+        Route::get('gettabelallsadmin', [AdminController::class, 'getDataallsadmin'])->name('gettabelallsadmin');
+
+
     });
 
     // Route User

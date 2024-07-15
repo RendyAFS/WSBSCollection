@@ -20,7 +20,20 @@
                             name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
                             placeholder="Masukkan Nama">
                         @error('name')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="invalid-feedback text-white" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <label for="nik" class="form-label">Nomor Karyawan</label>
+                    <div class="mb-3">
+                        <input id="nik" type="text"
+                            class="form-control border border-secondary shadow @error('nik') is-invalid @enderror"
+                            name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus
+                            placeholder="Masukkan Nomor Karyawan">
+                        @error('nik')
+                            <span class="invalid-feedback text-white" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -36,7 +49,7 @@
                             placeholder="Masukkan Email" value="{{ old('email') }}" aria-label="Masukkan Email"
                             aria-describedby="basic-addon2">
                         @error('email')
-                            <span class="invalid-feedback text-danger" role="alert">
+                            <span class="invalid-feedback text-white text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -54,7 +67,7 @@
                             <i class="bi bi-eye-slash text-secondary" id="togglePassword" style="cursor: pointer"></i>
                         </span>
                         @error('password')
-                            <span class="invalid-feedback text-danger" role="alert">
+                            <span class="invalid-feedback text-white text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -87,14 +100,15 @@
                     <div class="d-flex justify-content-center mb-3">
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
-                                required onclick="setLevel('Admin')">
+                                required onclick="setLevel('Admin')" {{ old('btnradio') == 'Admin' ? 'checked' : '' }}>
                             <label class="btn btn-outline-light" for="btnradio1">Admin</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
-                                required onclick="setLevel('User')">
+                                required onclick="setLevel('User')" {{ old('btnradio') == 'User' ? 'checked' : '' }}>
                             <label class="btn btn-outline-light" for="btnradio2">User</label>
                         </div>
                     </div>
+
 
                     {{-- status --}}
                     <div class="row mb-3 d-none">

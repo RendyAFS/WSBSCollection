@@ -57,7 +57,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
         // Data All
-        Route::get('/data-billper', [SuperAdminController::class, 'indexall'])->name('all.index');
+        Route::get('/data-all', [SuperAdminController::class, 'indexall'])->name('all.index');
         Route::get('gettabelalls', [SuperAdminController::class, 'getDataalls'])->name('gettabelalls');
         Route::get('edit-alls/{id}', [SuperAdminController::class, 'editalls'])->name('edit-alls');
         Route::post('update-alls/{id}', [SuperAdminController::class, 'updatealls'])->name('update-alls');

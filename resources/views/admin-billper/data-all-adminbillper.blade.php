@@ -1,4 +1,4 @@
-@extends('layouts.app-super-admin')
+@extends('layouts.app-admin')
 
 @include('layouts.loading')
 
@@ -10,54 +10,8 @@
             </span>
 
             <div class="d-flex">
-
-
-                <!-- Button trigger modal Pembayaran-->
-                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
-                    data-bs-target="#modalCekPembayaran">
-                    <i class="bi bi-capslock-fill"></i> Cek Pembayaran
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="modalCekPembayaran" tabindex="-1" aria-labelledby="modalCekPembayaranLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalCekPembayaranLabel">Cek Pembayaran</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <form action="{{ route('cek-pembayaran') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="form-group mb-3">
-                                        <label for="nper">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="nper" name="nper" class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="formFile" class="form-label">Upload File SND</label>
-                                        <input class="form-control" type="file" id="formFile" name="file" required>
-                                        <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
-                                        <div class="d-flex justify-content-end mt-3">
-                                            <button type="button" id="checkFilePembayaran" class="btn btn-yellow d-none">
-                                                <i class="bi bi-file-earmark-break-fill"></i> Cek File
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek
-                                        Pembayaran</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="btn-group">
-                    <a href="{{ route('download.excel') }}" class="btn btn-green">
+                    <a href="{{ route('download.excelbillper') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -72,7 +26,8 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excel') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excelbillper') }}"
+                                    method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
@@ -116,7 +71,7 @@
             </form>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelallsadminbillper" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nper</th>
@@ -126,12 +81,10 @@
                     <th id="th" class="align-middle text-center">No. Tlf</th>
                     <th id="th" class="align-middle">Email</th>
                     <th id="th" class="align-middle text-center">STO</th>
-                    <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Tahun-Bulan</th>
-                    <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
         </table>
@@ -141,13 +94,13 @@
     <script>
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelalls', {
+            var dataTable = new DataTable('#tabelallsadminbillper', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelalls') }}",
+                    url: "{{ route('gettabelallsadminbillper') }}",
                     type: 'GET',
                     data: function(d) {
                         d.filter_type = $('input[name="filter_type"]:checked').val();
@@ -202,11 +155,6 @@
                         className: 'align-middle'
                     },
                     {
-                        data: 'nper',
-                        name: 'nper',
-                        className: 'align-middle'
-                    },
-                    {
                         data: 'umur_customer',
                         name: 'umur_customer',
                         className: 'align-middle'
@@ -236,13 +184,6 @@
                         visible: false,
                         className: 'align-middle'
                     },
-                    {
-                        data: 'opsi-tabel-dataall',
-                        name: 'opsi-tabel-dataall',
-                        className: 'align-middle',
-                        orderable: false,
-                        searchable: false
-                    }
                 ],
                 order: [
                     [9, 'asc']
@@ -257,27 +198,27 @@
                 }
             });
 
+            function formatRupiah(angka, prefix) {
+                var number_string = angka.toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                // Tambahkan titik jika ada ribuan
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
+            }
+
             $('input[name="filter_type"]').on('change', function() {
                 dataTable.ajax.reload();
             });
         });
-
-        function formatRupiah(angka, prefix) {
-            var number_string = angka.toString(),
-                split = number_string.split(','),
-                sisa = split[0].length % 3,
-                rupiah = split[0].substr(0, sisa),
-                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-            // Tambahkan titik jika ada ribuan
-            if (ribuan) {
-                separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
-            }
-
-            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
-        }
 
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {
@@ -292,86 +233,6 @@
                         title: 'Oops...',
                         text: 'Harap isi Bulan/Tahun terlebih dahulu!',
                     });
-                }
-            });
-        });
-
-        // Check file pembayaran
-        document.getElementById('formFile').addEventListener('change', function() {
-            document.getElementById('checkFilePembayaran').classList.remove('d-none');
-        });
-
-        document.getElementById('checkFilePembayaran').addEventListener('click', function() {
-            let formData = new FormData();
-            formData.append('file', document.getElementById('formFile').files[0]);
-
-            let fileStatusElement = document.getElementById('filecekpembayaran');
-            fileStatusElement.innerText = '';
-            fileStatusElement.classList.remove('text-success', 'text-danger');
-
-            let checkFileButton = document.getElementById('checkFilePembayaran');
-            checkFileButton.classList.add('d-none');
-            let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading', 'd-block');
-            loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
-            checkFileButton.parentElement.appendChild(loadingElement);
-
-            fetch('{{ route('cek.filepembayaran') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    fileStatusElement.innerText = data.message;
-                    fileStatusElement.classList.remove('text-success', 'text-danger');
-
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                    checkFileButton.disabled = false;
-
-                    if (data.status === 'success') {
-                        fileStatusElement.classList.add('text-success');
-                        document.getElementById('cekPembayaranButton').disabled = false;
-                    } else {
-                        fileStatusElement.classList.add('text-danger');
-                        // Menonaktifkan tombol Cek Pembayaran jika file tidak sesuai
-                        document.getElementById('cekPembayaranButton').disabled = true;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    fileStatusElement.innerText = 'An error occurred. Please try again.';
-                    fileStatusElement.classList.add('text-danger');
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                });
-        });
-
-
-        // Modal delete confirmation
-        $(".datatable").on("click", ".btn-delete", function(e) {
-            e.preventDefault();
-
-            var form = $(this).closest("form");
-
-            Swal.fire({
-                title: "Apakah Anda Yakin Menghapus Data " + "?",
-                text: "Anda tidak akan dapat mengembalikannya!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "bg-primary",
-                confirmButtonText: "Ya, hapus!",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
                 }
             });
         });

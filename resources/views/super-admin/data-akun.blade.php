@@ -10,11 +10,11 @@
         <table class="table table-hover table-bordered datatable shadow" id="tabelakun" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
-                    <th id="th" class="w-25">Nama</th>
-                    <th id="th" class="w-25">Nomor Karyawan</th>
-                    <th id="th" class="text-center w-25">Jenis Akun</th>
-                    <th id="th" class="text-center w-25">Status</th>
-                    <th id="th" class="text-center">Opsi</th>
+                    <th id="th" class="align-middle w-25">Nama</th>
+                    <th id="th" class="align-middle text-center">Nomor Karyawan</th>
+                    <th id="th" class="align-middle text-center w-25">Jenis Akun</th>
+                    <th id="th" class="align-middle text-center w-25">Status</th>
+                    <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,9 +27,18 @@
                             <span class="fw-normal">{{ $user->nik }}</span>
                         </th>
                         <th class="align-middle text-center">
-                            <span class="fw-normal">{{ $user->level }}</span>
+                            @if ($user->level == 'User')
+                                <span class="badge text-bg-secondary">User</span>
+                            @elseif($user->level == 'Admin Billper')
+                                <span class="badge text-bg-success">Admin Billper</span>
+                            @elseif($user->level == 'Admin PraNPC')
+                                <span class="badge text-bg-primary">Admin PraNPC</span>
+                            @else
+                                <span class="fw-normal">{{ $user->level }}</span>
+                            @endif
                         </th>
-                            <th>
+
+                        <th>
                             <select class="form-select form-select-sm user-status border border-0"
                                 aria-label="Small select example">
                                 <option value="Aktif" class="text-success fw-bold"

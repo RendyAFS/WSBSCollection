@@ -57,8 +57,10 @@ class LoginController extends Controller
 
             if ($user->level === 'Super Admin' && $user->status === 'Aktif') {
                 return redirect()->route('super-admin.index');
-            } elseif ($user->level === 'Admin' && $user->status === 'Aktif') {
-                return redirect()->route('admin.index');
+            } elseif ($user->level === 'Admin Billper' && $user->status === 'Aktif') {
+                return redirect()->route('adminbillper.index');
+            } elseif ($user->level === 'Admin PraNPC' && $user->status === 'Aktif') {
+                return redirect()->route('adminpranpc.index');
             } elseif ($user->level === 'User' && $user->status === 'Aktif') {
                 return redirect()->route('user.index');
             }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminBillperController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminPranpcController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\UserController;
@@ -36,9 +38,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
         // Tool
         Route::get('/tool', [SuperAdminController::class, 'indextool'])->name('tools.index');
-        Route::post('/vlookup', [SuperAdminController::class, 'vlookup'])->name('vlookup.perform');
         Route::post('/vlookup/checkFile1', [SuperAdminController::class, 'checkFile1'])->name('vlookup.checkFile1');
-        Route::post('/vlookup/checkFile2', [SuperAdminController::class, 'checkFile2'])->name('vlookup.checkFile2');
+        Route::post('/vlookup', [SuperAdminController::class, 'vlookup'])->name('vlookup.perform');
         Route::get('gettabeltempalls', [SuperAdminController::class, 'getDataTempalls'])->name('gettabeltempalls');
         Route::post('/savealls', [SuperAdminController::class, 'savetempalls'])->name('savealls');
         Route::post('deleteAllTempalls', [SuperAdminController::class, 'deleteAllTempalls'])->name('deleteAllTempalls');
@@ -71,14 +72,35 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('edit-alls/{id}', [SuperAdminController::class, 'editalls'])->name('edit-alls');
         Route::post('update-alls/{id}', [SuperAdminController::class, 'updatealls'])->name('update-alls');
         Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
+        Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
         Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
         Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
-        Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
         Route::delete('/destroy-alls/{id}', [SuperAdminController::class, 'destroyalls'])->name('destroy-alls');
 
 
         // Report Data
         Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
+
+        // Tool Pra NPC
+        Route::get('/tool-pranpc', [SuperAdminController::class, 'indextoolpranpc'])->name('toolspranpc.index');
+        Route::get('gettabeltemppranpcs', [SuperAdminController::class, 'getDataTemppranpcs'])->name('gettabeltemppranpcs');
+        Route::post('/upload/checkFile1', [SuperAdminController::class, 'checkFile1pranpc'])->name('upload.checkFile1pranpc');
+        Route::post('/upload', [SuperAdminController::class, 'upload'])->name('upload.perform');
+        Route::post('/savepranpcs', [SuperAdminController::class, 'savetemppranpcs'])->name('savepranpcs');
+        Route::post('deleteAllTemppranpcs', [SuperAdminController::class, 'deleteAllTemppranpcs'])->name('deleteAllTemppranpcs');
+        Route::delete('/destroy-temppranpcs/{id}', [SuperAdminController::class, 'destroyTemppranpcs'])->name('destroy-temppranpcs');
+
+
+        // Data PraNPC
+        Route::get('/data-pranpc', [SuperAdminController::class, 'indexpranpc'])->name('pranpc.index');
+        Route::get('gettabelpranpcs', [SuperAdminController::class, 'getDatapranpcs'])->name('gettabelpranpcs');
+        Route::get('edit-pranpcs/{id}', [SuperAdminController::class, 'editpranpcs'])->name('edit-pranpcs');
+        Route::post('update-pranpcs/{id}', [SuperAdminController::class, 'updatepranpcs'])->name('update-pranpcs');
+        Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
+        Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
+        Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
+        Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
+        Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
 
 
         // Data Akun
@@ -87,17 +109,28 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::delete('/akun/{id}', [SuperAdminController::class, 'destroyakun'])->name('destroy-akun');
     });
 
-    // Route Admin
-    Route::middleware(['AD'])->group(function () {
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-
+    // Route Admin Bilper
+    Route::middleware(['AD-B'])->group(function () {
+        Route::get('/admin-billper', [AdminBillperController::class, 'index'])->name('adminbillper.index');
 
         // Data All Admin
-        Route::get('/data-all-admin', [AdminController::class, 'indexalladmin'])->name('all-admin.index');
-        Route::get('gettabelallsadmin', [AdminController::class, 'getDataallsadmin'])->name('gettabelallsadmin');
-
-
+        Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
+        Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
+        Route::get('/download/excel-billper', [AdminBillperController::class, 'exportbillper'])->name('download.excelbillper');
+        Route::post('/download/filtered/excel-billper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.excelbillper');
     });
+
+    // Route Admin PraNPC
+    Route::middleware(['AD-P'])->group(function () {
+        Route::get('/admin-pranpc', [AdminPranpcController::class, 'index'])->name('adminpranpc.index');
+
+        // Data All Admin
+        Route::get('/data-all-adminpranpc', [AdminPranpcController::class, 'indexalladminpranpc'])->name('all-adminpranpc.index');
+        Route::get('gettabelallsadminpranpc', [AdminPranpcController::class, 'getDataallsadminpranpc'])->name('gettabelallsadminpranpc');
+        Route::get('/download/excel-pranpc', [AdminPranpcController::class, 'exportpranpc'])->name('download.excelpranpc');
+        Route::post('/download/filtered/excel-pranpc', [AdminPranpcController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
+    });
+
 
     // Route User
     Route::middleware(['US'])->group(function () {

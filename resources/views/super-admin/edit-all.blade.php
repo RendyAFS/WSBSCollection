@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="email" class="form-label fw-bold">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
+                                        <input type="text" class="form-control" id="email" name="email"
                                             value="{{ $all->email }}">
                                     </div>
                                     <div class="mb-3">
@@ -71,7 +71,7 @@
                                             value="{{ $all->produk }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nper" class="form-label fw-bold">Bulan-Tahun</label>
+                                        <label for="nper" class="form-label fw-bold">NPER</label>
                                         <input type="text" class="form-control bg-secondary text-dark bg-opacity-25" readonly id="nper" name="nper"
                                             value="{{ $all->nper }}">
                                     </div>

@@ -56,26 +56,20 @@
     display: block;
     color: var(--white-color);
     transition: 0.5s;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-radius: 10px;
     text-decoration: none;
-    width: 106%;
 }
 
 #sidebar ul li a:hover {
     background: var(--white-color);
     color: var(--secondary-color);
-    width: 106%;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-radius: 10px;
 }
 
 #sidebar ul li.active>a {
     color: var(--secondary-color);
     background: var(--white-color);
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    width: 106%;
+    border-radius: 10px;
 }
 
 /* Content Wrapper */
@@ -144,6 +138,7 @@
     }
 
     #drowpdown-account {
-        margin-left: auto; /* Ensure the dropdown stays on the right */
+        margin-left: auto;
+        /* Ensure the dropdown stays on the right */
     }
 }

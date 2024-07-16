@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class AdminPranpcMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,10 +16,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->level === 'Admin') {
+        if (Auth::check() && Auth::user()->level === 'Admin PraNPC') {
             return $next($request);
         }
 
-        return redirect()->route('admin.index')->with('error', 'Tidak Memiliki Previllage!');
+        return redirect()->route('adminpranpc.index')->with('error', 'Tidak Memiliki Previllage!');
     }
 }

@@ -99,17 +99,14 @@
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <div class="btn-group" role="group" aria-label="Jenis Filter">
-                            <input type="radio" class="btn-check" name="filter_type" id="semua" value="semua"
+                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
                                 autocomplete="off" checked>
-                            <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
+                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
 
                             <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
                                 autocomplete="off">
                             <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
 
-                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
                         </div>
                     </div>
                 </div>

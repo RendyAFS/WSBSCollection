@@ -49,13 +49,22 @@
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('super-admin.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
-                                    @elseif (Auth::user()->level === 'Admin')
+                                    @elseif (Auth::user()->level === 'Admin Billper')
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
                                             <i class="bi bi-box-arrow-in-left"></i> Keluar
                                         </a>
-                                        <a class="btn btn-masuk fw-bold mt-5" href="{{ route('admin.index') }}">
+                                        <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminbillper.index') }}">
+                                            <i class="bi bi-box-arrow-in-right"></i> Masuk
+                                        </a>
+                                    @elseif (Auth::user()->level === 'Admin PraNPC')
+                                        <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                        </a>
+                                        <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminpranpc.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
                                     @elseif (Auth::user()->level === 'User')

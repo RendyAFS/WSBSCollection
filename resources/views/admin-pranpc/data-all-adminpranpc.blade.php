@@ -11,7 +11,7 @@
 
             <div class="d-flex">
                 <div class="btn-group">
-                    <a href="{{ route('download.excel') }}" class="btn btn-green">
+                    <a href="{{ route('download.excelpranpc') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -26,7 +26,8 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excel') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excelpranpc') }}"
+                                    method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
@@ -57,9 +58,9 @@
                                 autocomplete="off" checked>
                             <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
 
-                            <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
+                            <input type="radio" class="btn-check" name="filter_type" id="pranpc" value="pranpc"
                                 autocomplete="off">
-                            <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
+                            <label class="btn btn-outline" id="label-pranpc" for="pranpc">PraNPC</label>
 
                             <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
                                 autocomplete="off">
@@ -70,7 +71,7 @@
             </form>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelallsadmin" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelallsadminpranpc" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nper</th>
@@ -93,13 +94,13 @@
     <script>
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelallsadmin', {
+            var dataTable = new DataTable('#tabelallsadminpranpc', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelallsadmin') }}",
+                    url: "{{ route('gettabelallsadminpranpc') }}",
                     type: 'GET',
                     data: function(d) {
                         d.filter_type = $('input[name="filter_type"]:checked').val();
@@ -133,7 +134,10 @@
                     {
                         data: 'saldo',
                         name: 'saldo',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        render: function(data, type, row) {
+                            return formatRupiah(data, 'Rp. ');
+                        }
                     },
                     {
                         data: 'no_tlf',
@@ -199,6 +203,23 @@
             });
         });
 
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // Tambahkan titik jika ada ribuan
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
+        }
+
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {
             const btnSave = document.getElementById('btn-filter-download');
@@ -212,86 +233,6 @@
                         title: 'Oops...',
                         text: 'Harap isi Bulan/Tahun terlebih dahulu!',
                     });
-                }
-            });
-        });
-
-        // Check file pembayaran
-        document.getElementById('formFile').addEventListener('change', function() {
-            document.getElementById('checkFilePembayaran').classList.remove('d-none');
-        });
-
-        document.getElementById('checkFilePembayaran').addEventListener('click', function() {
-            let formData = new FormData();
-            formData.append('file', document.getElementById('formFile').files[0]);
-
-            let fileStatusElement = document.getElementById('filecekpembayaran');
-            fileStatusElement.innerText = '';
-            fileStatusElement.classList.remove('text-success', 'text-danger');
-
-            let checkFileButton = document.getElementById('checkFilePembayaran');
-            checkFileButton.classList.add('d-none');
-            let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading', 'd-block');
-            loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
-            checkFileButton.parentElement.appendChild(loadingElement);
-
-            fetch('{{ route('cek.filepembayaran') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    fileStatusElement.innerText = data.message;
-                    fileStatusElement.classList.remove('text-success', 'text-danger');
-
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                    checkFileButton.disabled = false;
-
-                    if (data.status === 'success') {
-                        fileStatusElement.classList.add('text-success');
-                        document.getElementById('cekPembayaranButton').disabled = false;
-                    } else {
-                        fileStatusElement.classList.add('text-danger');
-                        // Menonaktifkan tombol Cek Pembayaran jika file tidak sesuai
-                        document.getElementById('cekPembayaranButton').disabled = true;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    fileStatusElement.innerText = 'An error occurred. Please try again.';
-                    fileStatusElement.classList.add('text-danger');
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                });
-        });
-
-
-        // Modal delete confirmation
-        $(".datatable").on("click", ".btn-delete", function(e) {
-            e.preventDefault();
-
-            var form = $(this).closest("form");
-
-            Swal.fire({
-                title: "Apakah Anda Yakin Menghapus Data " + "?",
-                text: "Anda tidak akan dapat mengembalikannya!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "bg-primary",
-                confirmButtonText: "Ya, hapus!",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
                 }
             });
         });

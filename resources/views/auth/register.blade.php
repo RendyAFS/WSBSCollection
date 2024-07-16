@@ -100,12 +100,16 @@
                     <div class="d-flex justify-content-center mb-3">
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
-                                required onclick="setLevel('Admin')" {{ old('btnradio') == 'Admin' ? 'checked' : '' }}>
-                            <label class="btn btn-outline-light" for="btnradio1">Admin</label>
+                                required onclick="setLevel('Admin Billper')" {{ old('btnradio') == 'Admin Billper' ? 'checked' : '' }}>
+                            <label class="btn btn-outline-light" for="btnradio1">Admin Billper</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                                required onclick="setLevel('AdminPra NPC')" {{ old('btnradio') == 'AdminPra NPC' ? 'checked' : '' }}>
+                            <label class="btn btn-outline-light" for="btnradio2">Admin Pra NPC</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                                 required onclick="setLevel('User')" {{ old('btnradio') == 'User' ? 'checked' : '' }}>
-                            <label class="btn btn-outline-light" for="btnradio2">User</label>
+                            <label class="btn btn-outline-light" for="btnradio3">Sales</label>
                         </div>
                     </div>
 
@@ -147,11 +151,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('btnradio1').addEventListener('change', function() {
                 if (this.checked) {
-                    setLevel('Admin');
+                    setLevel('Admin Billper');
                 }
             });
 
             document.getElementById('btnradio2').addEventListener('change', function() {
+                if (this.checked) {
+                    setLevel('Admin PraNPC');
+                }
+            });
+
+            document.getElementById('btnradio3').addEventListener('change', function() {
                 if (this.checked) {
                     setLevel('User');
                 }

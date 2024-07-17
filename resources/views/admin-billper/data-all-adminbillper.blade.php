@@ -7,11 +7,71 @@
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Data All
+                <span id="info-filter" class="fs-6 fw-normal">
+
+                </span>
             </span>
 
             <div class="d-flex">
+                <!-- Button trigger modal Filter Data-->
+                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                    <i class="bi bi-funnel-fill"></i> Filter Data
+                </button>
+
+                <!-- Modal Filter Data-->
+                <div class="modal fade" id="modalFilterdata" tabindex="-1" aria-labelledby="modalFilterdataLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modalFilterdataLabel">Filter Data</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="filterForm" action="{{ route('adminbillper.index') }}" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_data">Jenis data</label>
+                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Billper">Billper</option>
+                                            <option value="Existing">Existing</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="nper_filter">Pilih NPER</label>
+                                        <input type="month" id="nper_filter" name="nper_filter" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="status_pembayaran">Status Pembayaran</label>
+                                        <select id="status_pembayaran_filter" name="status_pembayaran" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Paid">Paid</option>
+                                            <option value="Unpaid">Unpaid</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ route('all.index') }}" class="btn btn-grey">
+                                        <i class="bi bi-x-lg"></i> Reset
+                                    </a>
+                                    <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
+                                        data-bs-dismiss="modal">
+                                        <i class="bi bi-funnel-fill"></i> Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- BTN Donwload --}}
                 <div class="btn-group">
-                    <a href="{{ route('download.excelbillper') }}" class="btn btn-green">
+                    <a href="{{ route('download.exceladminbillper') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -26,7 +86,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excelbillper') }}"
+                                <form id="downloadForm" action="{{ route('download.filtered.exceladminbillper') }}"
                                     method="POST">
                                     @csrf
                                     <div class="modal-body">
@@ -34,6 +94,15 @@
                                             <label for="nper">Pilih Bulan-Tahun</label>
                                             <input type="month" id="nper_download" name="nper" class="form-control"
                                                 required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="status_pembayaran">Status Pembayaran</label>
+                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
+                                                aria-label="Default select example" required>
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Paid">Paid</option>
+                                                <option value="Unpaid">Unpaid</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -49,27 +118,6 @@
                 </div>
             </div>
         </div>
-        <div class="wraper-btn-group my-3 d-flex justify-content-center">
-            <form id="filterForm" action="" method="GET">
-                <div class="modal-body">
-                    <div class="form-group mb-3">
-                        <div class="btn-group" role="group" aria-label="Jenis Filter">
-                            <input type="radio" class="btn-check" name="filter_type" id="semua" value="semua"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
-
-                            <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
-
-                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
 
         <table class="table table-hover table-bordered datatable shadow" id="tabelallsadminbillper" style="width: 100%">
             <thead class="fw-bold">
@@ -81,10 +129,11 @@
                     <th id="th" class="align-middle text-center">No. Tlf</th>
                     <th id="th" class="align-middle">Email</th>
                     <th id="th" class="align-middle text-center">STO</th>
+                    <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
-                    <th id="th" class="align-middle text-center">Tahun-Bulan</th>
+                    <th id="th" class="align-middle text-center">NPER</th>
                 </tr>
             </thead>
         </table>
@@ -103,7 +152,9 @@
                     url: "{{ route('gettabelallsadminbillper') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.filter_type = $('input[name="filter_type"]:checked').val();
+                        d.jenis_data = $('#jenis_data_filter').val();
+                        d.nper = $('#nper_filter').val();
+                        d.status_pembayaran = $('#status_pembayaran_filter').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -155,6 +206,11 @@
                         className: 'align-middle'
                     },
                     {
+                        data: 'nper',
+                        name: 'nper',
+                        className: 'align-middle'
+                    },
+                    {
                         data: 'umur_customer',
                         name: 'umur_customer',
                         className: 'align-middle'
@@ -184,6 +240,7 @@
                         visible: false,
                         className: 'align-middle'
                     },
+
                 ],
                 order: [
                     [9, 'asc']
@@ -198,27 +255,34 @@
                 }
             });
 
-            function formatRupiah(angka, prefix) {
-                var number_string = angka.toString(),
-                    split = number_string.split(','),
-                    sisa = split[0].length % 3,
-                    rupiah = split[0].substr(0, sisa),
-                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+            $('#btn-filter').on('click', function() {
+                var jenisData = $('#jenis_data_filter').val();
+                var nper = $('#nper_filter').val();
+                var statusPembayaran = $('#status_pembayaran_filter').val();
 
-                // Tambahkan titik jika ada ribuan
-                if (ribuan) {
-                    separator = sisa ? '.' : '';
-                    rupiah += separator + ribuan.join('.');
-                }
+                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
+                $('#info-filter').text(infoText);
 
-                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-                return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
-            }
-
-            $('input[name="filter_type"]').on('change', function() {
                 dataTable.ajax.reload();
             });
         });
+
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // Tambahkan titik jika ada ribuan
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
+        }
 
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {

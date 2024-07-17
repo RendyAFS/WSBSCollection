@@ -7,10 +7,70 @@
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Data All
+                <span id="info-filter-head">
+
+                </span>
+                <span id="info-filter" class="fs-6 fw-normal">
+
+                </span>
             </span>
 
             <div class="d-flex">
+                <!-- Button trigger modal Filter Data-->
+                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                    <i class="bi bi-funnel-fill"></i> Filter Data
+                </button>
 
+                <!-- Modal Filter Data-->
+                <div class="modal fade" id="modalFilterdata" tabindex="-1" aria-labelledby="modalFilterdataLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modalFilterdataLabel">Filter Data</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="filterForm" action="{{ route('pranpc.index') }}" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_data">Jenis data</label>
+                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Billper">Billper</option>
+                                            <option value="Existing">Existing</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="nper_filter">Pilih NPER</label>
+                                        <input type="month" id="nper_filter" name="nper_filter" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="status_pembayaran">Status Pembayaran</label>
+                                        <select id="status_pembayaran_filter" name="status_pembayaran" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Paid">Paid</option>
+                                            <option value="Unpaid">Unpaid</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ route('all.index') }}" class="btn btn-grey">
+                                        <i class="bi bi-x-lg"></i> Reset
+                                    </a>
+                                    <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
+                                        data-bs-dismiss="modal">
+                                        <i class="bi bi-funnel-fill"></i> Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Button trigger modal Pembayaran-->
                 <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
@@ -40,7 +100,8 @@
                                         <input class="form-control" type="file" id="formFile" name="file" required>
                                         <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
                                         <div class="d-flex justify-content-end mt-3">
-                                            <button type="button" id="checkFilePembayaran" class="btn btn-yellow d-none">
+                                            <button type="button" id="checkFilePembayaran"
+                                                class="btn btn-yellow d-none">
                                                 <i class="bi bi-file-earmark-break-fill"></i> Cek File
                                             </button>
                                         </div>
@@ -48,7 +109,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek
+                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
+                                        disabled>Cek
                                         Pembayaran</button>
                                 </div>
                             </form>
@@ -56,6 +118,7 @@
                     </div>
                 </div>
 
+                {{-- BTN Donwload --}}
                 <div class="btn-group">
                     <a href="{{ route('download.excel') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
@@ -103,27 +166,6 @@
                 </div>
             </div>
         </div>
-        <div class="wraper-btn-group my-3 d-flex justify-content-center">
-            <form id="filterForm" action="" method="GET">
-                <div class="modal-body">
-                    <div class="form-group mb-3">
-                        <div class="btn-group" role="group" aria-label="Jenis Filter">
-                            <input type="radio" class="btn-check" name="filter_type" id="semua" value="semua"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline" id="label-semua" for="semua">Semua</label>
-
-                            <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
-
-                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
 
         <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">
@@ -159,7 +201,9 @@
                     url: "{{ route('gettabelalls') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.filter_type = $('input[name="filter_type"]:checked').val();
+                        d.jenis_data = $('#jenis_data_filter').val();
+                        d.nper = $('#nper_filter').val();
+                        d.status_pembayaran = $('#status_pembayaran_filter').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -266,7 +310,14 @@
                 }
             });
 
-            $('input[name="filter_type"]').on('change', function() {
+            $('#btn-filter').on('click', function() {
+                var jenisData = $('#jenis_data_filter').val();
+                var nper = $('#nper_filter').val();
+                var statusPembayaran = $('#status_pembayaran_filter').val();
+
+                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
+                $('#info-filter').text(infoText);
+
                 dataTable.ajax.reload();
             });
         });

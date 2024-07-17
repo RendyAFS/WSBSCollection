@@ -7,6 +7,9 @@
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Data PraNPC
+                <span id="info-filter" class="fs-6 fw-normal">
+
+                </span>
             </span>
 
             <div class="d-flex">
@@ -38,7 +41,7 @@
                                         <label for="bulan">Pilih Bulan</label>
                                         <select id="bulan_filter" name="bulan" class="form-select"
                                             aria-label="Default select example" required>
-                                            <option selected disabled>Pilih Rentang Bulan</option>
+                                            <option selected value="Semua" disabled>Pilih Rentang Bulan</option>
                                             <option value="01-02">Januari - Februari</option>
                                             <option value="02-03">Februari - Maret</option>
                                             <option value="03-04">Maret - April</option>
@@ -66,10 +69,11 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <a href="{{route('pranpc.index')}}" class="btn btn-grey">
+                                    <a href="{{ route('pranpc.index') }}" class="btn btn-grey">
                                         <i class="bi bi-x-lg"></i> Reset
                                     </a>
-                                    <button type="button" id="btn-filter" class="btn btn-secondary btn-filter" data-bs-dismiss="modal">
+                                    <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
+                                        data-bs-dismiss="modal">
                                         <i class="bi bi-funnel-fill"></i> Filter
                                     </button>
                                 </div>
@@ -283,7 +287,14 @@
             });
 
             $('#btn-filter').on('click', function() {
-                dataTable.draw();
+                var yearFilter = $('#year_filter').val();
+                var bulanFilter = $('#bulan_filter').val();
+                var statusPembayaran = $('#status_pembayaran_filter').val();
+
+                var infoText = yearFilter + "-" + bulanFilter + " - " +statusPembayaran;
+                $('#info-filter').text(infoText);
+
+                dataTable.ajax.reload();
             });
         });
 

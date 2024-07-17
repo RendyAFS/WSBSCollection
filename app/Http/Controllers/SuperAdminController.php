@@ -490,14 +490,26 @@ class SuperAdminController extends Controller
         if ($request->ajax()) {
             $query = All::query();
 
-            if ($request->has('filter_type')) {
-                $filterType = $request->input('filter_type');
+            if ($request->has('jenis_data')) {
+                $jenisData = $request->input('jenis_data');
                 $currentMonth = Carbon::now()->format('Y-m');
 
-                if ($filterType == 'billper') {
+                if ($jenisData == 'Billper') {
                     $query->where('nper', '=', $currentMonth);
-                } elseif ($filterType == 'existing') {
+                } elseif ($jenisData == 'Existing') {
                     $query->where('nper', '<', $currentMonth);
+                }
+            }
+
+            if ($request->has('nper')) {
+                $nper = $request->input('nper');
+                $query->where('nper', 'LIKE', "%$nper%");
+            }
+
+            if ($request->has('status_pembayaran')) {
+                $statusPembayaran = $request->input('status_pembayaran');
+                if ($statusPembayaran != 'Semua') {
+                    $query->where('status_pembayaran', '=', $statusPembayaran);
                 }
             }
 
@@ -510,7 +522,6 @@ class SuperAdminController extends Controller
                 ->toJson();
         }
     }
-
 
     public function editalls($id)
     {
@@ -853,16 +864,12 @@ class SuperAdminController extends Controller
 
                 $query->where('mintgk', '>=', $startMintgk)
                     ->where('maxtgk', '<=', $endMaxtgk);
-
             }
 
             // Filter by status pembayaran
             if ($request->status_pembayaran && $request->status_pembayaran != 'Semua') {
                 $query->where('status_pembayaran', $request->status_pembayaran);
-
-
             } else {
-
             }
 
             $pranpcs = $query->get();

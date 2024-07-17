@@ -39,7 +39,7 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="no_tlf" class="form-label fw-bold">No. Tlf</label>
+                                        <label for="no_tlf" class="form-label fw-bold">Nomor Telfon</label>
                                         <input type="text" class="form-control" id="no_tlf" name="no_tlf"
                                             value="{{ $all->no_tlf }}">
                                     </div>

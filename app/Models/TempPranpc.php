@@ -9,6 +9,6 @@ class TempPranpc extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'snd', 'nama', 'alamat', 'bill_bln', 'bill_bln1', 'multi_kontak1', 'email'
+        'snd', 'nama', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran'
     ];
 }

@@ -96,10 +96,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('gettabelpranpcs', [SuperAdminController::class, 'getDatapranpcs'])->name('gettabelpranpcs');
         Route::get('edit-pranpcs/{id}', [SuperAdminController::class, 'editpranpcs'])->name('edit-pranpcs');
         Route::post('update-pranpcs/{id}', [SuperAdminController::class, 'updatepranpcs'])->name('update-pranpcs');
-        Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
-        Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
-        Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
-        Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
+        Route::get('/download/excelpranpc', [SuperAdminController::class, 'exportpranpc'])->name('download.excelpranpc');
+        Route::post('/download/filtered/excelpranpc', [SuperAdminController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
         Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
 
 
@@ -116,8 +114,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         // Data All Admin
         Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
         Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
-        Route::get('/download/excel-billper', [AdminBillperController::class, 'exportbillper'])->name('download.excelbillper');
-        Route::post('/download/filtered/excel-billper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.excelbillper');
+        Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
+        Route::post('/download/filtered/exceladminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.exceladminbillper');
     });
 
     // Route Admin PraNPC
@@ -127,8 +125,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         // Data All Admin
         Route::get('/data-all-adminpranpc', [AdminPranpcController::class, 'indexalladminpranpc'])->name('all-adminpranpc.index');
         Route::get('gettabelallsadminpranpc', [AdminPranpcController::class, 'getDataallsadminpranpc'])->name('gettabelallsadminpranpc');
-        Route::get('/download/excel-pranpc', [AdminPranpcController::class, 'exportpranpc'])->name('download.excelpranpc');
-        Route::post('/download/filtered/excel-pranpc', [AdminPranpcController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
+        Route::get('/download/exceladminpranpc', [AdminPranpcController::class, 'exportpranpc'])->name('download.exceladminpranpc');
+        Route::post('/download/filtered/exceladminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.exceladminpranpc');
     });
 
 

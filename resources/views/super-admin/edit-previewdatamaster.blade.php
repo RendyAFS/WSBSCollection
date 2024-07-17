@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
-                                        <label for="mobile_contact_tel" class="form-label fw-bold">No. Tlf</label>
+                                        <label for="mobile_contact_tel" class="form-label fw-bold">Nomor Telfon</label>
                                         <input type="text" class="form-control" id="mobile_contact_tel"
                                             name="mobile_contact_tel" value="{{ $preview_data_master->mobile_contact_tel }}">
                                     </div>

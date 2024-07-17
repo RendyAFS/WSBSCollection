@@ -6,58 +6,81 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data All
+                Data PraNPC
             </span>
 
             <div class="d-flex">
-
-
-                <!-- Button trigger modal Pembayaran-->
-                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
-                    data-bs-target="#modalCekPembayaran">
-                    <i class="bi bi-capslock-fill"></i> Cek Pembayaran
+                <!-- Button trigger modal Filter Data-->
+                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                    <i class="bi bi-funnel-fill"></i> Filter Data
                 </button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="modalCekPembayaran" tabindex="-1" aria-labelledby="modalCekPembayaranLabel"
+                <!-- Modal Filter Data-->
+                <div class="modal fade" id="modalFilterdata" tabindex="-1" aria-labelledby="modalFilterdataLabel"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalCekPembayaranLabel">Cek Pembayaran</h1>
+                                <h1 class="modal-title fs-5" id="modalFilterdataLabel">Filter Data</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('cek-pembayaran') }}" method="POST" enctype="multipart/form-data">
+                            <form id="filterForm" action="{{ route('pranpc.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
-                                        <label for="nper">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="nper" name="nper" class="form-control" required>
+                                        <label for="year">Pilih Tahun</label>
+                                        <input type="number" id="year_filter" name="year" class="form-control"
+                                            min="1900" max="2100" step="1" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="formFile" class="form-label">Upload File SND</label>
-                                        <input class="form-control" type="file" id="formFile" name="file" required>
-                                        <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
-                                        <div class="d-flex justify-content-end mt-3">
-                                            <button type="button" id="checkFilePembayaran" class="btn btn-yellow d-none">
-                                                <i class="bi bi-file-earmark-break-fill"></i> Cek File
-                                            </button>
-                                        </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="bulan">Pilih Bulan</label>
+                                        <select id="bulan_filter" name="bulan" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected disabled>Pilih Rentang Bulan</option>
+                                            <option value="01-02">Januari - Februari</option>
+                                            <option value="02-03">Februari - Maret</option>
+                                            <option value="03-04">Maret - April</option>
+                                            <option value="04-05">April - Mei</option>
+                                            <option value="05-06">Mei - Juni</option>
+                                            <option value="06-07">Juni - Juli</option>
+                                            <option value="07-08">Juli - Agustus</option>
+                                            <option value="08-09">Agustus - September</option>
+                                            <option value="09-10">September - Oktober</option>
+                                            <option value="10-11">Oktober - November</option>
+                                            <option value="11-12">November - Desember</option>
+                                            <option value="12-01">Desember - Januari</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="status_pembayaran">Status Pembayaran</label>
+                                        <select id="status_pembayaran_filter" name="status_pembayaran" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Paid">Paid</option>
+                                            <option value="Unpaid">Unpaid</option>
+                                        </select>
                                     </div>
                                 </div>
+
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-secondary" id="cekPembayaranButton" disabled>Cek
-                                        Pembayaran</button>
+                                    <a href="{{route('pranpc.index')}}" class="btn btn-grey">
+                                        <i class="bi bi-x-lg"></i> Reset
+                                    </a>
+                                    <button type="button" id="btn-filter" class="btn btn-secondary btn-filter" data-bs-dismiss="modal">
+                                        <i class="bi bi-funnel-fill"></i> Filter
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
 
+                {{-- BTN DOWNLOAD --}}
                 <div class="btn-group">
-                    <a href="{{ route('download.excel') }}" class="btn btn-green">
+                    <a href="{{ route('download.excelpranpc') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -72,15 +95,47 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excel') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excelpranpc') }}"
+                                    method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
-                                            <label for="nper">Pilih Bulan-Tahun</label>
-                                            <input type="month" id="nper_download" name="nper" class="form-control"
-                                                required>
+                                            <label for="year">Pilih Tahun</label>
+                                            <input type="number" id="year_download" name="year" class="form-control"
+                                                min="1900" max="2100" step="1" required>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="bulan">Pilih Bulan</label>
+                                            <select id="bulan" name="bulan" class="form-select"
+                                                aria-label="Default select example" required>
+                                                <option selected disabled>Pilih Rentang Bulan</option>
+                                                <option value="01-02">Januari - Februari</option>
+                                                <option value="02-03">Februari - Maret</option>
+                                                <option value="03-04">Maret - April</option>
+                                                <option value="04-05">April - Mei</option>
+                                                <option value="05-06">Mei - Juni</option>
+                                                <option value="06-07">Juni - Juli</option>
+                                                <option value="07-08">Juli - Agustus</option>
+                                                <option value="08-09">Agustus - September</option>
+                                                <option value="09-10">September - Oktober</option>
+                                                <option value="10-11">Oktober - November</option>
+                                                <option value="11-12">November - Desember</option>
+                                                <option value="12-01">Desember - Januari</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="status_pembayaran">Status Pembayaran</label>
+                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
+                                                aria-label="Default select example" required>
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Paid">Paid</option>
+                                                <option value="Unpaid">Unpaid</option>
+                                            </select>
                                         </div>
                                     </div>
+
                                     <div class="modal-footer">
                                         <button type="submit" id="btn-filter-download"
                                             class="btn btn-green btn-filter-download">
@@ -94,40 +149,19 @@
                 </div>
             </div>
         </div>
-        <div class="wraper-btn-group my-3 d-flex justify-content-center">
-            <form id="filterForm" action="" method="GET">
-                <div class="modal-body">
-                    <div class="form-group mb-3">
-                        <div class="btn-group" role="group" aria-label="Jenis Filter">
-                            <input type="radio" class="btn-check" name="filter_type" id="existing" value="existing"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline" id="label-existing" for="existing">Existing</label>
-
-                            <input type="radio" class="btn-check" name="filter_type" id="billper" value="billper"
-                                autocomplete="off">
-                            <label class="btn btn-outline" id="label-billper" for="billper">Billper</label>
-
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcs" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
-                    <th id="th" class="align-middle">Nper</th>
                     <th id="th" class="align-middle">Nama</th>
                     <th id="th" class="align-middle text-center">No. Inet</th>
-                    <th id="th" class="align-middle text-center">Saldo</th>
-                    <th id="th" class="align-middle text-center">No. Tlf</th>
+                    <th id="th" class="align-middle text-center">mintgk</th>
+                    <th id="th" class="align-middle text-center">maxtgk</th>
+                    <th id="th" class="align-middle text-center">Bill Bln</th>
+                    <th id="th" class="align-middle text-center">Bill Bln1</th>
+                    <th id="th" class="align-middle text-center">No Hp</th>
                     <th id="th" class="align-middle">Email</th>
-                    <th id="th" class="align-middle text-center">STO</th>
-                    <th id="th" class="align-middle text-center">NPER</th>
-                    <th id="th" class="align-middle text-center">Umur Customer</th>
-                    <th id="th" class="align-middle text-center">Produk</th>
+                    <th id="th" class="align-middle text-center">Alamat</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
-                    <th id="th" class="align-middle text-center">Tahun-Bulan</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
@@ -138,16 +172,18 @@
     <script>
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelalls', {
+            var dataTable = new DataTable('#tabelpranpcs', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelalls') }}",
+                    url: "{{ route('gettabelpranpcs') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.filter_type = $('input[name="filter_type"]:checked').val();
+                        d.year = $('#year_filter').val();
+                        d.bulan = $('#bulan_filter').val();
+                        d.status_pembayaran = $('#status_pembayaran_filter').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -160,32 +196,46 @@
                     }
                 },
                 columns: [{
-                        data: 'nper',
-                        name: 'nper',
-                        className: 'align-middle',
-                        visible: false
-                    },
-                    {
                         data: 'nama',
                         name: 'nama',
                         className: 'align-middle'
                     },
                     {
-                        data: 'no_inet',
-                        name: 'no_inet',
+                        data: 'snd',
+                        name: 'snd',
                         className: 'align-middle'
                     },
                     {
-                        data: 'saldo',
-                        name: 'saldo',
+                        data: 'mintgk',
+                        name: 'mintgk',
+                        className: 'align-middle',
+                        visible: false
+                    },
+                    {
+                        data: 'maxtgk',
+                        name: 'maxtgk',
+                        className: 'align-middle',
+                        visible: false
+                    },
+                    {
+                        data: 'bill_bln',
+                        name: 'bill_bln',
                         className: 'align-middle',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
                     },
                     {
-                        data: 'no_tlf',
-                        name: 'no_tlf',
+                        data: 'bill_bln1',
+                        name: 'bill_bln1',
+                        className: 'align-middle',
+                        render: function(data, type, row) {
+                            return formatRupiah(data, 'Rp. ');
+                        }
+                    },
+                    {
+                        data: 'multi_kontak1',
+                        name: 'multi_kontak1',
                         className: 'align-middle'
                     },
                     {
@@ -194,25 +244,9 @@
                         className: 'align-middle'
                     },
                     {
-                        data: 'sto',
-                        name: 'sto',
+                        data: 'alamat',
+                        name: 'alamat',
                         className: 'align-middle'
-                    },
-                    {
-                        data: 'nper',
-                        name: 'nper',
-                        className: 'align-middle'
-                    },
-                    {
-                        data: 'umur_customer',
-                        name: 'umur_customer',
-                        className: 'align-middle'
-                    },
-                    {
-                        data: 'produk',
-                        name: 'produk',
-                        className: 'align-middle',
-                        visible: false
                     },
                     {
                         data: 'status_pembayaran',
@@ -228,21 +262,15 @@
                         }
                     },
                     {
-                        data: 'nper',
-                        name: 'nper',
-                        visible: false,
-                        className: 'align-middle'
-                    },
-                    {
-                        data: 'opsi-tabel-dataall',
-                        name: 'opsi-tabel-dataall',
+                        data: 'opsi-tabel-datapranpc',
+                        name: 'opsi-tabel-datapranpc',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
                     }
                 ],
                 order: [
-                    [9, 'asc']
+                    [2, 'asc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],
@@ -250,13 +278,38 @@
                 ],
                 language: {
                     search: "Cari",
-                    lengthMenu: "Tampilkan _MENU_ data",
+                    lengthMenu: "Tampilkan _MENU_ data"
                 }
             });
 
-            $('input[name="filter_type"]').on('change', function() {
-                dataTable.ajax.reload();
+            $('#btn-filter').on('click', function() {
+                dataTable.draw();
             });
+        });
+
+
+        // Tahun Now Filter
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dapatkan elemen input tahun
+            var yearInput = document.getElementById('year_filter');
+
+            // Dapatkan tahun sekarang
+            var currentYear = new Date().getFullYear();
+
+            // Set nilai default input tahun menjadi tahun sekarang
+            yearInput.value = currentYear;
+        });
+
+        // Tahun Now Download
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dapatkan elemen input tahun
+            var yearInput = document.getElementById('year_download');
+
+            // Dapatkan tahun sekarang
+            var currentYear = new Date().getFullYear();
+
+            // Set nilai default input tahun menjadi tahun sekarang
+            yearInput.value = currentYear;
         });
 
         function formatRupiah(angka, prefix) {
@@ -275,83 +328,6 @@
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
             return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
         }
-
-        // Validate filter download
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnSave = document.getElementById('btn-filter-download');
-            const bulanTahunInput = document.getElementById('nper_download');
-
-            btnSave.addEventListener('click', function(event) {
-                if (!bulanTahunInput.value) {
-                    event.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
-                    });
-                }
-            });
-        });
-
-        // Check file pembayaran
-        document.getElementById('formFile').addEventListener('change', function() {
-            document.getElementById('checkFilePembayaran').classList.remove('d-none');
-        });
-
-        document.getElementById('checkFilePembayaran').addEventListener('click', function() {
-            let formData = new FormData();
-            formData.append('file', document.getElementById('formFile').files[0]);
-
-            let fileStatusElement = document.getElementById('filecekpembayaran');
-            fileStatusElement.innerText = '';
-            fileStatusElement.classList.remove('text-success', 'text-danger');
-
-            let checkFileButton = document.getElementById('checkFilePembayaran');
-            checkFileButton.classList.add('d-none');
-            let loadingElement = document.createElement('div');
-            loadingElement.classList.add('loading', 'd-block');
-            loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
-            checkFileButton.parentElement.appendChild(loadingElement);
-
-            fetch('{{ route('cek.filepembayaran') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    fileStatusElement.innerText = data.message;
-                    fileStatusElement.classList.remove('text-success', 'text-danger');
-
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                    checkFileButton.disabled = false;
-
-                    if (data.status === 'success') {
-                        fileStatusElement.classList.add('text-success');
-                        document.getElementById('cekPembayaranButton').disabled = false;
-                    } else {
-                        fileStatusElement.classList.add('text-danger');
-                        // Menonaktifkan tombol Cek Pembayaran jika file tidak sesuai
-                        document.getElementById('cekPembayaranButton').disabled = true;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    fileStatusElement.innerText = 'An error occurred. Please try again.';
-                    fileStatusElement.classList.add('text-danger');
-                    loadingElement.remove();
-                    checkFileButton.classList.remove('d-none');
-                });
-        });
-
 
         // Modal delete confirmation
         $(".datatable").on("click", ".btn-delete", function(e) {

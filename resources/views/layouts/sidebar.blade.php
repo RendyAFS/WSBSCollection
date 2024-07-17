@@ -20,13 +20,20 @@
                 </a>
             </li>
 
+            <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
+                <a href="{{ route('reportdata.index') }}">
+                    <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
+                    Report
+                </a>
+            </li>
+
             <!-- Manajer Data Collapse Group -->
             <div class="my-4">
                 {{-- diver --}}
             </div>
             <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapse" role="button"
                 aria-expanded="false" aria-controls="dataManagerCollapse">
-                Manajer Data
+                Manajer Billper Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
             <div class="collapse show" id="dataManagerCollapse">
@@ -43,12 +50,7 @@
                             Data All
                         </a>
                     </li>
-                    <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
-                        <a href="{{ route('reportdata.index') }}">
-                            <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
-                            Report
-                        </a>
-                    </li>
+
                 </ul>
             </div>
 
@@ -71,7 +73,7 @@
                     </li>
                     <li class=" {{ Route::is('pranpc.index')? 'active' : '' }}">
                         <a href="{{ route('pranpc.index') }}">
-                            <i class="bi bi-database {{ Route::is('pranpc.index')? '-fill' : '' }}"></i>
+                            <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index')? '-fill' : '' }}"></i>
                             Data Pra NPC
                         </a>
                     </li>

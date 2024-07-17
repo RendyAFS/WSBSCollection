@@ -5,7 +5,15 @@
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Report Data
+                <span id="info-filter">
+                    @if (isset($nper) && !$show_all)
+                        - {{ strftime('%B %Y', strtotime($nper)) }}
+                    @endif
+                </span>
             </span>
+            {{-- <div id="info-filter" class="info-filter text-secondary">
+
+            </div> --}}
 
             <div class="d-flex">
                 <!-- Button trigger modal Filter Data-->
@@ -28,13 +36,26 @@
                                     <div class="form-group mb-3">
                                         <label for="filter_type">Jenis Filter</label>
                                         <select id="filter_type" name="filter_type" class="form-select" required>
-                                            <option value="sto">STO</option>
-                                            <option value="umur_customer">Umur Customer</option>
+                                            <option value="sto" {{ $filter_type === 'sto' ? 'selected' : '' }}>STO
+                                            </option>
+                                            <option value="umur_customer"
+                                                {{ $filter_type === 'umur_customer' ? 'selected' : '' }}>Umur Customer
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="nper">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="nper" name="nper" class="form-control" required>
+                                        <input type="month" id="nper" name="nper" value=""
+                                            class="form-control">
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="flexCheckDefault"
+                                                name="show_all" {{ $show_all ? 'checked' : '' }} checked>
+                                            <label class="form-check-label text-secondary" for="flexCheckDefault">
+                                                Tampilkan Semua
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -67,7 +88,7 @@
                                         <li>
                                             Perubahan status pembayaran Nama File:
                                             <strong>{{ $riwayat->deskripsi_riwayat }}</strong> Bulan-Tahun NPER:
-                                            <strong>{{ $riwayat->tanggal_riwayat}}</strong>
+                                            <strong>{{ $riwayat->tanggal_riwayat }}</strong>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -79,7 +100,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
@@ -127,7 +147,43 @@
 @endsection
 @push('scripts')
     <script type="module">
-        // Tabel Antrian
+        document.addEventListener('DOMContentLoaded', function() {
+            var flexCheckDefault = document.getElementById('flexCheckDefault');
+            var nperInput = document.getElementById('nper');
+
+            // Mengatur status disabled dan nilai kosong ketika flexCheckDefault diubah
+            flexCheckDefault.addEventListener('change', function() {
+                if (flexCheckDefault.checked) {
+                    nperInput.disabled = true;
+                    nperInput.value = ''; // Mengosongkan nilai
+                } else {
+                    nperInput.disabled = false;
+                    // Anda bisa mengatur nilai default kembali jika diperlukan
+                }
+            });
+
+            // Inisialisasi kondisi awal
+            if (flexCheckDefault.checked) {
+                nperInput.disabled = true;
+                nperInput.value = ''; // Mengosongkan nilai
+            }
+
+            // Menangani submit form
+            document.getElementById('filterForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Mencegah pengiriman form standar
+
+                var nper = nperInput.value;
+                var filterType = document.getElementById('filter_type').value;
+
+                var infoFilterDiv = document.getElementById('info-filter');
+                infoFilterDiv.textContent = `${filterType} - ${nper}`;
+
+                // Sekarang kirim form
+                event.target.submit();
+            });
+        });
+
+        // Tabel Report data
         $(document).ready(function() {
             var dataTable = new DataTable('#tabel_report', {
                 pagingType: 'simple',

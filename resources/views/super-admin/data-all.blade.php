@@ -80,6 +80,15 @@
                                             <input type="month" id="nper_download" name="nper" class="form-control"
                                                 required>
                                         </div>
+                                        <div class="form-group mb-3">
+                                            <label for="status_pembayaran">Status Pembayaran</label>
+                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
+                                                aria-label="Default select example" required>
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Paid">Paid</option>
+                                                <option value="Unpaid">Unpaid</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" id="btn-filter-download"
@@ -130,7 +139,7 @@
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
-                    <th id="th" class="align-middle text-center">Tahun-Bulan</th>
+                    <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>

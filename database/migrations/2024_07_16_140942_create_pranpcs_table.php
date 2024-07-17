@@ -18,8 +18,11 @@ return new class extends Migration
             $table->string('alamat')->nullable();
             $table->string('bill_bln')->nullable();
             $table->string('bill_bln1')->nullable();
+            $table->string('mintgk')->nullable();
+            $table->string('maxtgk')->nullable();
             $table->string('multi_kontak1')->nullable();
             $table->string('email')->nullable();
+            $table->string('status_pembayaran')->nullable();
             $table->timestamps();
         });
     }

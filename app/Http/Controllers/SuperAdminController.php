@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
+use App\Exports\PranpcExport;
 use App\Imports\DataMasterImport;
 use App\Imports\PranpcImport;
 use App\Models\All;
@@ -611,24 +612,33 @@ class SuperAdminController extends Controller
     {
         $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
-        return Excel::download(new AllExport($allData), 'data-semua.xlsx');
+        return Excel::download(new AllExport($allData), 'Data-Billper-Existing.xlsx');
     }
 
     public function downloadFilteredExcel(Request $request)
     {
         $bulanTahun = $request->input('nper');
+        $statusPembayaran = $request->input('status_pembayaran');
 
         // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
         // Query untuk mengambil data berdasarkan rentang nper
-        $filteredData = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
-            ->get();
+        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        } else {
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
     }
+
 
 
     public function destroyalls($id)
@@ -653,6 +663,7 @@ class SuperAdminController extends Controller
         // Fetch filter values
         $filter_type = $request->input('filter_type', 'sto');
         $nper = $request->input('nper');
+        $show_all = $request->input('show_all');
 
         // Determine the column to group by based on the filter type
         $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
@@ -666,7 +677,15 @@ class SuperAdminController extends Controller
             DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid')
         );
 
-        if ($nper) {
+        // Exclude rows where sto or umur_customer is 'N/A'
+        if ($group_column === 'sto') {
+            $query->where('sto', '!=', 'N/A');
+        } elseif ($group_column === 'umur_customer') {
+            $query->where('umur_customer', '!=', 'N/A');
+        }
+
+        // Apply filter by nper if show_all is not checked
+        if (!$show_all && $nper) {
             $query->where('nper', $nper);
         }
 
@@ -677,7 +696,7 @@ class SuperAdminController extends Controller
         $total_paid = $reports->sum('total_paid');
         $total_unpaid = $reports->sum('total_unpaid');
 
-        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'riwayats'));
+        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'show_all', 'riwayats'));
     }
 
 
@@ -714,9 +733,9 @@ class SuperAdminController extends Controller
         // Load spreadsheet and get first row as array
         $spreadsheet1 = IOFactory::load($file1Path);
         $sheet1 = $spreadsheet1->getActiveSheet();
-        $firstRow1 = $sheet1->rangeToArray('A1:AG1', null, true, false, true)[1]; // Get only the first row
+        $firstRow1 = $sheet1->rangeToArray('A1:AZ1', null, true, false, true)[1]; // Get only the first row
 
-        $requiredColumns = ['SND', 'NAMA', 'ALAMAT', 'BILL_BLN', 'BILL_BLN1', 'MULTI_KONTAK1', 'NO_HP', 'EMAIL'];
+        $requiredColumns = ['SND', 'NAMA', 'ALAMAT', 'BILL_BLN', 'BILL_BLN1', 'MULTI_KONTAK1', 'NO_HP', 'EMAIL', 'MINTGK', 'MAXTGK'];
         $missingColumns = [];
 
         foreach ($requiredColumns as $column) {
@@ -773,6 +792,9 @@ class SuperAdminController extends Controller
                 'email' => $row->email ?: 'N/A',
                 'bill_bln' => $row->bill_bln ?: 'N/A',
                 'bill_bln1' => $row->bill_bln1 ?: 'N/A',
+                'mintgk' => $row->mintgk ?: 'N/A',
+                'maxtgk' => $row->maxtgk ?: 'N/A',
+                'status_pembayaran' => $row->status_pembayaran,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -805,7 +827,7 @@ class SuperAdminController extends Controller
     }
 
 
-    // Data All
+    // Data PraNPC
     public function indexpranpc()
     {
         confirmDelete();
@@ -819,154 +841,121 @@ class SuperAdminController extends Controller
         if ($request->ajax()) {
             $query = Pranpc::query();
 
-            if ($request->has('filter_type')) {
-                $filterType = $request->input('filter_type');
-                $currentMonth = Carbon::now()->format('Y-m');
+            // Filter by year and month
+            if ($request->year && $request->bulan) {
+                $year = $request->year;
+                $bulanRange = explode('-', $request->bulan);
+                $startMonth = $bulanRange[0];
+                $endMonth = $bulanRange[1];
 
-                if ($filterType == 'billper') {
-                    $query->where('nper', '=', $currentMonth);
-                } elseif ($filterType == 'existing') {
-                    $query->where('nper', '<', $currentMonth);
-                }
+                $startMintgk = $year . '-' . $startMonth;
+                $endMaxtgk = $year . '-' . $endMonth;
+
+                $query->where('mintgk', '>=', $startMintgk)
+                    ->where('maxtgk', '<=', $endMaxtgk);
+
             }
 
-            $data_alls = $query->get();
-            return datatables()->of($data_alls)
+            // Filter by status pembayaran
+            if ($request->status_pembayaran && $request->status_pembayaran != 'Semua') {
+                $query->where('status_pembayaran', $request->status_pembayaran);
+
+
+            } else {
+
+            }
+
+            $pranpcs = $query->get();
+
+            return datatables()->of($pranpcs)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-dataall', function ($all) {
-                    return view('components.opsi-tabel-dataall', compact('all'));
+                ->addColumn('opsi-tabel-datapranpc', function ($pranpc) {
+                    return view('components.opsi-tabel-datapranpc', compact('pranpc'));
                 })
                 ->toJson();
         }
     }
 
-
     public function editpranpcs($id)
     {
-        $title = 'Edit Data All';
-        $all = All::findOrFail($id);
-        return view('super-admin.edit-all', compact('title', 'all'));
+        $title = 'Edit Data PraNPC';
+        $pranpc = Pranpc::findOrFail($id);
+        return view('super-admin.edit-pranpc', compact('title', 'pranpc'));
     }
-
-
-    public function checkFilePembayaranpranpc(Request $request)
-    {
-        $request->validate(['file' => 'required|file|mimes:xlsx']);
-        $file = $request->file('file')->getRealPath();
-        $spreadsheet = IOFactory::load($file);
-        $sheet = $spreadsheet->getActiveSheet();
-        $firstRow = $sheet->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
-
-        if (in_array('SND', $firstRow)) {
-            return response()->json(['status' => 'success', 'message' => '*Kolom SND ditemukan dalam file.']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => '*Kolom SND tidak ditemukan dalam file.']);
-        }
-    }
-
-    public function cekPembayaranpranpc(Request $request)
-    {
-        ini_set('memory_limit', '2048M');  // Increase memory limit
-        set_time_limit(300);  // Increase max execution time
-
-        // Validate the request
-        $request->validate([
-            'nper' => 'required|date_format:Y-m',
-            'file' => 'required|file|mimes:xlsx'
-        ]);
-
-        $nper = $request->input('nper');
-        $file = $request->file('file')->getRealPath();
-
-        // Load the Excel file
-        $spreadsheet = IOFactory::load($file);
-        $sheet = $spreadsheet->getActiveSheet();
-        $data = $sheet->toArray();
-
-        $sndList = [];
-
-
-        foreach ($data as $index => $row) {
-            if ($index == 0) continue; // Skip header row
-            $sndList[] = $row[array_search('SND', $data[0])];
-        }
-
-        Log::info('Total items in $sndList: ' . count($sndList));
-        Log::info('Content of $sndList:', $sndList);
-
-        // Fetch records from the database
-        $records = All::where('nper', $nper)->get();
-
-        // Save riwayat entry
-        $riwayat = new Riwayat();
-        $riwayat->deskripsi_riwayat = $request->file('file')->getClientOriginalName();
-        $riwayat->tanggal_riwayat = $nper;
-        $riwayat->save();
-
-        // Process each record
-        foreach ($records as $record) {
-            if (in_array($record->no_inet, $sndList)) {
-                $record->status_pembayaran = 'Unpaid';
-            } else {
-                $record->status_pembayaran = 'Paid';
-            }
-            $record->save();
-        }
-
-        Alert::success('Data Berhasil Terupdate');
-        return redirect()->route('all.index');
-    }
-
 
     public function updatepranpcs(Request $request, $id)
     {
-        $all = All::findOrFail($id);
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
-        $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->save();
+        $pranpc = Pranpc::findOrFail($id);
+        $pranpc->nama = $request->input('nama');
+        $pranpc->status_pembayaran = $request->input('status_pembayaran');
+        $pranpc->snd = $request->input('snd');
+        $pranpc->bill_bln = $request->input('bill_bln');
+        $pranpc->bill_bln1 = $request->input('bill_bln1');
+        $pranpc->mintgk = $request->input('mintgk');
+        $pranpc->maxtgk = $request->input('maxtgk');
+        $pranpc->multi_kontak1 = $request->input('multi_kontak1');
+        $pranpc->email = $request->input('email');
+        $pranpc->alamat = $request->input('alamat');
+        $pranpc->save();
 
         Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('all.index');
+        return redirect()->route('pranpc.index');
     }
 
 
     public function exportpranpc()
     {
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+        $pranpcData = Pranpc::select('nama', 'snd', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran')->get();
 
-        return Excel::download(new AllExport($allData), 'data-semua.xlsx');
+        return Excel::download(new PranpcExport($pranpcData), 'Data-Pranpc-Semua.xlsx');
     }
 
     public function downloadFilteredExcelpranpc(Request $request)
     {
-        $bulanTahun = $request->input('nper');
+        $year = $request->input('year');
+        $bulanRange = $request->input('bulan');
+        $statusPembayaran = $request->input('status_pembayaran');
 
-        // Format input nper ke format yang sesuai dengan kebutuhan database
-        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+        // Split bulanRange untuk mendapatkan bulan awal dan bulan akhir
+        list($bulanAwal, $bulanAkhir) = explode('-', $bulanRange);
 
-        // Query untuk mengambil data berdasarkan rentang nper
-        $filteredData = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
-            ->get();
+        // Format tahun dan bulan ke format yang sesuai dengan kebutuhan database
+        $formattedBulanAwal = $year . '-' . substr($bulanAwal, 0, 2);
+        $formattedBulanAkhir = $year . '-' . substr($bulanAkhir, 0, 2); // Ambil bulan kedua dari rentang
 
-        // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '.xlsx');
+        // Log untuk memeriksa nilai-nilai yang digunakan
+        // Log::info("Filter parameters:");
+        // Log::info("Year: " . $year);
+        // Log::info("Month range: " . $bulanRange);
+        // Log::info("Formatted start month (mintgk): " . $formattedBulanAwal);
+        // Log::info("Formatted end month (maxtgk): " . $formattedBulanAkhir);
+        // Log::info("Status pembayaran filter: " . $statusPembayaran);
+
+        // Query untuk mengambil data berdasarkan rentang bulan dan tahun
+        $query = Pranpc::where('mintgk', '>=', $formattedBulanAwal)
+            ->where('maxtgk', '<=', $formattedBulanAkhir);
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'snd', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran')->get();
+
+        // Export data menggunakan PranpcExport dengan data yang sudah difilter
+        return Excel::download(new PranpcExport($filteredData), 'Data-Pranpc-' . $statusPembayaran . '-' . $year . '-' . $bulanRange . '.xlsx');
     }
+
+
 
 
     public function destroypranpcs($id)
     {
-        $all = All::findOrFail($id);
-        $all->delete();
+        $pranpc = Pranpc::findOrFail($id);
+        $pranpc->delete();
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('all.index');
+        return redirect()->route('pranpc.index');
     }
 
 

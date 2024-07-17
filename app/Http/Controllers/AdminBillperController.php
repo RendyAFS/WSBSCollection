@@ -31,14 +31,26 @@ class AdminBillperController extends Controller
         if ($request->ajax()) {
             $query = All::query();
 
-            if ($request->has('filter_type')) {
-                $filterType = $request->input('filter_type');
+            if ($request->has('jenis_data')) {
+                $jenisData = $request->input('jenis_data');
                 $currentMonth = Carbon::now()->format('Y-m');
 
-                if ($filterType == 'billper') {
+                if ($jenisData == 'Billper') {
                     $query->where('nper', '=', $currentMonth);
-                } elseif ($filterType == 'existing') {
+                } elseif ($jenisData == 'Existing') {
                     $query->where('nper', '<', $currentMonth);
+                }
+            }
+
+            if ($request->has('nper')) {
+                $nper = $request->input('nper');
+                $query->where('nper', 'LIKE', "%$nper%");
+            }
+
+            if ($request->has('status_pembayaran')) {
+                $statusPembayaran = $request->input('status_pembayaran');
+                if ($statusPembayaran != 'Semua') {
+                    $query->where('status_pembayaran', '=', $statusPembayaran);
                 }
             }
 
@@ -53,22 +65,30 @@ class AdminBillperController extends Controller
     {
         $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
-        return Excel::download(new AllExport($allData), 'data-semua.xlsx');
+        return Excel::download(new AllExport($allData), 'Data-Billper-Existing.xlsx');
     }
 
     public function downloadFilteredExcelbillper(Request $request)
     {
         $bulanTahun = $request->input('nper');
+        $statusPembayaran = $request->input('status_pembayaran');
 
         // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
         // Query untuk mengambil data berdasarkan rentang nper
-        $filteredData = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
-            ->get();
+        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        } else {
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
     }
 }

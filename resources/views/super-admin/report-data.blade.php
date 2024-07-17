@@ -11,10 +11,6 @@
                     @endif
                 </span>
             </span>
-            {{-- <div id="info-filter" class="info-filter text-secondary">
-
-            </div> --}}
-
             <div class="d-flex">
                 <!-- Button trigger modal Filter Data-->
                 <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
@@ -197,16 +193,6 @@
                     lengthMenu: "Tampilkan _MENU_ data",
                 },
             });
-        });
-
-
-        // Default Date Filter
-        document.addEventListener('DOMContentLoaded', function() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const defaultValue = `${year}-${month}`;
-            document.getElementById('nper').value = defaultValue;
         });
     </script>
 @endpush

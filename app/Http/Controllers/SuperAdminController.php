@@ -937,13 +937,6 @@ class SuperAdminController extends Controller
         $formattedBulanAwal = $year . '-' . substr($bulanAwal, 0, 2);
         $formattedBulanAkhir = $year . '-' . substr($bulanAkhir, 0, 2); // Ambil bulan kedua dari rentang
 
-        // Log untuk memeriksa nilai-nilai yang digunakan
-        // Log::info("Filter parameters:");
-        // Log::info("Year: " . $year);
-        // Log::info("Month range: " . $bulanRange);
-        // Log::info("Formatted start month (mintgk): " . $formattedBulanAwal);
-        // Log::info("Formatted end month (maxtgk): " . $formattedBulanAkhir);
-        // Log::info("Status pembayaran filter: " . $statusPembayaran);
 
         // Query untuk mengambil data berdasarkan rentang bulan dan tahun
         $query = Pranpc::where('mintgk', '>=', $formattedBulanAwal)

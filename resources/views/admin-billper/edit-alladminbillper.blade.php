@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Edit Data All
+                Edit Data All Billper
             </span>
         </div>
 
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <div class="card shadow">
+                        <div class="card shadow mt-3 mt-md-0">
                             <div class="card-body">
                                 <div class="contain-header mb-3">
                                     <h5 class="card-title">{{ $all->user->name }}</h5>

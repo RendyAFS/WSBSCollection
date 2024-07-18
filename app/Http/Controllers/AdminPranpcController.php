@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
+use App\Exports\PranpcExport;
 use App\Models\All;
+use App\Models\Pranpc;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AdminPranpcController extends Controller
 {
@@ -18,57 +22,125 @@ class AdminPranpcController extends Controller
 
 
     // Data All
-    public function indexalladminpranpc()
+    public function indexpranpcadminpranpc()
     {
         confirmDelete();
         $title = 'Data All';
         $alls = All::all();
-        return view('admin-pranpc.data-all-adminpranpc', compact('title', 'alls'));
+        $users = User::where('level', 'User')->get();
+        return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'alls', 'users'));
     }
 
-    public function getDataallsadminpranpc(Request $request)
+    public function getDatapranpcsadminpranpc(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query();
+            $query = Pranpc::query()->with('user');
 
-            if ($request->has('filter_type')) {
-                $filterType = $request->input('filter_type');
-                $currentMonth = Carbon::now()->format('Y-m');
+            // Filter by year and month
+            if ($request->year && $request->bulan) {
+                $year = $request->year;
+                $bulanRange = explode('-', $request->bulan);
+                $startMonth = $bulanRange[0];
+                $endMonth = $bulanRange[1];
 
-                if ($filterType == 'billper') {
-                    $query->where('nper', '=', $currentMonth);
-                } elseif ($filterType == 'existing') {
-                    $query->where('nper', '<', $currentMonth);
-                }
+                $startMintgk = $year . '-' . $startMonth;
+                $endMaxtgk = $year . '-' . $endMonth;
+
+                $query->where('mintgk', '>=', $startMintgk)
+                    ->where('maxtgk', '<=', $endMaxtgk);
             }
 
-            $data_alls = $query->get();
-            return datatables()->of($data_alls)
+            // Filter by status pembayaran
+            if ($request->status_pembayaran && $request->status_pembayaran != 'Semua') {
+                $query->where('status_pembayaran', $request->status_pembayaran);
+            } else {
+            }
+
+            $pranpcs = $query->get();
+
+            return datatables()->of($pranpcs)
                 ->addIndexColumn()
+                ->addColumn('opsi-tabel-datapranpcadminpranpc', function ($pranpc) {
+                    return view('components.opsi-tabel-datapranpcadminpranpc', compact('pranpc'));
+                })
+                ->addColumn('nama_user', function ($all) {
+                    return $all->user ? $all->user->name : 'Tidak Ada'; // Mengakses nama pengguna atau teks "Tidak Ada" jika relasi user null
+                })
                 ->toJson();
         }
     }
 
     public function exportpranpc()
     {
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+        $pranpcData = Pranpc::select('nama', 'snd', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran')->get();
 
-        return Excel::download(new AllExport($allData), 'data-semua.xlsx');
+        return Excel::download(new PranpcExport($pranpcData), 'Data-Pranpc-Semua.xlsx');
     }
 
     public function downloadFilteredExcelpranpc(Request $request)
     {
-        $bulanTahun = $request->input('nper');
+        $year = $request->input('year');
+        $bulanRange = $request->input('bulan');
+        $statusPembayaran = $request->input('status_pembayaran');
 
-        // Format input nper ke format yang sesuai dengan kebutuhan database
-        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+        // Split bulanRange untuk mendapatkan bulan awal dan bulan akhir
+        list($bulanAwal, $bulanAkhir) = explode('-', $bulanRange);
 
-        // Query untuk mengambil data berdasarkan rentang nper
-        $filteredData = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
-            ->get();
+        // Format tahun dan bulan ke format yang sesuai dengan kebutuhan database
+        $formattedBulanAwal = $year . '-' . substr($bulanAwal, 0, 2);
+        $formattedBulanAkhir = $year . '-' . substr($bulanAkhir, 0, 2); // Ambil bulan kedua dari rentang
 
-        // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '.xlsx');
+
+        // Query untuk mengambil data berdasarkan rentang bulan dan tahun
+        $query = Pranpc::where('mintgk', '>=', $formattedBulanAwal)
+            ->where('maxtgk', '<=', $formattedBulanAkhir);
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'snd', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran')->get();
+
+        // Export data menggunakan PranpcExport dengan data yang sudah difilter
+        return Excel::download(new PranpcExport($filteredData), 'Data-Pranpc-' . $statusPembayaran . '-' . $year . '-' . $bulanRange . '.xlsx');
+    }
+
+    public function editpranpcsadminpranpc($id)
+    {
+        $title = 'Edit Data PraNPC';
+        $pranpc = Pranpc::findOrFail($id);
+        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc'));
+    }
+
+    public function updatepranpcsadminpranpc(Request $request, $id)
+    {
+        $pranpc = Pranpc::findOrFail($id);
+        $pranpc->nama = $request->input('nama');
+        $pranpc->status_pembayaran = $request->input('status_pembayaran');
+        $pranpc->snd = $request->input('snd');
+        $pranpc->bill_bln = $request->input('bill_bln');
+        $pranpc->bill_bln1 = $request->input('bill_bln1');
+        $pranpc->mintgk = $request->input('mintgk');
+        $pranpc->maxtgk = $request->input('maxtgk');
+        $pranpc->multi_kontak1 = $request->input('multi_kontak1');
+        $pranpc->email = $request->input('email');
+        $pranpc->alamat = $request->input('alamat');
+        $pranpc->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('pranpc-adminpranpc.index');
+    }
+
+    public function savePlotting(Request $request)
+    {
+        $ids = $request->input('ids');
+        $userId = $request->input('user_id');
+
+        // Update data dengan user_id yang dipilih
+        Pranpc::whereIn('id', $ids)->update(['users_id' => $userId]);
+
+        return response()->json(['success' => true]);
     }
 }

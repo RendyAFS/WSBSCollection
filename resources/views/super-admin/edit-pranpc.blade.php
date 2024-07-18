@@ -26,6 +26,8 @@
                                         <select class="form-select" id="status_pembayaran" name="status_pembayaran">
                                             <option value="Paid"
                                                 {{ $pranpc->status_pembayaran == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="Pending"
+                                                {{ $pranpc->status_pembayaran == 'Pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="Unpaid"
                                                 {{ $pranpc->status_pembayaran == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>

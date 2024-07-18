@@ -67,13 +67,14 @@
                 <ul class="list-unstyled">
                     <li class=" {{ Route::is('toolspranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('toolspranpc.index') }}">
-                            <i class="bi bi-wrench-adjustable-circle {{ Route::is('toolspranpc.index') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-wrench-adjustable-circle {{ Route::is('toolspranpc.index') ? '-fill' : '' }}"></i>
                             Tool
                         </a>
                     </li>
-                    <li class=" {{ Route::is('pranpc.index')? 'active' : '' }}">
+                    <li class=" {{ Route::is('pranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('pranpc.index') }}">
-                            <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index')? '-fill' : '' }}"></i>
+                            <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index') ? '-fill' : '' }}"></i>
                             Data Pra NPC
                         </a>
                     </li>
@@ -146,11 +147,11 @@
             </span>
             <div class="collapse show" id="adminDataManagerCollapse">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('all-adminpranpc.index') ? 'active' : '' }}">
-                        <a href="{{ route('all-adminpranpc.index') }}">
+                    <li class="{{ Route::is('pranpc-adminpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('pranpc-adminpranpc.index') }}">
                             <i
-                                class="bi bi-clipboard2-data{{ Route::is('all-adminpranpc.index') ? '-fill' : '' }}"></i>
-                            Data All
+                                class="bi bi-clipboard2-data{{ Route::is('pranpc-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            Data Plotting Pranpc
                         </a>
                     </li>
                 </ul>

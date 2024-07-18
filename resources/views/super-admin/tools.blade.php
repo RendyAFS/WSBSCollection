@@ -139,12 +139,12 @@
                     {
                         data: 'no_inet',
                         name: 'no_inet',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'saldo',
                         name: 'saldo',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -152,7 +152,7 @@
                     {
                         data: 'no_tlf',
                         name: 'no_tlf',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'email',
@@ -162,17 +162,17 @@
                     {
                         data: 'sto',
                         name: 'sto',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'umur_customer',
                         name: 'umur_customer',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         visible: false
                     },
                     {

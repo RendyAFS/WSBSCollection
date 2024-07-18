@@ -54,6 +54,7 @@
                                             aria-label="Default select example" required>
                                             <option selected value="Semua">Semua</option>
                                             <option value="Paid">Paid</option>
+                                            <option value="Pending">Pending</option>
                                             <option value="Unpaid">Unpaid</option>
                                         </select>
                                     </div>
@@ -170,7 +171,6 @@
         <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
-                    <th id="th" class="align-middle">Nper</th>
                     <th id="th" class="align-middle">Nama</th>
                     <th id="th" class="align-middle text-center">No. Inet</th>
                     <th id="th" class="align-middle text-center">Saldo</th>
@@ -181,7 +181,6 @@
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
-                    <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
@@ -216,12 +215,6 @@
                     }
                 },
                 columns: [{
-                        data: 'nper',
-                        name: 'nper',
-                        className: 'align-middle',
-                        visible: false
-                    },
-                    {
                         data: 'nama',
                         name: 'nama',
                         className: 'align-middle'
@@ -229,12 +222,12 @@
                     {
                         data: 'no_inet',
                         name: 'no_inet',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'saldo',
                         name: 'saldo',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -242,52 +235,49 @@
                     {
                         data: 'no_tlf',
                         name: 'no_tlf',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'email',
                         name: 'email',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'sto',
                         name: 'sto',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'nper',
                         name: 'nper',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'umur_customer',
                         name: 'umur_customer',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         visible: false
                     },
                     {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
-                            } else if (data === 'Paid') {
+                            } else if (data === 'Pending') {
+                                return '<span class="badge text-bg-Secondary">Pending</span>';
+                            }
+                            else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;
                         }
-                    },
-                    {
-                        data: 'nper',
-                        name: 'nper',
-                        visible: false,
-                        className: 'align-middle'
                     },
                     {
                         data: 'opsi-tabel-dataall',
@@ -298,7 +288,7 @@
                     }
                 ],
                 order: [
-                    [9, 'asc']
+                    [7, 'asc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

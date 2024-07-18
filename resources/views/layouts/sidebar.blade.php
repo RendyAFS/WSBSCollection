@@ -122,7 +122,7 @@
                         <a href="{{ route('all-adminbillper.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('all-adminbillper.index') ? '-fill' : '' }}"></i>
-                            Data All
+                            Data Plotting
                         </a>
                     </li>
                 </ul>

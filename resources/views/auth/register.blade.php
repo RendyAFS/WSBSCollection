@@ -29,10 +29,23 @@
                     <label for="nik" class="form-label">Nomor Karyawan</label>
                     <div class="mb-3">
                         <input id="nik" type="text"
-                            class="form-control border border-secondary shadow @error('nik') is-invalid @enderror"
-                            name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus
-                            placeholder="Masukkan Nomor Karyawan">
+                        class="form-control border border-secondary shadow @error('nik') is-invalid @enderror"
+                        name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus
+                        placeholder="Masukkan Nomor Karyawan">
                         @error('nik')
+                        <span class="invalid-feedback text-white" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <label for="no_hp" class="form-label">Nomor Hp</label>
+                    <div class="mb-3">
+                        <input id="no_hp" type="text"
+                            class="form-control border border-secondary shadow @error('no_hp') is-invalid @enderror"
+                            name="no_hp" value="{{ old('no_hp') }}" required autocomplete="no_hp" autofocus
+                            placeholder="Masukkan Nomor Hp">
+                        @error('no_hp')
                             <span class="invalid-feedback text-white" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

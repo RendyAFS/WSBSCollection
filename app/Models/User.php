@@ -22,6 +22,7 @@ class User extends Authenticatable
         'status',
         'name',
         'nik',
+        'no_hp',
         'email',
         'password',
     ];
@@ -44,4 +45,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function alls()
+    {
+        return $this->hasMany(All::class, 'users_id');
+    }
 }

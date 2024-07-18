@@ -35,6 +35,7 @@
                                         <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
                                         <select class="form-select" id="status_pembayaran" name="status_pembayaran">
                                             <option value="Paid" {{ $all->status_pembayaran == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="Pending" {{ $all->status_pembayaran == 'Pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="Unpaid" {{ $all->status_pembayaran == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>
                                     </div>

@@ -131,12 +131,12 @@
                     {
                         data: 'snd',
                         name: 'snd',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'bill_bln',
                         name: 'bill_bln',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -144,7 +144,7 @@
                     {
                         data: 'bill_bln1',
                         name: 'bill_bln1',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -152,7 +152,7 @@
                     {
                         data: 'multi_kontak1',
                         name: 'multi_kontak1',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'email',

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
 use App\Models\All;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AdminBillperController extends Controller
 {
@@ -23,13 +25,14 @@ class AdminBillperController extends Controller
         confirmDelete();
         $title = 'Data All';
         $alls = All::all();
-        return view('admin-billper.data-all-adminbillper', compact('title', 'alls'));
+        $users = User::where('level', 'User')->get();
+        return view('admin-billper.data-all-adminbillper', compact('title', 'alls', 'users'));
     }
 
     public function getDataallsadminbillper(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query();
+            $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
 
             if ($request->has('jenis_data')) {
                 $jenisData = $request->input('jenis_data');
@@ -55,8 +58,16 @@ class AdminBillperController extends Controller
             }
 
             $data_alls = $query->get();
+
             return datatables()->of($data_alls)
                 ->addIndexColumn()
+                ->addColumn('opsi-tabel-dataalladminbillper', function ($all) {
+                    return view('components.opsi-tabel-dataalladminbillper', compact('all'));
+                })
+                ->addColumn('nama_user', function ($all) {
+                    return $all->user ? $all->user->name : 'Tidak Ada'; // Mengakses nama pengguna atau teks "Tidak Ada" jika relasi user null
+                })
+                ->rawColumns(['opsi-tabel-dataalladminbillper']) // Menandai kolom sebagai raw HTML
                 ->toJson();
         }
     }
@@ -90,5 +101,42 @@ class AdminBillperController extends Controller
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
         return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
+    }
+
+    public function editallsadminbillper($id)
+    {
+        $title = 'Edit Data All Billper';
+        $all = All::with('user')->findOrFail($id); // Memuat relasi 'user'
+        return view('admin-billper.edit-alladminbillper', compact('title', 'all'));
+    }
+
+
+    public function updateallsadminbillper(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $all->nama = $request->input('nama');
+        $all->no_inet = $request->input('no_inet');
+        $all->saldo = $request->input('saldo');
+        $all->no_tlf = $request->input('no_tlf');
+        $all->email = $request->input('email');
+        $all->sto = $request->input('sto');
+        $all->produk = $request->input('produk');
+        $all->umur_customer = $request->input('umur_customer');
+        $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('all-adminbillper.index');
+    }
+
+    public function savePlotting(Request $request)
+    {
+        $ids = $request->input('ids');
+        $userId = $request->input('user_id');
+
+        // Update data dengan user_id yang dipilih
+        All::whereIn('id', $ids)->update(['users_id' => $userId]);
+
+        return response()->json(['success' => true]);
     }
 }

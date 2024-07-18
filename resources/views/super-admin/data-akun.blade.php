@@ -12,6 +12,7 @@
                 <tr>
                     <th id="th" class="align-middle w-25">Nama</th>
                     <th id="th" class="align-middle text-center">Nomor Karyawan</th>
+                    <th id="th" class="align-middle text-center">Nomor Telfon</th>
                     <th id="th" class="align-middle text-center w-25">Jenis Akun</th>
                     <th id="th" class="align-middle text-center w-25">Status</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
@@ -25,6 +26,9 @@
                         </th>
                         <th class="align-middle text-center">
                             <span class="fw-normal">{{ $user->nik }}</span>
+                        </th>
+                        <th class="align-middle text-center">
+                            <span class="fw-normal">{{ $user->no_hp }}</span>
                         </th>
                         <th class="align-middle text-center">
                             @if ($user->level == 'User')
@@ -70,9 +74,14 @@
         $(document).ready(function() {
             new DataTable('#tabelakun', {
                 responsive: true,
+                lengthMenu: [
+                    [50, 100, -1],
+                    [50, 100, "Semua"]
+                ],
                 language: {
                     search: "Cari",
                     lengthMenu: "Tampilkan _MENU_ data",
+
                 }
             });
             $('.form-select').change(function() {

@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('produk')->nullable();
             $table->string('status_pembayaran')->nullable();
             $table->string('nper')->nullable();
+            $table->foreignId('users_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('evidence')->nullable();
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

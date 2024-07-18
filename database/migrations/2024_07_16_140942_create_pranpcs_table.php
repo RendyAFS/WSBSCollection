@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('multi_kontak1')->nullable();
             $table->string('email')->nullable();
             $table->string('status_pembayaran')->nullable();
+            $table->foreignId('users_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('evidence')->nullable();
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

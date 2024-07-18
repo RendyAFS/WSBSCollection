@@ -237,6 +237,9 @@ class SuperAdminController extends Controller
                 'produk' => $row->produk ?: 'N/A',
                 'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
                 'nper' => $row->nper ?: 'N/A',
+                'users_id' => $row->users_id ?: null,
+                'evidence' => $row->evidence ?: null,
+                'keterangan' => $row->keterangan ?: null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -531,6 +534,24 @@ class SuperAdminController extends Controller
     }
 
 
+    public function updatealls(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $all->nama = $request->input('nama');
+        $all->no_inet = $request->input('no_inet');
+        $all->saldo = $request->input('saldo');
+        $all->no_tlf = $request->input('no_tlf');
+        $all->email = $request->input('email');
+        $all->sto = $request->input('sto');
+        $all->produk = $request->input('produk');
+        $all->umur_customer = $request->input('umur_customer');
+        $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('all.index');
+    }
+
     public function checkFilePembayaran(Request $request)
     {
         $request->validate(['file' => 'required|file|mimes:xlsx']);
@@ -600,23 +621,6 @@ class SuperAdminController extends Controller
     }
 
 
-    public function updatealls(Request $request, $id)
-    {
-        $all = All::findOrFail($id);
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
-        $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->save();
-
-        Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('all.index');
-    }
 
 
     public function export()
@@ -806,6 +810,9 @@ class SuperAdminController extends Controller
                 'mintgk' => $row->mintgk ?: 'N/A',
                 'maxtgk' => $row->maxtgk ?: 'N/A',
                 'status_pembayaran' => $row->status_pembayaran,
+                'users_id' => $row->users_id ?: null,
+                'evidence' => $row->evidence ?: null,
+                'keterangan' => $row->keterangan ?: null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

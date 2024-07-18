@@ -116,6 +116,9 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
         Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
         Route::post('/download/filtered/exceladminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.exceladminbillper');
+        Route::get('edit-allsadminbillper/{id}', [AdminBillperController::class, 'editallsadminbillper'])->name('edit-allsadminbillper');
+        Route::post('update-allsadminbillper/{id}', [AdminBillperController::class, 'updateallsadminbillper'])->name('update-allsadminbillper');
+        Route::post('/savePlotting', [AdminBillperController::class, 'savePlotting'])->name('savePlotting');
     });
 
     // Route Admin PraNPC

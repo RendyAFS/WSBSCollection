@@ -63,6 +63,7 @@
                                             aria-label="Default select example" required>
                                             <option selected value="Semua">Semua</option>
                                             <option value="Paid">Paid</option>
+                                            <option value="Pending">Pending</option>
                                             <option value="Unpaid">Unpaid</option>
                                         </select>
                                     </div>
@@ -207,24 +208,24 @@
                     {
                         data: 'snd',
                         name: 'snd',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'mintgk',
                         name: 'mintgk',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         visible: false
                     },
                     {
                         data: 'maxtgk',
                         name: 'maxtgk',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         visible: false
                     },
                     {
                         data: 'bill_bln',
                         name: 'bill_bln',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -232,7 +233,7 @@
                     {
                         data: 'bill_bln1',
                         name: 'bill_bln1',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
@@ -240,7 +241,7 @@
                     {
                         data: 'multi_kontak1',
                         name: 'multi_kontak1',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'email',
@@ -255,11 +256,14 @@
                     {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
-                        className: 'align-middle',
+                        className: 'align-middle text-center',
                         render: function(data, type, row) {
                             if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
-                            } else if (data === 'Paid') {
+                            } else if (data === 'Pending') {
+                                return '<span class="badge text-bg-Secondary">Pending</span>';
+                            }
+                            else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;

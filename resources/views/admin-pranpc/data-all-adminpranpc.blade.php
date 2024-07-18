@@ -172,7 +172,10 @@
                         render: function(data, type, row) {
                             if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
-                            } else if (data === 'Paid') {
+                            } else if (data === 'Pending') {
+                                return '<span class="badge text-bg-Secondary">Pending</span>';
+                            }
+                            else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;

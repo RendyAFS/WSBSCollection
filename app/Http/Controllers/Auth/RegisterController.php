@@ -65,11 +65,14 @@ class RegisterController extends Controller
             'nik.regex' => 'NIK harus berupa angka dan memiliki panjang 5-6 digit.',
             'nik.min' => 'NIK harus minimal 5 digit.',
             'nik.max' => 'NIK tidak boleh lebih dari 6 digit.',
+            'no_hp.required' => 'Nomor telepon wajib diisi.',
+            'no_hp.digits_between' => 'Nomor telepon harus terdiri dari 1 hingga 15 digit angka.',
         ];
 
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'regex:/^\d{5,6}$/'],
+            'no_hp' => ['required', 'digits_between:1,15'], // Validasi untuk no_hp dengan panjang 1-15 digit
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], $messages);
@@ -89,6 +92,7 @@ class RegisterController extends Controller
             'status' => $data['status'],
             'name' => $data['name'],
             'nik' => $data['nik'],
+            'no_hp' => $data['no_hp'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

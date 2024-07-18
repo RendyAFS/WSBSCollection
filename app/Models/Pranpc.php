@@ -9,6 +9,11 @@ class Pranpc extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'snd', 'nama', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran'
+        'snd', 'nama', 'alamat', 'bill_bln', 'bill_bln1', 'mintgk', 'maxtgk', 'multi_kontak1', 'email', 'status_pembayaran', 'users_id', 'evidence', 'keterangan'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
 }

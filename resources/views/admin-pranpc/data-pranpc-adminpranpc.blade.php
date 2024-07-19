@@ -1,4 +1,4 @@
-@extends('layouts.app-super-admin')
+@extends('layouts.app-admin')
 
 @include('layouts.loading')
 
@@ -6,7 +6,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data PraNPC
+                Data Plotting PraNPC
                 <span id="info-filter" class="fs-6 fw-normal">
 
                 </span>
@@ -28,7 +28,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('pranpc.index') }}" method="POST">
+                            <form id="filterForm" action="{{ route('pranpc-adminpranpc.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
@@ -70,7 +70,7 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <a href="{{ route('pranpc.index') }}" class="btn btn-grey">
+                                    <a href="{{ route('pranpc-adminpranpc.index') }}" class="btn btn-grey">
                                         <i class="bi bi-x-lg"></i> Reset
                                     </a>
                                     <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
@@ -85,7 +85,7 @@
 
                 {{-- BTN DOWNLOAD --}}
                 <div class="btn-group">
-                    <a href="{{ route('download.excelpranpc') }}" class="btn btn-green">
+                    <a href="{{ route('download.exceladminpranpc') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -100,7 +100,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excelpranpc') }}"
+                                <form id="downloadForm" action="{{ route('download.filtered.exceladminpranpc') }}"
                                     method="POST">
                                     @csrf
                                     <div class="modal-body">
@@ -154,9 +154,34 @@
                 </div>
             </div>
         </div>
-        <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcs" style="width: 100%">
+
+        {{-- Plotting --}}
+        <div class="contain-btn-plotting my-3 d-flex justify-content-center justify-content-md-start">
+            <button class="btn btn-secondary" id="btn-plotting">
+                <i class="bi bi-person-fill-check"></i> Plotting Sales
+            </button>
+            <div class="w-25 ms-2">
+                <select class="form-select" id="select-sales" aria-label="Default select example"
+                    style="display: none;">
+                    <option selected disabled>Pilih Sales</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center justify-content-md-start my-3">
+            <button class="btn btn-green" id="save-plotting" style="display: none;">
+                Simpan
+            </button>
+        </div>
+
+        <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcadminpranpc" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
+                    <th id="th" class="align-middle text-center">
+                        <input type="checkbox" id="select-all">
+                    </th>
                     <th id="th" class="align-middle">Nama</th>
                     <th id="th" class="align-middle text-center">No. Inet</th>
                     <th id="th" class="align-middle text-center">STO</th>
@@ -164,27 +189,32 @@
                     <th id="th" class="align-middle text-center">maxtgk</th>
                     <th id="th" class="align-middle text-center">Bill Bln</th>
                     <th id="th" class="align-middle text-center">Bill Bln1</th>
-                    <th id="th" class="align-middle text-center">No Hp</th>
-                    <th id="th" class="align-middle">Email</th>
-                    <th id="th" class="align-middle text-center">Alamat</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
+                    <th id="th" class="align-middle text-center">Sales</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
         </table>
+
     </div>
 @endsection
 @push('scripts')
     <script>
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelpranpcs', {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var dataTable = new DataTable('#tabelpranpcadminpranpc', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelpranpcs') }}",
+                    url: "{{ route('gettabelpranpcadminpranpc') }}",
                     type: 'GET',
                     data: function(d) {
                         d.year = $('#year_filter').val();
@@ -202,6 +232,17 @@
                     }
                 },
                 columns: [{
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center align-middle',
+                        visible: false, // Initially hidden
+                        render: function(data, type, row) {
+                            return '<input type="checkbox" class="row-checkbox" value="' + row.id +
+                                '">';
+                        }
+                    },
+                    {
                         data: 'nama',
                         name: 'nama',
                         className: 'align-middle'
@@ -245,21 +286,6 @@
                         }
                     },
                     {
-                        data: 'multi_kontak1',
-                        name: 'multi_kontak1',
-                        className: 'align-middle text-center'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email',
-                        className: 'align-middle text-center'
-                    },
-                    {
-                        data: 'alamat',
-                        name: 'alamat',
-                        className: 'align-middle text-center'
-                    },
-                    {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
                         className: 'align-middle text-center',
@@ -267,7 +293,7 @@
                             if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
                             } else if (data === 'Pending') {
-                                return '<span class="badge text-bg-Secondary">Pending</span>';
+                                return '<span class="badge text-bg-secondary">Pending</span>';
                             } else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
@@ -275,15 +301,20 @@
                         }
                     },
                     {
-                        data: 'opsi-tabel-datapranpc',
-                        name: 'opsi-tabel-datapranpc',
+                        data: 'nama_user',
+                        name: 'nama_user',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'opsi-tabel-datapranpcadminpranpc',
+                        name: 'opsi-tabel-datapranpcadminpranpc',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
                     }
                 ],
                 order: [
-                    [2, 'asc']
+                    [6, 'asc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],
@@ -292,6 +323,70 @@
                 language: {
                     search: "Cari",
                     lengthMenu: "Tampilkan _MENU_ data"
+                }
+            });
+
+            // Event handler untuk select all
+            $('#tabelpranpcadminpranpc').on('change', '#select-all', function() {
+                var isChecked = $(this).is(':checked');
+                $('.row-checkbox').prop('checked', isChecked);
+            });
+
+            // Plotting
+            $('#btn-plotting').on('click', function() {
+                var column = dataTable.column(0); // Get the column with index 0 (checkbox column)
+                column.visible(!column.visible()); // Toggle visibility
+                $('#select-sales').toggle();
+                $('#save-plotting').toggle();
+            });
+
+            // Handle save button click
+            $('#save-plotting').on('click', function() {
+                var selectedIds = [];
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                var selectedSales = $('#select-sales').val();
+                if (selectedIds.length > 0 && selectedSales) {
+                    $.ajax({
+                        url: "{{ route('savePlottingpranpc') }}",
+                        type: 'POST',
+                        data: {
+                            ids: selectedIds,
+                            user_id: selectedSales,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil disimpan.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                dataTable.ajax.reload();
+                                var column = dataTable.column(0);
+                                column.visible(false); // Hide the checkbox column
+                                $('#select-sales').hide();
+                                $('#save-plotting').hide();
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Terjadi kesalahan. Silakan coba lagi.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Peringatan!',
+                        text: 'Silakan pilih data dan sales terlebih dahulu.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
 

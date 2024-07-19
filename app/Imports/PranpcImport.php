@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\DataMaster;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\TempPranpc;
@@ -20,12 +21,24 @@ class PranpcImport implements ToModel, WithHeadingRow, WithChunkReading
             $mintgk = isset($row['mintgk']) ? substr($row['mintgk'], 0, 4) . '-' . substr($row['mintgk'], 4, 2) : 'N/A';
             $maxtgk = isset($row['maxtgk']) ? substr($row['maxtgk'], 0, 4) . '-' . substr($row['maxtgk'], 4, 2) : 'N/A';
 
+            // Dapatkan nilai snd dari baris
+            $snd = $row['snd'] ?? 'N/A';
+
+            // Cari nilai csto yang cocok dari tabel data_masters berdasarkan event_source
+            $dataMaster = DataMaster::where('event_source', $snd)->first();
+            $sto = $dataMaster ? $dataMaster->csto : 'N/A';
+
+            // Hapus karakter non-numerik dari bill_bln dan bill_bln1
+            $billBln = isset($row['bill_bln']) ? preg_replace('/[^0-9]/', '', $row['bill_bln']) : 'N/A';
+            $billBln1 = isset($row['bill_bln1']) ? preg_replace('/[^0-9]/', '', $row['bill_bln1']) : 'N/A';
+
             return new TempPranpc([
-                'snd' => $row['snd'] ?? 'N/A',
+                'snd' => $snd,
+                'sto' => $sto,
                 'nama' => $row['nama'] ?? 'N/A',
                 'alamat' => $row['alamat'] ?? 'N/A',
-                'bill_bln' => $row['bill_bln'] ?? 'N/A',
-                'bill_bln1' => $row['bill_bln1'] ?? 'N/A',
+                'bill_bln' => $billBln,
+                'bill_bln1' => $billBln1,
                 'mintgk' => $mintgk,
                 'maxtgk' => $maxtgk,
                 'multi_kontak1' => $multiKontak1,

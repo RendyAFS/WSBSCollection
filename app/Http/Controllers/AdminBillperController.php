@@ -105,9 +105,10 @@ class AdminBillperController extends Controller
 
     public function editallsadminbillper($id)
     {
-        $title = 'Edit Data All Billper';
-        $all = All::with('user')->findOrFail($id); // Memuat relasi 'user'
-        return view('admin-billper.edit-alladminbillper', compact('title', 'all'));
+        $title = 'Edit Data Plotting';
+        $all = All::with('user')->findOrFail($id);
+        $user = $all->user ? $all->user : 'Tidak ada';
+        return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user'));
     }
 
 

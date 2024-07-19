@@ -309,7 +309,7 @@
                 var selectedSales = $('#select-sales').val();
                 if (selectedIds.length > 0 && selectedSales) {
                     $.ajax({
-                        url: "{{ route('savePlotting') }}",
+                        url: "{{ route('savePlottingbillper') }}",
                         type: 'POST',
                         data: {
                             ids: selectedIds,

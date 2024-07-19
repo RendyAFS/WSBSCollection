@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <div class="contain-header mb-3">
                         <h5 class="card-title">{{ $pranpc->nama }}</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $pranpc->sto }}</h6>
                         <h6 class="card-subtitle mb-2 text-body-secondary">{{ $pranpc->snd }}</h6>
                     </div>
                     <hr class="border border-dark border-3 opacity-75 my-4">
@@ -26,6 +27,8 @@
                                         <select class="form-select" id="status_pembayaran" name="status_pembayaran">
                                             <option value="Paid"
                                                 {{ $pranpc->status_pembayaran == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="Pending"
+                                                {{ $pranpc->status_pembayaran == 'Pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="Unpaid"
                                                 {{ $pranpc->status_pembayaran == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>
@@ -39,6 +42,11 @@
                                         <label for="snd" class="form-label">SND</label>
                                         <input type="text" class="form-control" id="snd" name="snd"
                                             value="{{ $pranpc->snd }}">
+                                    </div>
+                                    <div class="mb-3 d-none">
+                                        <label for="sto" class="form-label">STO</label>
+                                        <input type="text" class="form-control" id="sto" name="sto"
+                                            value="{{ $pranpc->sto }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="multi_kontak1" class="form-label">Nomor Telfon</label>

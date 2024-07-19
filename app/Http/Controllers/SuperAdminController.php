@@ -129,10 +129,14 @@ class SuperAdminController extends Controller
                     $ageRange = '>12 Bln';
                 }
 
+                // Remove non-numeric characters from saldo
+                $saldoRaw = $row1[array_search('SALDO', $data1[0])];
+                $saldoFormatted = preg_replace('/[^0-9]/', '', $saldoRaw);
+
                 $result[] = [
                     'nama' => $dataMaster->pelanggan,
                     'no_inet' => $dataMaster->event_source,
-                    'saldo' => $row1[array_search('SALDO', $data1[0])],
+                    'saldo' => $saldoFormatted,
                     'no_tlf' => $dataMaster->mobile_contact_tel,
                     'email' => $dataMaster->email_address,
                     'sto' => $dataMaster->csto,
@@ -174,33 +178,6 @@ class SuperAdminController extends Controller
                 'updated_at' => now(),
             ]);
         }
-
-        // Insert not found results into the database
-        foreach ($notFound as $row) {
-            DB::table('temp_alls')->insert([
-                'nama' => $row['nama'],
-                'no_inet' => $row['no_inet'],
-                'saldo' => $row['saldo'],
-                'no_tlf' => $row['no_tlf'],
-                'email' => $row['email'],
-                'sto' => $row['sto'],
-                'umur_customer' => $row['umur_customer'],
-                'produk' => $row['produk'],
-                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
-                'nper' => $row['nper'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // Use SweetAlert for success and error alerts
-        if (!empty($notFound)) {
-            Alert::error('Error', 'SND tidak ditemukan pada EVENT_SOURCE');
-        } else {
-            Alert::success('Success', 'Data SND dan EVENT_SOURCE Berhasil di Merge');
-        }
-
-        return redirect()->route('tools.index');
     }
 
 
@@ -802,6 +779,7 @@ class SuperAdminController extends Controller
             DB::table('pranpcs')->insert([
                 'nama' => $row->nama ?: 'N/A',
                 'snd' => $row->snd ?: 'N/A',
+                'sto' => $row->sto ?: 'N/A',
                 'alamat' => $row->alamat ?: 'N/A',
                 'multi_kontak1' => $row->multi_kontak1 ?: 'N/A',
                 'email' => $row->email ?: 'N/A',
@@ -903,6 +881,7 @@ class SuperAdminController extends Controller
         $pranpc->nama = $request->input('nama');
         $pranpc->status_pembayaran = $request->input('status_pembayaran');
         $pranpc->snd = $request->input('snd');
+        $pranpc->sto = $request->input('sto');
         $pranpc->bill_bln = $request->input('bill_bln');
         $pranpc->bill_bln1 = $request->input('bill_bln1');
         $pranpc->mintgk = $request->input('mintgk');
@@ -937,13 +916,6 @@ class SuperAdminController extends Controller
         $formattedBulanAwal = $year . '-' . substr($bulanAwal, 0, 2);
         $formattedBulanAkhir = $year . '-' . substr($bulanAkhir, 0, 2); // Ambil bulan kedua dari rentang
 
-        // Log untuk memeriksa nilai-nilai yang digunakan
-        // Log::info("Filter parameters:");
-        // Log::info("Year: " . $year);
-        // Log::info("Month range: " . $bulanRange);
-        // Log::info("Formatted start month (mintgk): " . $formattedBulanAwal);
-        // Log::info("Formatted end month (maxtgk): " . $formattedBulanAkhir);
-        // Log::info("Status pembayaran filter: " . $statusPembayaran);
 
         // Query untuk mengambil data berdasarkan rentang bulan dan tahun
         $query = Pranpc::where('mintgk', '>=', $formattedBulanAwal)

@@ -133,6 +133,16 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('edit-pranpcsadminpranpc/{id}', [AdminPranpcController::class, 'editpranpcsadminpranpc'])->name('edit-pranpcsadminpranpc');
         Route::post('update-pranpcsadminpranpc/{id}', [AdminPranpcController::class, 'updatepranpcsadminpranpc'])->name('update-pranpcsadminpranpc');
         Route::post('/savePlottingpranpc', [AdminPranpcController::class, 'savePlotting'])->name('savePlottingpranpc');
+
+
+        // Data Existing Admin
+        Route::get('/data-existing-adminpranpc', [AdminPranpcController::class, 'indexexistingadminpranpc'])->name('existing-adminpranpc.index');
+        Route::get('gettabelexistingsadminpranpc', [AdminPranpcController::class, 'getDataexistingsadminpranpc'])->name('gettabelexistingsadminpranpc');
+        Route::get('/download/excelexistingadminpranpc', [AdminPranpcController::class, 'exportexisting'])->name('download.excelexistingadminpranpc');
+        Route::post('/download/filtered/excelexistingadminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelexisting'])->name('download.filtered.excelexistingadminpranpc');
+        Route::get('edit-existingsadminpranpc/{id}', [AdminPranpcController::class, 'editexistingsadminpranpc'])->name('edit-existingsadminpranpc');
+        Route::post('update-existingsadminpranpc/{id}', [AdminPranpcController::class, 'updateexistingsadminpranpc'])->name('update-existingsadminpranpc');
+        Route::post('/savePlottingexisting', [AdminPranpcController::class, 'savePlottingexisting'])->name('savePlottingexisting');
     });
 
 

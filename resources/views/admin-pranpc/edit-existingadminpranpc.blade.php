@@ -4,12 +4,12 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Edit Data All Billper
+                Edit Data Existing Pranpcs
             </span>
         </div>
 
         <div class="px-0 px-md-5">
-            <form action="{{ route('update-allsadminbillper', ['id' => $all->id]) }}" method="POST">
+            <form action="{{ route('update-existingsadminpranpc', ['id' => $all->id]) }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-12 col-md-6">
@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-3">
-                    <a href="{{ route('all-adminbillper.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
+                    <a href="{{ route('existing-adminpranpc.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
                     <button type="submit" class="btn btn-secondary w-25">Edit</button>
                 </div>
 

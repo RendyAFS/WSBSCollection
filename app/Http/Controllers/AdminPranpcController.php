@@ -21,14 +21,14 @@ class AdminPranpcController extends Controller
     }
 
 
-    // Data All
+    // Data Pranpc
     public function indexpranpcadminpranpc()
     {
         confirmDelete();
-        $title = 'Data All';
-        $alls = All::all();
+        $title = 'Data Pranpc';
+        $pranpcs = Pranpc::all();
         $users = User::where('level', 'User')->get();
-        return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'alls', 'users'));
+        return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'pranpcs', 'users'));
     }
 
     public function getDatapranpcsadminpranpc(Request $request)
@@ -109,10 +109,12 @@ class AdminPranpcController extends Controller
 
     public function editpranpcsadminpranpc($id)
     {
-        $title = 'Edit Data PraNPC';
-        $pranpc = Pranpc::findOrFail($id);
-        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc'));
+        $title = 'Edit Data Plotting PraNPC';
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
+        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user'));
     }
+
 
     public function updatepranpcsadminpranpc(Request $request, $id)
     {
@@ -120,6 +122,7 @@ class AdminPranpcController extends Controller
         $pranpc->nama = $request->input('nama');
         $pranpc->status_pembayaran = $request->input('status_pembayaran');
         $pranpc->snd = $request->input('snd');
+        $pranpc->sto = $request->input('sto');
         $pranpc->bill_bln = $request->input('bill_bln');
         $pranpc->bill_bln1 = $request->input('bill_bln1');
         $pranpc->mintgk = $request->input('mintgk');
@@ -140,6 +143,134 @@ class AdminPranpcController extends Controller
 
         // Update data dengan user_id yang dipilih
         Pranpc::whereIn('id', $ids)->update(['users_id' => $userId]);
+
+        return response()->json(['success' => true]);
+    }
+
+
+
+
+    // Data Existing Pranpc
+    public function indexexistingadminpranpc()
+    {
+        confirmDelete();
+        $title = 'Data Existing';
+        $existings = All::all();
+        $users = User::where('level', 'User')->get();
+        return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
+    }
+
+    public function getDataexistingsadminpranpc(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
+
+            $currentMonth = Carbon::now()->format('Y-m');
+
+            // Filter untuk hanya menampilkan data existing saja
+            $query->where('nper', '<', $currentMonth);
+
+            if ($request->has('nper')) {
+                $nper = $request->input('nper');
+                $query->where('nper', 'LIKE', "%$nper%");
+            }
+
+            if ($request->has('status_pembayaran')) {
+                $statusPembayaran = $request->input('status_pembayaran');
+                if ($statusPembayaran != 'Semua') {
+                    $query->where('status_pembayaran', '=', $statusPembayaran);
+                }
+            }
+
+            $data_alls = $query->get();
+
+            return datatables()->of($data_alls)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-dataexistingadminpranpc', function ($all) {
+                    return view('components.opsi-tabel-dataexistingadminpranpc', compact('all'));
+                })
+                ->addColumn('nama_user', function ($all) {
+                    return $all->user ? $all->user->name : 'Tidak Ada'; // Mengakses nama pengguna atau teks "Tidak Ada" jika relasi user null
+                })
+                ->rawColumns(['opsi-tabel-dataexistingadminpranpc']) // Menandai kolom sebagai raw HTML
+                ->toJson();
+        }
+    }
+
+
+    public function exportexisting()
+    {
+        $currentMonth = Carbon::now()->format('Y-m');
+        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
+            ->where('nper', '<', $currentMonth)
+            ->get();
+
+        return Excel::download(new AllExport($allData), 'Data-Existing.xlsx');
+    }
+
+
+    public function downloadFilteredExcelexisting(Request $request)
+    {
+        $bulanTahun = $request->input('nper');
+        $statusPembayaran = $request->input('status_pembayaran');
+
+        // Format input nper ke format yang sesuai dengan kebutuhan database
+        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+
+        // Get current month
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        // Query untuk mengambil data berdasarkan rentang nper
+        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
+            ->where('nper', '<', $currentMonth); // Filter data with nper < current month
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+
+        // Export data menggunakan AllExport dengan data yang sudah difilter
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
+    }
+
+
+    public function editexistingsadminpranpc($id)
+    {
+        $title = 'Edit Data Plotting Existing';
+        $all = All::with('user')->findOrFail($id);
+        $user = $all->user ? $all->user : 'Tidak ada';
+        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user'));
+    }
+
+
+    public function updateexistingsadminpranpc(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $all->nama = $request->input('nama');
+        $all->no_inet = $request->input('no_inet');
+        $all->saldo = $request->input('saldo');
+        $all->no_tlf = $request->input('no_tlf');
+        $all->email = $request->input('email');
+        $all->sto = $request->input('sto');
+        $all->produk = $request->input('produk');
+        $all->umur_customer = $request->input('umur_customer');
+        $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('existing-adminpranpc.index');
+    }
+
+    public function savePlottingexisting(Request $request)
+    {
+        $ids = $request->input('ids');
+        $userId = $request->input('user_id');
+
+        // Update data dengan user_id yang dipilih
+        All::whereIn('id', $ids)->update(['users_id' => $userId]);
 
         return response()->json(['success' => true]);
     }

@@ -86,6 +86,7 @@
                     <tr>
                         <th id="th" class="align-middle">Nama</th>
                         <th id="th" class="align-middle text-center">No. Inet</th>
+                        <th id="th" class="align-middle text-center">STO</th>
                         <th id="th" class="align-middle text-center">Bill Bln</th>
                         <th id="th" class="align-middle text-center">Bill Bln1</th>
                         <th id="th" class="align-middle text-center">No Hp</th>
@@ -134,6 +135,11 @@
                         className: 'align-middle text-center'
                     },
                     {
+                        data: 'sto',
+                        name: 'sto',
+                        className: 'align-middle text-center'
+                    },
+                    {
                         data: 'bill_bln',
                         name: 'bill_bln',
                         className: 'align-middle text-center',
@@ -157,12 +163,12 @@
                     {
                         data: 'email',
                         name: 'email',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'alamat',
                         name: 'alamat',
-                        className: 'align-middle'
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'opsi-tabel-datatemppranpc',
@@ -187,20 +193,19 @@
         });
 
         function formatRupiah(angka, prefix) {
-            var number_string = angka.toString(),
-                split = number_string.split(','),
+            var numberString = angka.replace(/[^,\d]/g, '').toString(),
+                split = numberString.split(','),
                 sisa = split[0].length % 3,
                 rupiah = split[0].substr(0, sisa),
                 ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-            // Tambahkan titik jika ada ribuan
             if (ribuan) {
-                separator = sisa ? '.' : '';
+                var separator = sisa ? '.' : '';
                 rupiah += separator + ribuan.join('.');
             }
 
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
         }
 
         // Modal delete confirmation

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama')->nullable();
             $table->string('snd')->nullable();
+            $table->string('sto')->nullable();
             $table->string('alamat')->nullable();
             $table->string('bill_bln')->nullable();
             $table->string('bill_bln1')->nullable();

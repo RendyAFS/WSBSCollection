@@ -156,6 +156,17 @@
                     </li>
                 </ul>
             </div>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('existing-adminpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('existing-adminpranpc.index') }}">
+                            <i
+                                class="bi bi-clipboard2-data{{ Route::is('existing-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            Data Plotting Existing
+                        </a>
+                    </li>
+                </ul>
+            </div>
         @elseif(auth()->user()->level == 'User')
             <li class="{{ Route::is('user.index') ? 'active' : '' }}">
                 <a href="{{ route('user.index') }}">

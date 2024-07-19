@@ -85,23 +85,26 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <div class="card shadow mt-3 mt-md-0">
+                        <div class="card px-3 py-4 shadow mt-3 mt-md-0">
                             <div class="card-body">
                                 <div class="contain-header mb-3">
-                                    <h5 class="card-title">{{ $pranpc->user->name }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ $pranpc->user->nik }}</h6>
+                                    <h5 class="card-title">{{ $pranpc->user ? $pranpc->user->name : 'Tidak ada' }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                        {{ $pranpc->user ? $pranpc->user->nik : 'Tidak ada' }}</h6>
                                 </div>
                                 <hr class="border border-dark border-3 opacity-75 my-4">
                                 <div class="contain-form">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label fw-bold">Email</label>
+                                        <label for="email_sales" class="form-label fw-bold">Email</label>
                                         <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                            readonly id="email" name="email" value="{{ $pranpc->user->email }}">
+                                            readonly id="email_sales" name="email_sales"
+                                            value="{{ $pranpc->user ? $pranpc->user->email : 'Tidak ada' }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="no_hp" class="form-label fw-bold">No Telfon</label>
                                         <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                            readonly id="no_hp" name="no_hp" value="{{ $pranpc->user->no_hp }}">
+                                            readonly id="no_hp" name="no_hp"
+                                            value="{{ $pranpc->user ? $pranpc->user->no_hp : 'Tidak ada' }}">
                                     </div>
                                 </div>
                             </div>

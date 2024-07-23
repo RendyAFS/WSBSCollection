@@ -50,4 +50,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(All::class, 'users_id');
     }
+    public function pranpcs()
+    {
+        return $this->hasMany(Pranpc::class, 'users_id');
+    }
+    public function salesreports()
+    {
+        return $this->hasMany(SalesReport::class, 'users_id');
+    }
 }

@@ -107,11 +107,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::delete('/akun/{id}', [SuperAdminController::class, 'destroyakun'])->name('destroy-akun');
     });
 
-    // Route Admin Bilper
+    // Route Admin Billper
     Route::middleware(['AD-B'])->group(function () {
         Route::get('/admin-billper', [AdminBillperController::class, 'index'])->name('adminbillper.index');
 
-        // Data All Admin
+        // Data All Admin billper
         Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
         Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
         Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
@@ -148,6 +148,25 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
     // Route User
     Route::middleware(['US'])->group(function () {
+        // Dashboard
         Route::get('/user', [UserController::class, 'index'])->name('user.index');
+
+
+        // Assignment Billper
+        Route::get('/assignment-billper', [UserController::class, 'indexassignmentbillper'])->name('assignmentbillper.index');
+        Route::get('gettabelassignmentbillper', [UserController::class, 'getDataassignmentbillper'])->name('gettabelassignmentbillper');
+
+
+
+        // Assignment Pranpc
+        Route::get('/assignment-pranpc', [UserController::class, 'indexassignmentpranpc'])->name('assignmentpranpc.index');
+
+
+        // Report Assignment
+        Route::get('/report-assignment-billper', [UserController::class, 'indexreportassignmentbillper'])->name('reportassignmentbillper.index');
+
+
+        // Report Assignment
+        Route::get('/report-assignment-pranpc', [UserController::class, 'indexreportassignmentpranpc'])->name('reportassignmentpranpc.index');
     });
 });

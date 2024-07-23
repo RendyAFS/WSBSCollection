@@ -128,6 +128,16 @@
                     </li>
                 </ul>
             </div>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('all-adminbillper.index') ? 'active' : '' }}">
+                        <a href="{{ route('all-adminbillper.index') }}">
+                            <i class="bi bi-flag{{ Route::is('all-adminbillper.index') ? '-fill' : '' }}"></i>
+                            Report Sales
+                        </a>
+                    </li>
+                </ul>
+            </div>
         @elseif(auth()->user()->level == 'Admin PraNPC')
             <li class="{{ Route::is('adminpranpc.index') ? 'active' : '' }}">
                 <a href="{{ route('adminpranpc.index') }}">
@@ -167,6 +177,16 @@
                     </li>
                 </ul>
             </div>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('existing-adminpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('existing-adminpranpc.index') }}">
+                            <i class="bi bi-flag{{ Route::is('existing-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            Report Sales
+                        </a>
+                    </li>
+                </ul>
+            </div>
         @elseif(auth()->user()->level == 'User')
             <li class="{{ Route::is('user.index') ? 'active' : '' }}">
                 <a href="{{ route('user.index') }}">
@@ -174,6 +194,70 @@
                     Dashboard User
                 </a>
             </li>
+            <div class="my-4">
+                {{-- diver --}}
+            </div>
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse" role="button"
+                aria-expanded="false" aria-controls="adminDataManagerCollapse">
+                Operasional Billper
+                <i class="bi bi-chevron-down float-end"></i>
+            </span>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('assignmentbillper.index') ? 'active' : '' }}">
+                        <a href="{{ route('assignmentbillper.index') }}">
+                            <i
+                            class="bi bi-clipboard-check{{ Route::is('assignmentbillper.index') ? '-fill' : '' }}"></i>
+                            Assignment Billper
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('reportassignmentbillper.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportassignmentbillper.index') }}">
+                            <i
+                                class="bi bi-flag{{ Route::is('reportassignmentbillper.index') ? '-fill' : '' }}"></i>
+                            Report Billper
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="my-4">
+                {{-- diver --}}
+            </div>
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse" role="button"
+                aria-expanded="false" aria-controls="adminDataManagerCollapse">
+                Operasional Pranpc
+                <i class="bi bi-chevron-down float-end"></i>
+            </span>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('assignmentpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('assignmentpranpc.index') }}">
+                            <i
+                                class="bi bi-clipboard-check{{ Route::is('assignmentpranpc.index') ? '-fill' : '' }}"></i>
+                            Assignment Pranpc
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('reportassignmentpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportassignmentpranpc.index') }}">
+                            <i
+                                class="bi bi-flag{{ Route::is('reportassignmentpranpc.index') ? '-fill' : '' }}"></i>
+                            Report Pranpc
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         @endif
     </ul>
 </div>

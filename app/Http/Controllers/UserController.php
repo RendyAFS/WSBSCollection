@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\All;
+use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\VocKendala;
 use Carbon\Carbon;
@@ -227,7 +228,7 @@ class UserController extends Controller
 
 
 
-    public function resetReportAssignmentBillPer($id)
+    public function resetReportAssignmentbillper($id)
     {
         // Find the SalesReport model by ID
         $report = SalesReport::findOrFail($id);
@@ -268,11 +269,231 @@ class UserController extends Controller
         return view('user.assignmentpranpc', compact('title'));
     }
 
+    public function getDataassignmentpranpc(Request $request)
+    {
+        if ($request->ajax()) {
+            $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
+            $query = Pranpc::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
+                ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
+
+            return datatables()->of($query)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-assignmentpranpc', function ($pranpc) {
+                    return view('components.opsi-tabel-assignmentpranpc', compact('pranpc'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function infoassignmentpranpc($id)
+    {
+        $title = 'Info Assignment';
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $voc_kendala = VocKendala::all(); // Assuming you have a model named VocKendala
+        $sales_report = SalesReport::all();
+        return view('user.info-assignmentpranpc', compact('title', 'pranpc', 'voc_kendala', 'sales_report'));
+    }
+
+
+    public function updateassignmentpranpc(Request $request, $id)
+    {
+        // Find the Pranpc model by its ID
+        $pranpc = Pranpc::findOrFail($id);
+
+        // Update the Pranpc model with the new values from the request
+        $pranpc->nama = $request->input('nama');
+        $pranpc->snd = $request->input('snd');
+        $pranpc->sto = $request->input('sto');
+        $pranpc->alamat = $request->input('alamat');
+        $pranpc->bill_bln = $request->input('bill_bln');
+        $pranpc->bill_bln1 = $request->input('bill_bln1');
+        $pranpc->mintgk = $request->input('mintgk');
+        $pranpc->maxtgk = $request->input('maxtgk');
+        $pranpc->status_pembayaran = $request->input('status_pembayaran');
+        $pranpc->multi_kontak1 = $request->input('multi_kontak1');
+        $pranpc->email = $request->input('email');
+        $pranpc->users_id = $request->input('users_id');
+
+        // Update the SalesReport model
+        $report = SalesReport::where('pranpc_id', $pranpc->id)->firstOrNew(); // Use firstOrNew() to update if exists or create a new one
+        $report->users_id = $request->input('users_id');
+        $report->pranpc_id = $request->input('pranpc_id');
+        $report->snd = $request->input('snd');
+        $report->witel = $request->input('witel');
+        $report->waktu_visit = $request->input('waktu_visit');
+        $report->voc_kendalas_id = $request->input('voc_kendalas_id');
+        $report->follow_up = $request->input('follow_up');
+
+        // Handle evidence file uploads
+        $evidenceUploaded = false;
+
+        // Handle evidence_sales file upload
+        if ($request->hasFile('evidence_sales')) {
+            $file = $request->file('evidence_sales');
+            $filename = $pranpc->nama . '_' . $pranpc->snd . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
+            $report->evidence_sales = $filename;
+            $evidenceUploaded = true;
+        }
+
+        // Handle evidence_pembayaran file upload
+        if ($request->hasFile('evidence_pembayaran')) {
+            $file = $request->file('evidence_pembayaran');
+            $filename = $pranpc->nama . '_' . $pranpc->snd . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
+            $report->evidence_pembayaran = $filename;
+            $evidenceUploaded = true;
+        }
+
+        // Update status_pembayaran if any evidence file is uploaded
+        if ($evidenceUploaded) {
+            $pranpc->status_pembayaran = 'Pending';
+        }
+
+        // Save the updated Pranpc model
+        $pranpc->save();
+
+        // Save the updated SalesReport model
+        $report->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('assignmentpranpc.index');
+    }
+
+
+
 
     // Report Assignment Pranpc
     public function indexreportassignmentpranpc()
     {
         $title = 'Report Assignment Pranpc';
         return view('user.reportassignmentpranpc', compact('title'));
+    }
+
+
+    public function getDatareportassignmentpranpc(Request $request)
+    {
+        if ($request->ajax()) {
+            $userId = Auth::id(); // Get the ID of the currently authenticated user
+
+            $query = SalesReport::with('pranpcs') // Ensure 'pranpcs' relationship is eager loaded
+                ->whereHas('pranpcs', function ($query) use ($userId) {
+                    $query->where('users_id', $userId)
+                        ->where('status_pembayaran', 'Pending');
+                });
+
+            $data_sales_reports = $query->get(); // Get the data
+
+            return datatables()->of($data_sales_reports)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-reportassignmentpranpc', function ($sales_report) {
+                    return view('components.opsi-tabel-reportassignmentpranpc', compact('sales_report'));
+                })
+                ->toJson();
+        }
+    }
+
+
+    public function inforeportassignmentpranpc($id)
+    {
+        $title = 'Info Report Assignment';
+        $sales_report = SalesReport::with('user', 'pranpcs')->findOrFail($id);
+
+        // Retrieve all VocKendala records
+        $voc_kendala = VocKendala::all();
+
+        return view('user.info-reportassignmentpranpc', compact('title', 'sales_report', 'voc_kendala'));
+    }
+
+
+    public function updatereportassignmentpranpc(Request $request, $id)
+    {
+        // Find the SalesReport model by ID
+        $report = SalesReport::findOrFail($id);
+
+        // Retrieve related pranpc model
+        $pranpc = $report->pranpcs; // Ensure this matches your model relationship
+
+        // Update fields from request
+        $report->users_id = $request->input('users_id');
+        $report->snd = $request->input('snd');
+        $report->witel = $request->input('witel');
+        $report->waktu_visit = $request->input('waktu_visit');
+        $report->voc_kendalas_id = $request->input('voc_kendalas_id');
+        $report->follow_up = $request->input('follow_up');
+
+        // Update the status_pembayaran in the related pranpc model
+        if ($pranpc) {
+            $statusPembayaran = $request->input('status_pembayaran');
+            $pranpc->status_pembayaran = $statusPembayaran;
+            $pranpc->save();
+        }
+
+        // Handle evidence_sales file upload
+        if ($request->hasFile('evidence_sales')) {
+            // Delete the old file if it exists
+            if ($report->evidence_sales) {
+                Storage::delete('public/file_evidence/' . $report->evidence_sales);
+            }
+
+            // Store the new file
+            $file = $request->file('evidence_sales');
+            $filename = $pranpc->nama . '_' . $pranpc->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/file_evidence', $filename);
+            $report->evidence_sales = $filename;
+        }
+
+        // Handle evidence_pembayaran file upload
+        if ($request->hasFile('evidence_pembayaran')) {
+            // Delete the old file if it exists
+            if ($report->evidence_pembayaran) {
+                Storage::delete('public/file_evidence/' . $report->evidence_pembayaran);
+            }
+
+            // Store the new file
+            $file = $request->file('evidence_pembayaran');
+            $filename = $pranpc->nama . '_' . $pranpc->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/file_evidence', $filename);
+            $report->evidence_pembayaran = $filename;
+        }
+
+        // Save the updated report
+        $report->save();
+
+        // Set a success message and redirect
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('reportassignmentpranpc.index');
+    }
+
+
+
+    public function resetReportAssignmentpranpc($id)
+    {
+        // Find the SalesReport model by ID
+        $report = SalesReport::findOrFail($id);
+
+        // Retrieve related pranpc model
+        $pranpc = $report->pranpcs;
+
+        if ($pranpc) {
+            // Update status_pembayaran to 'Unpaid'
+            $pranpc->status_pembayaran = 'Unpaid';
+            $pranpc->save();
+        }
+
+        // Delete evidence files if they exist
+        if ($report->evidence_sales) {
+            Storage::delete('public/file_evidence/' . $report->evidence_sales);
+        }
+        if ($report->evidence_pembayaran) {
+            Storage::delete('public/file_evidence/' . $report->evidence_pembayaran);
+        }
+
+        // Delete the SalesReport record
+        $report->delete();
+
+        // Set a success message and redirect
+        Alert::success('Data Berhasil Direset');
+        return redirect()->route('reportassignmentpranpc.index');
     }
 }

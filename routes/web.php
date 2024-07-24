@@ -159,22 +159,28 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('update-assignmentbillper/{id}', [UserController::class, 'updateassignmentbillper'])->name('update-assignmentbillper');
 
 
-
-        // Assignment Pranpc
-        Route::get('/assignment-pranpc', [UserController::class, 'indexassignmentpranpc'])->name('assignmentpranpc.index');
-
-
         // Report Assignment Billper
         Route::get('/report-assignment-billper', [UserController::class, 'indexreportassignmentbillper'])->name('reportassignmentbillper.index');
         Route::get('gettabelreportassignmentbillper', [UserController::class, 'getDatareportassignmentbillper'])->name('gettabelreportassignmentbillper');
         Route::get('info-reportassignmentbillper/{id}', [UserController::class, 'inforeportassignmentbillper'])->name('info-reportassignmentbillper');
         Route::post('update-reportassignmentbillper/{id}', [UserController::class, 'updatereportassignmentbillper'])->name('update-reportassignmentbillper');
-        Route::post('/reset-reportassignmentbillper/{id}', [UserController::class, 'resetReportAssignmentBillPer'])->name('reset-reportassignmentbillper');
+        Route::post('/reset-reportassignmentbillper/{id}', [UserController::class, 'resetReportAssignmentbillper'])->name('reset-reportassignmentbillper');
 
+
+        // Assignment Pranpc
+        Route::get('/assignment-pranpc', [UserController::class, 'indexassignmentpranpc'])->name('assignmentpranpc.index');
+        Route::get('gettabelassignmentpranpc', [UserController::class, 'getDataassignmentpranpc'])->name('gettabelassignmentpranpc');
+        Route::get('info-assignmentpranpc/{id}', [UserController::class, 'infoassignmentpranpc'])->name('info-assignmentpranpc');
+        Route::post('update-assignmentpranpc/{id}', [UserController::class, 'updateassignmentpranpc'])->name('update-assignmentpranpc');
 
 
 
         // Report Assignment Pranpc
         Route::get('/report-assignment-pranpc', [UserController::class, 'indexreportassignmentpranpc'])->name('reportassignmentpranpc.index');
+        Route::get('gettabelreportassignmentpranpc', [UserController::class, 'getDatareportassignmentpranpc'])->name('gettabelreportassignmentpranpc');
+        Route::get('info-reportassignmentpranpc/{id}', [UserController::class, 'inforeportassignmentpranpc'])->name('info-reportassignmentpranpc');
+        Route::post('update-reportassignmentpranpc/{id}', [UserController::class, 'updatereportassignmentpranpc'])->name('update-reportassignmentpranpc');
+        Route::post('/reset-reportassignmentpranpc/{id}', [UserController::class, 'resetReportAssignmentpranpc'])->name('reset-reportassignmentpranpc');
+
     });
 });

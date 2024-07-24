@@ -215,7 +215,6 @@ class SuperAdminController extends Controller
                 'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
                 'nper' => $row->nper ?: 'N/A',
                 'users_id' => $row->users_id ?: null,
-                'keterangan' => $row->keterangan ?: null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -788,7 +787,6 @@ class SuperAdminController extends Controller
                 'maxtgk' => $row->maxtgk ?: 'N/A',
                 'status_pembayaran' => $row->status_pembayaran,
                 'users_id' => $row->users_id ?: null,
-                'keterangan' => $row->keterangan ?: null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

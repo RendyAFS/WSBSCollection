@@ -107,6 +107,29 @@
                                             value="{{ $pranpc->user ? $pranpc->user->no_hp : 'Tidak ada' }}">
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="evidence_sales" class="form-label fw-bold">Evidence Sales</label>
+                                    <div class="mt-2">
+                                        <a href="{{ $sales_report->evidence_sales ? asset('storage/file_evidence/' . $sales_report->evidence_sales) : '#' }}"
+                                            target="_blank">
+                                            <img id="preview_sales"
+                                                src="{{ $sales_report->evidence_sales ? asset('storage/file_evidence/' . $sales_report->evidence_sales) : '' }}"
+                                                alt="Preview Sales" class="img-preview">
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="evidence_pembayaran" class="form-label fw-bold">Evidence
+                                        Pembayaran</label>
+                                    <div class="mt-2">
+                                        <a href="{{ $sales_report->evidence_pembayaran ? asset('storage/file_evidence/' . $sales_report->evidence_pembayaran) : '#' }}"
+                                            target="_blank">
+                                            <img id="preview_pembayaran"
+                                                src="{{ $sales_report->evidence_pembayaran ? asset('storage/file_evidence/' . $sales_report->evidence_pembayaran) : '' }}"
+                                                alt="Preview Pembayaran" class="img-preview">
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

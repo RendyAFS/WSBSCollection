@@ -10,7 +10,7 @@
 
         <div class="px-0 px-md-5">
             <div class="row">
-                <form action="{{ route('update-assignmentbillper', ['id' => $all->id]) }}" method="POST"
+                <form action="{{ route('update-assignmentpranpc', ['id' => $pranpc->id]) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="row">
@@ -18,70 +18,83 @@
                             <div class="card px-3 py-4 shadow">
                                 <div class="card-body">
                                     <div class="contain-header mb-3">
-                                        <h5 class="card-title">{{ $all->nama }}</h5>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $all->no_inet }}</h6>
+                                        <h5 class="card-title">{{ $pranpc->nama }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $pranpc->snd }}</h6>
                                     </div>
                                     <hr class="border border-dark border-3 opacity-75 my-4">
                                     <div class="contain-form">
-
+                                        <div class="mb-3 d-none">
+                                            <label for="user_name" class="form-label fw-bold">User Name</label>
+                                            <input type="text" class="form-control" id="user_name"
+                                                value="{{ Auth::user()->name }}" readonly>
+                                            <input type="text" class="form-control"  id="users_id" name="users_id"
+                                                value="{{ Auth::user()->id }}">
+                                        </div>
                                         <div class="mb-3 d-none">
                                             <label for="nama" class="form-label">Nama</label>
                                             <input type="text" class="form-control" id="nama" name="nama"
-                                                value="{{ $all->nama }}">
+                                                value="{{ $pranpc->nama }}">
                                         </div>
                                         <div class="mb-3 d-none">
-                                            <label for="no_inet" class="form-label">No. Inet</label>
-                                            <input type="text" class="form-control" id="no_inet" name="no_inet"
-                                                value="{{ $all->no_inet }}">
+                                            <label for="snd" class="form-label">SND</label>
+                                            <input type="text" class="form-control" id="snd" name="snd"
+                                                value="{{ $pranpc->snd }}">
                                         </div>
                                         <div class="mb-3 d-none">
-                                            <label for="all_id" class="form-label">id</label>
-                                            <input type="text" class="form-control" id="all_id" name="all_id"
-                                                value="{{ $all->id }}">
+                                            <label for="pranpc_id" class="form-label">id</label>
+                                            <input type="text" class="form-control" id="pranpc_id" name="pranpc_id"
+                                                value="{{ $pranpc->id }}">
                                         </div>
-
-
-                                        <div class="mb-3">
-                                            <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
-                                            <input type="text" class="form-control  bg-body-secondary" id="status_pembayaran " name="status_pembayaran"
-                                                value="{{ $all->status_pembayaran }}" readonly>
+                                        <div class="mb-3 d-none">
+                                            <label for="alamat" class="form-label">id</label>
+                                            <input type="text" class="form-control" id="alamat" name="alamat"
+                                                value="{{ $pranpc->alamat }}">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="no_tlf" class="form-label fw-bold">Nomor Telfon</label>
-                                            <input type="text" class="form-control" id="no_tlf" name="no_tlf"
-                                                value="{{ $all->no_tlf }}">
+                                            <label for="status_pembayaran" class="form-label fw-bold">Status
+                                                Pembayaran</label>
+                                            <input type="text" class="form-control  bg-body-secondary"
+                                                id="status_pembayaran " name="status_pembayaran"
+                                                value="{{ $pranpc->status_pembayaran }}" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="multi_kontak1" class="form-label fw-bold">Nomor Telfon</label>
+                                            <input type="text" class="form-control" id="multi_kontak1"
+                                                name="multi_kontak1" value="{{ $pranpc->multi_kontak1 }}">
                                         </div>
                                         <div class="mb-3">
                                             <label for="email" class="form-label fw-bold">Email</label>
                                             <input type="text" class="form-control" id="email" name="email"
-                                                value="{{ $all->email }}">
+                                                value="{{ $pranpc->email }}">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="saldo" class="form-label fw-bold">Saldo</label>
+                                            <label for="bill_bln" class="form-label fw-bold">Bill Bln</label>
                                             <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                                readonly id="saldo" name="saldo" value="{{ $all->saldo }}">
+                                                readonly id="bill_bln" name="bill_bln" value="{{ $pranpc->bill_bln }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bill_bln1" class="form-label fw-bold">Bill Bln1</label>
+                                            <input type="text"
+                                                class="form-control bg-secondary text-dark bg-opacity-25" readonly
+                                                id="bill_bln1" name="bill_bln1" value="{{ $pranpc->bill_bln1 }}">
                                         </div>
                                         <div class="mb-3">
                                             <label for="sto" class="form-label fw-bold">STO</label>
-                                            <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                                readonly id="sto" name="sto" value="{{ $all->sto }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="umur_customer" class="form-label fw-bold">Umur Customer</label>
-                                            <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                                readonly id="umur_customer" name="umur_customer"
-                                                value="{{ $all->umur_customer }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="produk" class="form-label fw-bold">Produk</label>
-                                            <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                                readonly id="produk" name="produk" value="{{ $all->produk }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="nper" class="form-label fw-bold">NPER</label>
                                             <input type="text"
                                                 class="form-control bg-secondary text-dark bg-opacity-25" readonly
-                                                id="nper" name="nper" value="{{ $all->nper }}">
+                                                id="sto" name="sto" value="{{ $pranpc->sto }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="mintgk" class="form-label fw-bold">Mintgk</label>
+                                            <input type="text"
+                                                class="form-control bg-secondary text-dark bg-opacity-25" readonly
+                                                id="mintgk" name="mintgk" value="{{ $pranpc->mintgk }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="maxtgk" class="form-label fw-bold">Maxtgk</label>
+                                            <input type="text"
+                                                class="form-control bg-secondary text-dark bg-opacity-25" readonly
+                                                id="maxtgk" name="maxtgk" value="{{ $pranpc->maxtgk }}">
                                         </div>
                                     </div>
                                 </div>
@@ -91,8 +104,8 @@
                             <div class="card px-3 py-4 shadow">
                                 <div class="card-body">
                                     <div class="contain-header mb-3">
-                                        <h5 class="card-title">Evidence {{ $all->user->name }} </h5>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $all->user->nik }}</h6>
+                                        <h5 class="card-title">Evidence {{ $pranpc->user->name }} </h5>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $pranpc->user->nik }}</h6>
                                     </div>
                                     <hr class="border border-dark border-3 opacity-75 my-4">
                                     <div class="contain-form">
@@ -106,7 +119,7 @@
                                         <div class="mb-3 d-none">
                                             <label for="snd" class="form-label">SND</label>
                                             <input type="text" class="form-control" id="snd" name="snd"
-                                                value="{{ $all->no_inet }}">
+                                                value="{{ $pranpc->snd }}">
                                         </div>
                                         <div class="mb-3">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
@@ -170,7 +183,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                        <a href="{{ route('assignmentbillper.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
+                        <a href="{{ route('assignmentpranpc.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
                         <button type="submit" class="btn btn-secondary w-25">Update</button>
                     </div>
                 </form>

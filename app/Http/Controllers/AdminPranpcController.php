@@ -6,6 +6,7 @@ use App\Exports\AllExport;
 use App\Exports\PranpcExport;
 use App\Models\All;
 use App\Models\Pranpc;
+use App\Models\SalesReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -112,7 +113,8 @@ class AdminPranpcController extends Controller
         $title = 'Edit Data Plotting PraNPC';
         $pranpc = Pranpc::with('user')->findOrFail($id);
         $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
-        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user'));
+        $sales_report = SalesReport::where('pranpc_id', $id)->first(); // Ambil entri yang relevan
+        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user', 'sales_report'));
     }
 
 

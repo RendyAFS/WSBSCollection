@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class All extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper', 'users_id', 'keterangan'
     ];
@@ -16,4 +17,10 @@ class All extends Model
     {
         return $this->belongsTo(User::class, 'users_id');
     }
+
+    public function salesReports()
+    {
+        return $this->hasMany(SalesReport::class, 'all_id');
+    }
 }
+

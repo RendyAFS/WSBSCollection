@@ -52,3 +52,12 @@
 }
 
 
+/* user */
+.img-preview {
+    max-width: 250px; /* Set the desired fixed width */
+    max-height: 200px; /* Set the desired fixed height */
+    object-fit: cover; /* Ensure the image covers the set dimensions without distortion */
+    display: block; /* Ensure the image is displayed as a block element */
+    cursor: pointer;
+}
+

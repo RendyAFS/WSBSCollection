@@ -15,6 +15,9 @@ class VocKendalaSeeder extends Seeder
     {
         DB::table('voc_kendalas')->insert([
             [
+                'voc_kendala' => 'Tidak Ada',
+            ],
+            [
                 'voc_kendala' => 'Produk',
             ],
             [

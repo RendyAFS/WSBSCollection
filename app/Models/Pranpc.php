@@ -16,4 +16,9 @@ class Pranpc extends Model
     {
         return $this->belongsTo(User::class, 'users_id');
     }
+
+    public function salesReports()
+    {
+        return $this->hasMany(SalesReport::class, 'pranpc_id');
+    }
 }

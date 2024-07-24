@@ -15,27 +15,18 @@
                     @csrf
                     <div class="card px-3 py-4 shadow">
                         <div class="card-body">
+                            <div class="contain-header mb-3">
+                                <h5 class="card-title">{{$sales_report->alls->nama }}</h5>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">{{ $sales_report->snd }}</h6>
+                            </div>
+                            <hr class="border border-dark border-3 opacity-75 my-4">
                             <div class="row">
                                 <div class="col-12 col-md-6">
-                                    <div class="contain-header mb-3">
-                                        <h5 class="card-title">{{ $sales_report->users_id }}</h5>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ $sales_report->snd }}</h6>
-                                    </div>
-                                    <hr class="border border-dark border-3 opacity-75 my-4">
                                     <div class="contain-form">
                                         <div class="mb-3">
-                                            <label for="status_pembayaran" class="form-label fw-bold">Status
-                                                Pembayaran</label>
-                                            <select class="form-select" id="status_pembayaran" name="status_pembayaran"
-                                                required>
-                                                <option value="" disabled selected>Status Pembayaran</option>
-                                                <option value="Pending"
-                                                    {{ $sales_report->alls->status_pembayaran == 'Pending' ? 'selected' : '' }}>
-                                                    Paid</option>
-                                                <option value="Unpaid"
-                                                    {{ $sales_report->alls->status_pembayaran == 'Unpaid' ? 'selected' : '' }}>
-                                                    Unpaid</option>
-                                            </select>
+                                            <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
+                                            <input type="text" class="form-control bg-body-secondary" id="status_pembayaran" name="status_pembayaran"
+                                                value="{{$sales_report->alls->status_pembayaran}}" readonly>
                                         </div>
                                         <div class="mb-3">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
@@ -45,12 +36,13 @@
 
                                         <div class="mb-3">
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
-                                            <input type="date" class="form-control" id="waktu_visit" name="waktu_visit"
-                                                value="{{ $sales_report->waktu_visit }}" required>
+                                            <input type="datetime-local" class="form-control" id="waktu_visit" name="waktu_visit"
+                                                value="{{ $sales_report->waktu_visit ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i:s') : '' }}" required>
                                         </div>
 
+
                                         <div class="mb-3">
-                                            <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala ID</label>
+                                            <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>
                                             <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id"
                                                 required>
                                                 <option value="" disabled selected>Pilih Kendala</option>

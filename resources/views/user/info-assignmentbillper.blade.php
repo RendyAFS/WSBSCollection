@@ -10,7 +10,8 @@
 
         <div class="px-0 px-md-5">
             <div class="row">
-                <form action="{{ route('update-assignmentbillper', ['id' => $all->id]) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('update-assignmentbillper', ['id' => $all->id]) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-12 col-md-6">
@@ -39,18 +40,11 @@
                                                 value="{{ $all->id }}">
                                         </div>
 
+
                                         <div class="mb-3">
-                                            <label for="status_pembayaran" class="form-label fw-bold">Status
-                                                Pembayaran</label>
-                                            <select class="form-select" id="status_pembayaran" name="status_pembayaran" required>
-                                                <option value="" disabled selected> Status Pembayaran </option>
-                                                <option value="Pending"
-                                                    {{ $all->status_pembayaran}}>Paid
-                                                </option>
-                                                <option value="Unpaid"
-                                                    {{ $all->status_pembayaran}}>Unpaid
-                                                </option>
-                                            </select>
+                                            <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
+                                            <input type="text" class="form-control  bg-body-secondary" id="status_pembayaran " name="status_pembayaran"
+                                                value="{{ $all->status_pembayaran }}" readonly>
                                         </div>
                                         <div class="mb-3">
                                             <label for="no_tlf" class="form-label fw-bold">Nomor Telfon</label>
@@ -85,8 +79,9 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="nper" class="form-label fw-bold">NPER</label>
-                                            <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
-                                                readonly id="nper" name="nper" value="{{ $all->nper }}">
+                                            <input type="text"
+                                                class="form-control bg-secondary text-dark bg-opacity-25" readonly
+                                                id="nper" name="nper" value="{{ $all->nper }}">
                                         </div>
                                     </div>
                                 </div>
@@ -123,16 +118,18 @@
                                             <input type="text" class="form-control" id="witel" name="witel"
                                                 value="SBS">
                                         </div>
-
                                         <div class="mb-3">
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
-                                            <input type="date" class="form-control" id="waktu_visit"
-                                                name="waktu_visit" value="{{ old('waktu_visit') }}" required>
+                                            <input type="datetime-local" class="form-control" id="waktu_visit"
+                                                name="waktu_visit"
+                                                value="{{ old('waktu_visit', isset($sales_report->waktu_visit) ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i') : '') }}"
+                                                required>
                                         </div>
 
 
+
                                         <div class="mb-3">
-                                            <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala ID</label>
+                                            <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>
 
                                             <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id"
                                                 required>
@@ -157,10 +154,20 @@
                                         </div>
 
                                         <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input border border-dark" type="checkbox"
+                                                    id="toggleEvidencePembayaran" name="toggleEvidencePembayaran">
+                                                <label class="form-check-label" for="toggleEvidencePembayaran">
+                                                    Tambah Evidence Pembayaran
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3" id="evidencePembayaranWrapper" style="display: none;">
                                             <label for="evidence_pembayaran" class="form-label fw-bold">Evidence
                                                 Pembayaran</label>
                                             <input type="file" class="form-control" id="evidence_pembayaran"
-                                                name="evidence_pembayaran" accept="image/*" required>
+                                                name="evidence_pembayaran" accept="image/*">
                                         </div>
                                     </div>
                                 </div>
@@ -178,6 +185,15 @@
 @endsection
 @push('scripts')
     <script type="module">
-        //
+        document.getElementById('toggleEvidencePembayaran').addEventListener('change', function() {
+            var wrapper = document.getElementById('evidencePembayaranWrapper');
+            if (this.checked) {
+                wrapper.style.display = 'block';
+                document.getElementById('evidence_pembayaran').required = true;
+            } else {
+                wrapper.style.display = 'none';
+                document.getElementById('evidence_pembayaran').required = false;
+            }
+        });
     </script>
 @endpush

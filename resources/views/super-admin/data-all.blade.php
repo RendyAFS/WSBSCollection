@@ -272,8 +272,7 @@
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
                             } else if (data === 'Pending') {
                                 return '<span class="badge text-bg-Secondary">Pending</span>';
-                            }
-                            else if (data === 'Paid') {
+                            } else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;
@@ -415,8 +414,9 @@
                 text: "Anda tidak akan dapat mengembalikannya!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonClass: "bg-primary",
                 confirmButtonText: "Ya, hapus!",
+                confirmButtonColor: '#831a16',
+                cancelButtonColor: '#727375'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

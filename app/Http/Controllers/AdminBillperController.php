@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
 use App\Models\All;
+use App\Models\SalesReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -108,8 +109,10 @@ class AdminBillperController extends Controller
         $title = 'Edit Data Plotting';
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user'));
+        $sales_report = SalesReport::where('all_id', $id)->first(); // Ambil entri yang relevan
+        return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report'));
     }
+
 
 
     public function updateallsadminbillper(Request $request, $id)

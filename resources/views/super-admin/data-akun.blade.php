@@ -101,7 +101,9 @@
                             title: 'Berhasil!',
                             text: 'Status Memperbaharui',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#831a16',
+                            cancelButtonColor: '#727375'
                         });
                     },
                     error: function(response) {
@@ -109,7 +111,9 @@
                             title: 'Error!',
                             text: 'Failed to update status',
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            cancelButtonColor: '#727375',
+                            cancelButtonColor: '#727375'
                         });
                     }
                 });
@@ -150,7 +154,9 @@
                         showCancelButton: true,
                         confirmButtonText: "Ya, hapus!",
                         cancelButtonText: "Batal",
-                        reverseButtons: true
+                        reverseButtons: true,
+                        confirmButtonColor: '#831a16',
+                        cancelButtonColor: '#727375'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();

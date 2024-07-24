@@ -10,7 +10,7 @@ class SalesReport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'all_id'
+        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'all_id', 'pranpc_id'
     ];
 
     public function user()
@@ -26,5 +26,10 @@ class SalesReport extends Model
     public function alls()
     {
         return $this->belongsTo(All::class, 'all_id');
+    }
+
+    public function pranpcs()
+    {
+        return $this->belongsTo(Pranpc::class, 'pranpc_id');
     }
 }

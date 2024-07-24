@@ -224,8 +224,9 @@
                 text: "Anda tidak akan dapat mengembalikannya!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonClass: "bg-primary",
                 confirmButtonText: "Ya, hapus!",
+                confirmButtonColor: '#831a16',
+                cancelButtonColor: '#727375'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -248,7 +249,9 @@
                         showCancelButton: true,
                         confirmButtonText: "Ya, simpan!",
                         cancelButtonText: "Batal",
-                        reverseButtons: true
+                        reverseButtons: true,
+                        confirmButtonColor: '#831a16',
+                        cancelButtonColor: '#727375'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();
@@ -273,7 +276,9 @@
                     showCancelButton: true,
                     confirmButtonText: "Ya, hapus semua!",
                     cancelButtonText: "Batal",
-                    reverseButtons: true
+                    reverseButtons: true,
+                    confirmButtonColor: '#831a16',
+                    cancelButtonColor: '#727375'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();

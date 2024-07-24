@@ -169,6 +169,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('gettabelreportassignmentbillper', [UserController::class, 'getDatareportassignmentbillper'])->name('gettabelreportassignmentbillper');
         Route::get('info-reportassignmentbillper/{id}', [UserController::class, 'inforeportassignmentbillper'])->name('info-reportassignmentbillper');
         Route::post('update-reportassignmentbillper/{id}', [UserController::class, 'updatereportassignmentbillper'])->name('update-reportassignmentbillper');
+        Route::post('/reset-reportassignmentbillper/{id}', [UserController::class, 'resetReportAssignmentBillPer'])->name('reset-reportassignmentbillper');
 
 
 

@@ -65,8 +65,9 @@ class UserController extends Controller
         $all->sto = $request->input('sto');
         $all->produk = $request->input('produk');
         $all->umur_customer = $request->input('umur_customer');
+
+        // Initially set the status_pembayaran from the request
         $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->save();
 
         // Update the SalesReport model
         $report = new SalesReport; // Make sure to use findOrFail() to update existing records
@@ -78,12 +79,18 @@ class UserController extends Controller
         $report->voc_kendalas_id = $request->input('voc_kendalas_id');
         $report->follow_up = $request->input('follow_up');
 
+        // Flag to check if any evidence file is uploaded
+        $evidenceUploaded = false;
+
         // Handle evidence_sales file upload
         if ($request->hasFile('evidence_sales')) {
             $file = $request->file('evidence_sales');
             $filename = $all->nama . '_' . $all->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_sales = $filename;
+
+            // Set flag to true if evidence_sales is uploaded
+            $evidenceUploaded = true;
         }
 
         // Handle evidence_pembayaran file upload
@@ -92,13 +99,27 @@ class UserController extends Controller
             $filename = $all->nama . '_' . $all->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_pembayaran = $filename;
+
+            // Set flag to true if evidence_pembayaran is uploaded
+            $evidenceUploaded = true;
         }
 
+        // If any evidence file is uploaded, change status_pembayaran to "Pending"
+        if ($evidenceUploaded) {
+            $all->status_pembayaran = 'Pending';
+        }
+
+        // Save the updated All model
+        $all->save();
+
+        // Save the updated SalesReport model
         $report->save();
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('assignmentbillper.index');
     }
+
+
 
 
 
@@ -153,13 +174,20 @@ class UserController extends Controller
         // Retrieve related All model
         $all = $report->alls; // Ensure this matches your model relationship
 
-        // Retrieve the current status_pembayaran
-        $currentStatusPembayaran = $all->status_pembayaran;
+        // Update fields from request
+        $report->users_id = $request->input('users_id');
+        $report->snd = $request->input('snd');
+        $report->witel = $request->input('witel');
+        $report->waktu_visit = $request->input('waktu_visit');
+        $report->voc_kendalas_id = $request->input('voc_kendalas_id');
+        $report->follow_up = $request->input('follow_up');
 
         // Update the status_pembayaran in the related All model
-        $statusPembayaran = $request->input('status_pembayaran');
-        $all->status_pembayaran = $statusPembayaran;
-        $all->save();
+        if ($all) {
+            $statusPembayaran = $request->input('status_pembayaran');
+            $all->status_pembayaran = $statusPembayaran;
+            $all->save();
+        }
 
         // Handle evidence_sales file upload
         if ($request->hasFile('evidence_sales')) {
@@ -192,24 +220,6 @@ class UserController extends Controller
         // Save the updated report
         $report->save();
 
-        // Check if the status_pembayaran was changed to Unpaid
-        if ($statusPembayaran === 'Unpaid' && $currentStatusPembayaran !== 'Unpaid') {
-            // Delete the related SalesReport entries and their files
-            $salesReports = $all->salesReports;
-            foreach ($salesReports as $salesReport) {
-                // Delete evidence files if they exist
-                if ($salesReport->evidence_sales) {
-                    Storage::delete('public/file_evidence/' . $salesReport->evidence_sales);
-                }
-                if ($salesReport->evidence_pembayaran) {
-                    Storage::delete('public/file_evidence/' . $salesReport->evidence_pembayaran);
-                }
-
-                // Delete the SalesReport record
-                $salesReport->delete();
-            }
-        }
-
         // Set a success message and redirect
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('reportassignmentbillper.index');
@@ -217,6 +227,35 @@ class UserController extends Controller
 
 
 
+    public function resetReportAssignmentBillPer($id)
+    {
+        // Find the SalesReport model by ID
+        $report = SalesReport::findOrFail($id);
+
+        // Retrieve related All model
+        $all = $report->alls;
+
+        if ($all) {
+            // Update status_pembayaran to 'Unpaid'
+            $all->status_pembayaran = 'Unpaid';
+            $all->save();
+        }
+
+        // Delete evidence files if they exist
+        if ($report->evidence_sales) {
+            Storage::delete('public/file_evidence/' . $report->evidence_sales);
+        }
+        if ($report->evidence_pembayaran) {
+            Storage::delete('public/file_evidence/' . $report->evidence_pembayaran);
+        }
+
+        // Delete the SalesReport record
+        $report->delete();
+
+        // Set a success message and redirect
+        Alert::success('Data Berhasil Direset');
+        return redirect()->route('reportassignmentbillper.index');
+    }
 
 
 

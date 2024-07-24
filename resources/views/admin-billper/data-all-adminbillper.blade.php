@@ -321,7 +321,9 @@
                                 title: 'Berhasil!',
                                 text: 'Data berhasil disimpan.',
                                 icon: 'success',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#831a16',
+                                cancelButtonColor: '#727375',
                             }).then(() => {
                                 dataTable.ajax.reload();
                                 var column = dataTable.column(0);
@@ -335,7 +337,9 @@
                                 title: 'Error!',
                                 text: 'Terjadi kesalahan. Silakan coba lagi.',
                                 icon: 'error',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#831a16',
+                                cancelButtonColor: '#727375',
                             });
                         }
                     });
@@ -344,7 +348,9 @@
                         title: 'Peringatan!',
                         text: 'Silakan pilih data dan sales terlebih dahulu.',
                         icon: 'warning',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#831a16',
+                        cancelButtonColor: '#727375',
                     });
                 }
             });

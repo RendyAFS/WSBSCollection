@@ -15,8 +15,12 @@
                     <th id="th" class="align-middle">Nama</th>
                     <th id="th" class="align-middle text-center">No. Inet</th>
                     <th id="th" class="align-middle text-center">Saldo</th>
+                    <th id="th" class="align-middle text-center">No. Tlf</th>
+                    <th id="th" class="align-middle">Email</th>
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
+                    <th id="th" class="align-middle text-center">Umur Customer</th>
+                    <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
@@ -41,8 +45,7 @@
                     complete: function() {
                         $('#loadingScreen').addClass('d-none');
                     },
-                    error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
+                    error: function() {
                         $('#loadingScreen').addClass('d-none');
                     }
                 },
@@ -60,9 +63,19 @@
                         data: 'saldo',
                         name: 'saldo',
                         className: 'align-middle text-center',
-                        render: function(data, type, row) {
+                        render: function(data) {
                             return formatRupiah(data, 'Rp. ');
                         }
+                    },
+                    {
+                        data: 'no_tlf',
+                        name: 'no_tlf',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email',
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'sto',
@@ -75,10 +88,21 @@
                         className: 'align-middle text-center'
                     },
                     {
+                        data: 'umur_customer',
+                        name: 'umur_customer',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
+                        className: 'align-middle text-center',
+                        visible: false
+                    },
+                    {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
                         className: 'align-middle text-center',
-                        render: function(data, type, row) {
+                        render: function(data) {
                             if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
                             } else if (data === 'Pending') {
@@ -90,15 +114,15 @@
                         }
                     },
                     {
-                        data: 'opsi-tabel-dataalladminbillper',
-                        name: 'opsi-tabel-dataalladminbillper',
+                        data: 'opsi-tabel-assignmentbillper',
+                        name: 'opsi-tabel-assignmentbillper',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
                     }
                 ],
                 order: [
-                    [4, 'desc']
+                    [7, 'asc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],
@@ -106,9 +130,25 @@
                 ],
                 language: {
                     search: "Cari",
-                    lengthMenu: "Tampilkan _MENU_ data",
+                    lengthMenu: "Tampilkan _MENU_ data"
                 }
             });
         });
+
+        function formatRupiah(angka, prefix) {
+            var numberString = angka.replace(/[^,\d]/g, '').toString(),
+                split = numberString.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                var separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+        }
     </script>
 @endpush

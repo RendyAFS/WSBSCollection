@@ -15,19 +15,22 @@ class VocKendalaSeeder extends Seeder
     {
         DB::table('voc_kendalas')->insert([
             [
-                'voc_kendala' => 'Bukan Keluarga',
+                'voc_kendala' => 'Produk',
+            ],
+            [
+                'voc_kendala' => 'Price',
             ],
             [
                 'voc_kendala' => 'Customer',
+            ],
+            [
+                'voc_kendala' => 'Bukan Keluarga',
             ],
             [
                 'voc_kendala' => 'Rumah Tidak Berpenghuni',
             ],
             [
                 'voc_kendala' => 'Alamat Tidak Ditemukan',
-            ],
-            [
-                'voc_kendala' => 'Produk',
             ],
             [
                 'voc_kendala' => 'Pindah Alamat',

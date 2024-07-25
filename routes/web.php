@@ -112,6 +112,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/admin-billper', [AdminBillperController::class, 'index'])->name('adminbillper.index');
 
         // Data All Admin billper
+        Route::get('/report-all-adminbillper', [AdminBillperController::class, 'indexreportalladminbillper'])->name('report-all-adminbillper.index');
         Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
         Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
         Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
@@ -126,6 +127,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/admin-pranpc', [AdminPranpcController::class, 'index'])->name('adminpranpc.index');
 
         // Data Pranpc admin
+        Route::get('/report-all-adminpranpc', [AdminPranpcController::class, 'indexreportalladminpranpc'])->name('report-all-adminpranpc.index');
         Route::get('/data-pranpc-adminpranpc', [AdminPranpcController::class, 'indexpranpcadminpranpc'])->name('pranpc-adminpranpc.index');
         Route::get('gettabelpranpcadminpranpc', [AdminPranpcController::class, 'getDatapranpcsadminpranpc'])->name('gettabelpranpcadminpranpc');
         Route::get('/download/exceladminpranpc', [AdminPranpcController::class, 'exportpranpc'])->name('download.exceladminpranpc');

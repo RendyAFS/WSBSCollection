@@ -110,6 +110,40 @@
                                             readonly id="no_hp" name="no_hp"
                                             value="{{ $all->user ? $all->user->no_hp : 'Tidak ada' }}">
                                     </div>
+
+                                    {{-- Report --}}
+                                    <div class="mb-3">
+                                        <label for="evidence_sales" class="form-label fw-bold">Evidence Sales</label>
+                                        <div class="mt-2">
+                                            @if ($sales_report && $sales_report->evidence_sales)
+                                                <a href="{{ asset('storage/file_evidence/' . $sales_report->evidence_sales) }}"
+                                                    target="_blank">
+                                                    <img id="preview_sales"
+                                                        src="{{ asset('storage/file_evidence/' . $sales_report->evidence_sales) }}"
+                                                        alt="Preview Sales" class="img-preview">
+                                                </a>
+                                            @else
+                                                <span class="badge text-bg-danger">Report belum ada</span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="evidence_pembayaran" class="form-label fw-bold">Evidence
+                                            Pembayaran</label>
+                                        <div class="mt-2">
+                                            @if ($sales_report && $sales_report->evidence_pembayaran)
+                                                <a href="{{ asset('storage/file_evidence/' . $sales_report->evidence_pembayaran) }}"
+                                                    target="_blank">
+                                                    <img id="preview_pembayaran"
+                                                        src="{{ asset('storage/file_evidence/' . $sales_report->evidence_pembayaran) }}"
+                                                        alt="Preview Pembayaran" class="img-preview">
+                                                </a>
+                                            @else
+                                                <span class="badge text-bg-danger">Report belum ada</span>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

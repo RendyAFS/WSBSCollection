@@ -8,6 +8,7 @@ use App\Models\All;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\User;
+use App\Models\VocKendala;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -113,7 +114,7 @@ class AdminPranpcController extends Controller
         $title = 'Edit Data Plotting PraNPC';
         $pranpc = Pranpc::with('user')->findOrFail($id);
         $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
-        $sales_report = SalesReport::where('pranpc_id', $id)->first(); // Ambil entri yang relevan
+        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
         return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user', 'sales_report'));
     }
 
@@ -244,7 +245,8 @@ class AdminPranpcController extends Controller
         $title = 'Edit Data Plotting Existing';
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user'));
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
+        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report'));
     }
 
 
@@ -275,5 +277,25 @@ class AdminPranpcController extends Controller
         All::whereIn('id', $ids)->update(['users_id' => $userId]);
 
         return response()->json(['success' => true]);
+    }
+
+
+
+    public function indexreportalladminpranpc(Request $request)
+    {
+        confirmDelete();
+        $title = 'Report Data All';
+
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+        }])->get();
+
+        return view('admin-pranpc.report-all-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
     }
 }

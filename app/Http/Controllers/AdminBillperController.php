@@ -6,6 +6,7 @@ use App\Exports\AllExport;
 use App\Models\All;
 use App\Models\SalesReport;
 use App\Models\User;
+use App\Models\VocKendala;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -109,7 +110,7 @@ class AdminBillperController extends Controller
         $title = 'Edit Data Plotting';
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->first(); // Ambil entri yang relevan
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
         return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report'));
     }
 
@@ -142,5 +143,25 @@ class AdminBillperController extends Controller
         All::whereIn('id', $ids)->update(['users_id' => $userId]);
 
         return response()->json(['success' => true]);
+    }
+
+
+    // Report Data All
+    public function indexreportalladminbillper(Request $request)
+    {
+        confirmDelete();
+        $title = 'Report Data All';
+
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+        }])->get();
+
+        return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
     }
 }

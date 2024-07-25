@@ -15,6 +15,6 @@ class VocKendala extends Model
 
     public function salesreports()
     {
-        return $this->hasMany(SalesReport::class, 'voc_kendala_id');
+        return $this->hasMany(SalesReport::class, 'voc_kendalas_id');
     }
 }

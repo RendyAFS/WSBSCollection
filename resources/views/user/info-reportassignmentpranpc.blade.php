@@ -23,6 +23,18 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="contain-form">
+                                        <div class="mb-3 d-none">
+                                            <label for="user_name" class="form-label fw-bold">User Name</label>
+                                            <input type="text" class="form-control" id="user_name"
+                                                value="{{ Auth::user()->name }}" readonly>
+                                            <input type="hidden" id="users_id" name="users_id"
+                                                value="{{ Auth::user()->id }}">
+                                        </div>
+                                        <div class="mb-3 d-none">
+                                            <label for="snd" class="form-label">SND</label>
+                                            <input type="text" class="form-control" id="snd" name="snd"
+                                                value="{{ $sales_report->snd }}">
+                                        </div>
                                         <div class="mb-3">
                                             <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
                                             <input type="text" class="form-control bg-body-secondary" id="status_pembayaran" name="status_pembayaran"

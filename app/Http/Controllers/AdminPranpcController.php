@@ -115,7 +115,8 @@ class AdminPranpcController extends Controller
         $pranpc = Pranpc::with('user')->findOrFail($id);
         $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
         $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
-        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user', 'sales_report'));
+        $voc_kendala = VocKendala::all();
+        return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user', 'sales_report', 'voc_kendala'));
     }
 
 

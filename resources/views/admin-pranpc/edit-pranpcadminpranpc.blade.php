@@ -115,6 +115,32 @@
 
                                 {{-- Report --}}
                                 <div class="mb-3">
+                                    <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
+                                    <input type="datetime-local" class="form-control" id="waktu_visit"
+                                        name="waktu_visit"
+                                        value="{{ $sales_report->waktu_visit ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i:s') : '' }}"
+                                        required readonly>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>
+                                    <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id" required disabled>
+                                        <option value="" disabled selected>Pilih Kendala</option>
+                                        @foreach ($voc_kendala as $kendala)
+                                            <option value="{{ $kendala->id }}"
+                                                {{ $sales_report->voc_kendalas_id == $kendala->id ? 'selected' : '' }}>
+                                                {{ $kendala->voc_kendala }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="follow_up" class="form-label fw-bold">Follow Up</label>
+                                    <input type="text" class="form-control" id="follow_up" name="follow_up"
+                                        value="{{ $sales_report->follow_up }}" required readonly>
+                                </div>
+                                <div class="mb-3">
                                     <label for="evidence_sales" class="form-label fw-bold">Evidence Sales</label>
                                     <div class="mt-2">
                                         @if ($sales_report && $sales_report->evidence_sales)

@@ -111,7 +111,8 @@ class AdminBillperController extends Controller
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
         $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
-        return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report'));
+        $voc_kendala = VocKendala::all();
+        return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
 
 

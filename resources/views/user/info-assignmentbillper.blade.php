@@ -108,7 +108,7 @@
                                             <input type="text" class="form-control" id="snd" name="snd"
                                                 value="{{ $all->no_inet }}">
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="mb-3 d-none">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
                                             <input type="text" class="form-control" id="witel" name="witel"
                                                 value="SBS">

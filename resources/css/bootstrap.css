@@ -124,14 +124,14 @@
 .text-blue:hover {
     text-decoration: underline;
 }
-.text-secondary {
+#text-secondary {
     color: var(--secondary-color);
     font-weight: bold;
     cursor: pointer;
     transition: 0.5s;
 }
 
-.text-secondary:hover {
+#text-secondary:hover {
     text-decoration: underline;
 }
 .text-green {
@@ -154,6 +154,44 @@
 
 .text-red:hover {
     text-decoration: underline;
+}
+.text-yellow {
+    color: var(--yellow-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.text-yellow:hover {
+    text-decoration: underline;
+}
+
+#bg-secondary{
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+#bg-secondary:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+.bg-green{
+    background-color: var(--green-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.bg-green:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
+}
+.bg-blue{
+    background-color: var(--blue-color);
+    color: var(--white-color);
+    transition: 0.5s;
+}
+.bg-blue:hover{
+    background-color: var(--grey-color);
+    color: var(--white-color);
 }
 
 

@@ -78,15 +78,24 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
 
-    {{-- Loading Screen --}}
-    <div class="contain-loading d-none" id="loadingScreen">
-        <div class="content-loading">
-            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
-                <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="" id="img-loading">
-            </div>
-        </div>
+        {{-- New Table --}}
+        <table class="table table-hover table-bordered datatable shadow" id="datareportbillper" style="width: 100%">
+            <thead>
+                <tr>
+                    <th id="th" class="align-middle text-center">SND</th>
+                    <th id="th" class="align-middle text-center">Nama Customer</th>
+                    <th id="th" class="align-middle text-center">Waktu Visit</th>
+                    <th id="th" class="align-middle text-center">Nama Sales</th>
+                    <th id="th" class="align-middle text-center">VOC & Kendala</th>
+                    <th id="th" class="align-middle text-center">Follow Up</th>
+                    <th id="th" class="align-middle text-center">Evidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- Data will be populated by DataTables --}}
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -97,6 +106,80 @@
                 setTimeout(function() {
                     document.getElementById('loadingScreen').classList.add('d-none');
                 }, 1500);
+            });
+
+            // Initialize DataTable
+            // Initialize DataTable
+            var dataTable = new DataTable('#datareportbillper', {
+                serverSide: true,
+                processing: true,
+                pagingType: "simple_numbers",
+                responsive: true,
+                ajax: {
+                    url: "{{ route('getDatareportbillper') }}",
+                    type: 'GET',
+                    data: function(d) {
+                        // Additional parameters can be added here if needed
+                    },
+                    beforeSend: function() {
+                        $('#loadingScreen').removeClass('d-none');
+                    },
+                    complete: function() {
+                        $('#loadingScreen').addClass('d-none');
+                    },
+                    error: function() {
+                        $('#loadingScreen').addClass('d-none');
+                    }
+                },
+                order: [
+                    [2, 'desc']
+                ],
+                lengthMenu: [
+                    [100, 500, 1000, -1],
+                    [100, 500, 1000, "Semua"]
+                ],
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                },
+                columns: [{
+                        data: 'snd',
+                        name: 'snd',
+                        className: 'align-middle text-center'
+
+                    },
+                    {
+                        data: 'alls.nama',
+                        name: 'alls.nama',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'waktu_visit',
+                        name: 'waktu_visit',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'user.name',
+                        name: 'user.name',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'vockendals.voc_kendala',
+                        name: 'vockendals.voc_kendala',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'follow_up',
+                        name: 'follow_up',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'evidence',
+                        name: 'evidence',
+                        className: 'align-middle text-center'
+                    },
+                ],
+
             });
         });
     </script>

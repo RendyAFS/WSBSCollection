@@ -44,22 +44,38 @@ class SuperAdminController extends Controller
 
     public function checkFile1(Request $request)
     {
-        $request->validate(['file1' => 'required|file|mimes:xlsx']);
-        $file1 = $request->file('file1');
-        $fileName1 = $file1->getClientOriginalName();
-        $file1Path = $file1->getRealPath();
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
 
-        // Load spreadsheet and get first row as array
-        $spreadsheet1 = IOFactory::load($file1Path);
-        $sheet1 = $spreadsheet1->getActiveSheet();
-        $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+        // Validate the uploaded file
+        $validator = Validator::make($request->all(), [
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
 
-        if (in_array('SND', $firstRow1)) {
-            return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
-        } else {
-            return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
+        }
+
+        try {
+            // Load the spreadsheet
+            $file1 = $request->file('file1')->getRealPath();
+            $fileName1 = $request->file('file1')->getClientOriginalName();
+            $spreadsheet1 = IOFactory::load($file1);
+            $sheet1 = $spreadsheet1->getActiveSheet();
+            $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+            // Check if 'SND' column is present
+            if (in_array('SND', $firstRow1)) {
+                return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
+            } else {
+                return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error processing file: ' . $e->getMessage()]);
         }
     }
+
 
     public function vlookup(Request $request)
     {
@@ -715,32 +731,50 @@ class SuperAdminController extends Controller
 
     public function checkFile1pranpc(Request $request)
     {
-        $request->validate(['file1' => 'required|file|mimes:xlsx']);
-        $file1 = $request->file('file1');
-        $fileName1 = $file1->getClientOriginalName();
-        $file1Path = $file1->getRealPath();
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
 
-        // Load spreadsheet and get first row as array
-        $spreadsheet1 = IOFactory::load($file1Path);
-        $sheet1 = $spreadsheet1->getActiveSheet();
-        $firstRow1 = $sheet1->rangeToArray('A1:AZ1', null, true, false, true)[1]; // Get only the first row
+        // Validate the uploaded file
+        $validator = Validator::make($request->all(), [
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
 
-        $requiredColumns = ['SND', 'NAMA', 'ALAMAT', 'BILL_BLN', 'BILL_BLN1', 'MULTI_KONTAK1', 'NO_HP', 'EMAIL', 'MINTGK', 'MAXTGK'];
-        $missingColumns = [];
-
-        foreach ($requiredColumns as $column) {
-            if (!in_array($column, $firstRow1)) {
-                $missingColumns[] = $column;
-            }
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
         }
 
-        if (!empty($missingColumns)) {
-            $missingColumnsString = implode(', ', $missingColumns);
-            return response()->json(['status' => 'error', 'message' => "*Kolom $missingColumnsString tidak ditemukan dalam file $fileName1"]);
-        } else {
-            return response()->json(['status' => 'success', 'message' => "*Semua kolom yang diperlukan ditemukan dalam file $fileName1"]);
+        try {
+            // Load the spreadsheet
+            $file1 = $request->file('file1')->getRealPath();
+            $fileName1 = $request->file('file1')->getClientOriginalName();
+            $spreadsheet1 = IOFactory::load($file1);
+            $sheet1 = $spreadsheet1->getActiveSheet();
+            $firstRow1 = $sheet1->rangeToArray('A1:AZ1', null, true, false, true)[1]; // Get only the first row
+
+            // Define required columns
+            $requiredColumns = ['SND', 'NAMA', 'ALAMAT', 'BILL_BLN', 'BILL_BLN1', 'MULTI_KONTAK1', 'NO_HP', 'EMAIL', 'MINTGK', 'MAXTGK'];
+            $missingColumns = [];
+
+            // Check for missing columns
+            foreach ($requiredColumns as $column) {
+                if (!in_array($column, $firstRow1)) {
+                    $missingColumns[] = $column;
+                }
+            }
+
+            // Return appropriate response
+            if (!empty($missingColumns)) {
+                $missingColumnsString = implode(', ', $missingColumns);
+                return response()->json(['status' => 'error', 'message' => "*Kolom $missingColumnsString tidak ditemukan dalam file $fileName1"]);
+            } else {
+                return response()->json(['status' => 'success', 'message' => "*Semua kolom yang diperlukan ditemukan dalam file $fileName1"]);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error processing file: ' . $e->getMessage()]);
         }
     }
+
 
     public function upload(Request $request)
     {

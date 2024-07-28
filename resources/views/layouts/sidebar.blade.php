@@ -179,10 +179,20 @@
             </div>
             <div class="collapse show" id="adminDataManagerCollapse">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('report-all-adminpranpc.index') ? 'active' : '' }}">
-                        <a href="{{ route('report-all-adminpranpc.index') }}">
-                            <i class="bi bi-flag{{ Route::is('report-all-adminpranpc.index') ? '-fill' : '' }}"></i>
-                            Report Sales
+                    <li class="{{ Route::is('report-pranpc-adminpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('report-pranpc-adminpranpc.index') }}">
+                            <i class="bi bi-flag{{ Route::is('report-pranpc-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            Report Sales Pranpc
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="collapse show" id="adminDataManagerCollapse">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('report-existing-adminpranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('report-existing-adminpranpc.index') }}">
+                            <i class="bi bi-flag{{ Route::is('report-existing-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            Report Sales Existing
                         </a>
                     </li>
                 </ul>

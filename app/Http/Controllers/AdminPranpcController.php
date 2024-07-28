@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
 use App\Exports\PranpcExport;
+use App\Exports\SalesReportBillperExisting;
+use App\Exports\SalesReportPranpc;
 use App\Models\All;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
@@ -162,7 +164,8 @@ class AdminPranpcController extends Controller
         $fileName = 'Report-' . $pranpc->nama . '-' . $pranpc->snd . '/' . ($pranpc->user ? $pranpc->user->name : 'Unknown') . '-' . ($pranpc->user ? $pranpc->user->nik : 'Unknown') . '.pdf';
 
         // Create an instance of PDF
-        $pdf = PDF::loadView('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
 
         return $pdf->download($fileName);
     }
@@ -352,8 +355,78 @@ class AdminPranpcController extends Controller
                 ->whereNotNull('pranpc_id'); // Ensure only records with pranpc_id are included
         }])->get();
 
-        return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+        // Retrieve all sales
+        $sales = User::where('level', 'user')->get();
+
+        return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
     }
+
+    public function getDatareportpranpc(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_report_pranpc = SalesReport::with('pranpcs', 'user', 'vockendals')
+                ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+                ->get();
+
+            return datatables()->of($data_report_pranpc)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-pranpc-buttons-adminpranpc', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function downloadAllExcelreportpranpc()
+    {
+        $reports = SalesReport::with('pranpcs', 'user', 'vockendals')
+            ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+            ->get();
+
+        return Excel::download(new SalesReportPranpc($reports), 'Report_Pranpc_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportpranpc(Request $request)
+    {
+        $reports = SalesReport::with('pranpcs', 'user', 'vockendals')
+            ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportPranpc($reports), $fileName);
+    }
+
+
 
     public function indexreportexistingadminpranpc(Request $request)
     {
@@ -378,6 +451,89 @@ class AdminPranpcController extends Controller
                 });
         }])->get();
 
-        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+        // Retrieve all sales
+        $sales = User::where('level', 'user')->get();
+
+        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
+    }
+
+
+    public function getDatareportexisting(Request $request)
+    {
+        if ($request->ajax()) {
+            $currentMonth = Carbon::now()->format('Y-m');
+            $data_report_existing = SalesReport::with('alls', 'user', 'vockendals')
+                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', '<', $currentMonth);
+                })
+                ->get();
+
+            return datatables()->of($data_report_existing)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-existing-buttons-adminpranpc', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function downloadAllExcelreportexisting()
+    {
+        $currentMonth = Carbon::now()->format('Y-m');
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id')
+            ->whereHas('alls', function ($query) use ($currentMonth) {
+                $query->where('nper', '<', $currentMonth);
+            })
+            ->get();
+
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Existing_Semua.xlsx');
+    }
+
+
+    public function downloadFilteredExcelreportexisting(Request $request)
+    {
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->whereHas('alls', function ($query) use ($currentMonth) {
+                $query->where('nper', '<', $currentMonth);
+            })
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
     }
 }

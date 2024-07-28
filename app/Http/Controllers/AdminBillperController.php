@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
+use App\Exports\SalesReportBillperExisting;
 use App\Models\All;
 use App\Models\SalesReport;
 use App\Models\User;
@@ -193,7 +194,9 @@ class AdminBillperController extends Controller
                 ->whereNotNull('all_id'); // Ensure only records with all_id are included
         }])->get();
 
-        return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+        // Retrieve all sales
+        $sales = User::where('level', 'user')->get();
+        return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
     }
 
 
@@ -211,5 +214,54 @@ class AdminBillperController extends Controller
                 })
                 ->toJson();
         }
+    }
+
+    public function downloadAllExcelreportbillper()
+    {
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->get();
+
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper-Existing_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportbillper(Request $request)
+    {
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
     }
 }

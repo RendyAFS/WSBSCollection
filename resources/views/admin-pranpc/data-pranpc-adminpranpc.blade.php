@@ -322,8 +322,18 @@
                 ],
                 language: {
                     search: "Cari",
-                    lengthMenu: "Tampilkan _MENU_ data"
-                }
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Tidak ada data ditemukan",
+                    info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                    infoEmpty: "Menampilkan 0 hingga 0 dari 0 data",
+                    infoFiltered: "(disaring dari _MAX_ total data)",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
+                        previous: "Sebelumnya"
+                    },
+                },
             });
 
             // Event handler untuk select all

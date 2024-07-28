@@ -78,7 +78,64 @@
                 @endforeach
             </tbody>
         </table>
-
+        <div class="mt-5 mb-2 d-flex justify-content-end">
+            <div class="btn-group">
+                <a href="{{ route('download.excelreportbillper') }}" class="btn btn-green">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
+                </a>
+                <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu p-3">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="downloadForm" action="{{ route('download.filtered.excelreportbillper') }}"
+                                method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="tahun_bulan">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="nama_sales">Nama Sales</label>
+                                        <select id="nama_sales" name="nama_sales" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($sales as $sale)
+                                                <option value="{{ $sale->name }}">{{ $sale->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="voc_kendala">VOC & Kendala</label>
+                                        <select id="voc_kendala" name="voc_kendala" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($voc_kendalas as $voc_kendala)
+                                                <option value="{{ $voc_kendala->voc_kendala }}">
+                                                    {{ $voc_kendala->voc_kendala }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="btn-filter-download"
+                                        class="btn btn-green btn-filter-download">
+                                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
         {{-- New Table --}}
         <table class="table table-hover table-bordered datatable shadow" id="datareportbillper" style="width: 100%">
             <thead>
@@ -97,8 +154,9 @@
             </tbody>
         </table>
     </div>
-
-    <script>
+@endsection
+@push('scripts')
+    <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('filterForm').addEventListener('submit', function(event) {
                 document.getElementById('loadingScreen').classList.remove('d-none');
@@ -141,6 +199,16 @@
                 language: {
                     search: "Cari",
                     lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Tidak ada data ditemukan",
+                    info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                    infoEmpty: "Menampilkan 0 hingga 0 dari 0 data",
+                    infoFiltered: "(disaring dari _MAX_ total data)",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
+                        previous: "Sebelumnya"
+                    },
                 },
                 columns: [{
                         data: 'snd',
@@ -182,5 +250,14 @@
 
             });
         });
+        // Input date now
+        document.addEventListener('DOMContentLoaded', function() {
+            var dateInput = document.getElementById('tahun_bulan');
+            var now = new Date();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2);
+            var year = now.getFullYear();
+            var defaultDate = year + '-' + month;
+            dateInput.value = defaultDate;
+        });
     </script>
-@endsection
+@endpush

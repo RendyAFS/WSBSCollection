@@ -5,12 +5,12 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Pranpc- Existing
+                Report existing
             </span>
         </div>
 
         {{-- Filter Form --}}
-        <form id="filterForm" action="{{ route('report-all-adminpranpc.index') }}" method="GET">
+        <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="month" class="form-label fw-bold">Bulan</label>
@@ -78,15 +78,6 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
-
-    {{-- Loading Screen --}}
-    <div class="contain-loading d-none" id="loadingScreen">
-        <div class="content-loading">
-            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
-                <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="" id="img-loading">
-            </div>
-        </div>
     </div>
 
     <script>

@@ -40,7 +40,7 @@
                                             <input type="text" class="form-control bg-body-secondary" id="status_pembayaran" name="status_pembayaran"
                                                 value="{{$sales_report->pranpcs->status_pembayaran}}" readonly>
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="mb-3 d-none">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
                                             <input type="text" class="form-control" id="witel" name="witel"
                                                 value="{{ $sales_report->witel }}">

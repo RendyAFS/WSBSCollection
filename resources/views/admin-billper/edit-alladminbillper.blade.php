@@ -6,6 +6,12 @@
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Edit Data All Billper
             </span>
+            <a href="{{ route('view-pdf-report-billper', ['id' => $all->id]) }}" class="btn btn-green fw-bold d-none">
+                <i class="bi bi-file-earmark-arrow-down-fill"></i> View
+            </a>
+            <a href="{{ route('download-pdf-report-billper', ['id' => $all->id]) }}" class="btn btn-yellow fw-bold">
+                <i class="bi bi-file-earmark-arrow-down-fill"></i> Download
+            </a>
         </div>
 
         <div class="px-0 px-md-5">
@@ -92,10 +98,16 @@
                         <div class="card px-3 py-4 shadow mt-3 mt-md-0">
                             <div class="card-body">
                                 <div class="contain-header mb-3">
-                                    <h5 class="card-title">{{ $all->user ? $all->user->name : 'Tidak ada' }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-body-secondary">
-                                        {{ $all->user ? $all->user->nik : 'Tidak ada' }}</h6>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">{{ $all->user ? $all->user->name : 'Tidak ada' }}</h5>
+                                            <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                {{ $all->user ? $all->user->nik : 'Tidak ada' }}
+                                            </h6>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <hr class="border border-dark border-3 opacity-75 my-4">
                                 <div class="contain-form">
                                     <div class="mb-3">
@@ -123,7 +135,8 @@
 
                                     <div class="mb-3">
                                         <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>
-                                        <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id" required disabled>
+                                        <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id" required
+                                            disabled>
                                             <option value="" disabled selected>Pilih Kendala</option>
                                             @foreach ($voc_kendala as $kendala)
                                                 <option value="{{ $kendala->id }}"

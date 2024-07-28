@@ -7,6 +7,8 @@ use App\Models\All;
 use App\Models\SalesReport;
 use App\Models\User;
 use App\Models\VocKendala;
+use PDF;
+use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -135,6 +137,32 @@ class AdminBillperController extends Controller
         return redirect()->route('all-adminbillper.index');
     }
 
+    public function viewPDFreportbillper($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportbillper($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report - ' . $all->nama . '-' . $all->no_inet . '/' . ($all->user ? $all->user->name : 'Unknown') . '-' . ($all->user ? $all->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
+
     public function savePlotting(Request $request)
     {
         $ids = $request->input('ids');
@@ -158,11 +186,30 @@ class AdminBillperController extends Controller
         $filterYear = $request->input('year', now()->format('Y'));
 
         // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        // and only include reports with a non-null all_id
         $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
             $query->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth);
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('all_id'); // Ensure only records with all_id are included
         }])->get();
 
         return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+    }
+
+
+    public function getDatareportbillper(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
+                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->get();
+
+            return datatables()->of($data_report_billper)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-buttons-adminbillper', compact('row'));
+                })
+                ->toJson();
+        }
     }
 }

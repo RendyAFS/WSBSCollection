@@ -13,6 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
+use PDF;
+use Illuminate\Support\Facades\App;
+
 
 class AdminPranpcController extends Controller
 {
@@ -140,6 +143,30 @@ class AdminPranpcController extends Controller
         return redirect()->route('pranpc-adminpranpc.index');
     }
 
+    public function viewPDFreportpranpc($id)
+    {
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportpranpc($id)
+    {
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report-' . $pranpc->nama . '-' . $pranpc->snd . '/' . ($pranpc->user ? $pranpc->user->name : 'Unknown') . '-' . ($pranpc->user ? $pranpc->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = PDF::loadView('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
     public function savePlotting(Request $request)
     {
         $ids = $request->input('ids');
@@ -247,7 +274,8 @@ class AdminPranpcController extends Controller
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
         $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
-        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report'));
+        $voc_kendala = VocKendala::all();
+        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
 
 
@@ -269,6 +297,31 @@ class AdminPranpcController extends Controller
         return redirect()->route('existing-adminpranpc.index');
     }
 
+    public function viewPDFreportexisting($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-reportexisting-adminpranpc', compact('all', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportexisting($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report - ' . $all->nama . '-' . $all->no_inet . '/' . ($all->user ? $all->user->name : 'Unknown') . '-' . ($all->user ? $all->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-reportexisting-adminpranpc', compact('all', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
     public function savePlottingexisting(Request $request)
     {
         $ids = $request->input('ids');
@@ -282,21 +335,49 @@ class AdminPranpcController extends Controller
 
 
 
-    public function indexreportalladminpranpc(Request $request)
+    public function indexreportpranpcadminpranpc(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data All';
+        $title = 'Report Data Pranpc';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
         $filterYear = $request->input('year', now()->format('Y'));
 
         // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        // and include reports with a non-null pranpc_id
         $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
             $query->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth);
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('pranpc_id'); // Ensure only records with pranpc_id are included
         }])->get();
 
-        return view('admin-pranpc.report-all-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+        return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
+    }
+
+    public function indexreportexistingadminpranpc(Request $request)
+    {
+        confirmDelete();
+        $title = 'Report Data Existing';
+
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+
+        // Calculate the current date in 'Y-m' format
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        // and include reports with a non-null all_id and nper < current month
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $currentMonth) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', '<', $currentMonth);
+                });
+        }])->get();
+
+        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear'));
     }
 }

@@ -364,8 +364,15 @@ class AdminPranpcController extends Controller
     public function getDatareportpranpc(Request $request)
     {
         if ($request->ajax()) {
+            // Get filter values from request
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+
+            // Build the query with filters
             $data_report_pranpc = SalesReport::with('pranpcs', 'user', 'vockendals')
                 ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
                 ->get();
 
             return datatables()->of($data_report_pranpc)
@@ -376,6 +383,7 @@ class AdminPranpcController extends Controller
                 ->toJson();
         }
     }
+
 
     public function downloadAllExcelreportpranpc()
     {
@@ -440,8 +448,8 @@ class AdminPranpcController extends Controller
         // Calculate the current date in 'Y-m' format
         $currentMonth = Carbon::now()->format('Y-m');
 
+
         // Retrieve all voc_kendalas and their related report counts for the specified month and year
-        // and include reports with a non-null all_id and nper < current month
         $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $currentMonth) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
@@ -458,14 +466,25 @@ class AdminPranpcController extends Controller
     }
 
 
+
     public function getDatareportexisting(Request $request)
     {
         if ($request->ajax()) {
             $currentMonth = Carbon::now()->format('Y-m');
+            $month = $request->input('month');
+            $year = $request->input('year');
+
+            // Build the start and end date based on the provided month and year
+            $startDate = ($year && $month) ? "$year-$month-01" : null;
+            $endDate = ($year && $month) ? Carbon::parse($startDate)->endOfMonth()->format('Y-m-d') : null;
+
             $data_report_existing = SalesReport::with('alls', 'user', 'vockendals')
                 ->whereNotNull('all_id') // Ensure only records with all_id are included
                 ->whereHas('alls', function ($query) use ($currentMonth) {
                     $query->where('nper', '<', $currentMonth);
+                })
+                ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
                 })
                 ->get();
 
@@ -477,6 +496,7 @@ class AdminPranpcController extends Controller
                 ->toJson();
         }
     }
+
 
     public function downloadAllExcelreportexisting()
     {

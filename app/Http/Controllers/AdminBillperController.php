@@ -203,8 +203,13 @@ class AdminBillperController extends Controller
     public function getDatareportbillper(Request $request)
     {
         if ($request->ajax()) {
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+
             $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
                 ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
                 ->get();
 
             return datatables()->of($data_report_billper)
@@ -215,6 +220,7 @@ class AdminBillperController extends Controller
                 ->toJson();
         }
     }
+
 
     public function downloadAllExcelreportbillper()
     {

@@ -17,6 +17,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use PDF;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AdminPranpcController extends Controller
@@ -62,6 +63,7 @@ class AdminPranpcController extends Controller
                 $query->where('status_pembayaran', $request->status_pembayaran);
             } else {
             }
+
 
             $pranpcs = $query->get();
 
@@ -199,7 +201,7 @@ class AdminPranpcController extends Controller
     public function getDataexistingsadminpranpc(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
+            $query = All::query()->with('user');
 
             $currentMonth = Carbon::now()->format('Y-m');
 
@@ -218,6 +220,15 @@ class AdminPranpcController extends Controller
                 }
             }
 
+            // Filter berdasarkan jenis_produk
+            if ($request->has('jenis_produk')) {
+                $jenisProduk = $request->input('jenis_produk');
+                if ($jenisProduk !== 'Semua') {
+                    $query->where('produk', '=', $jenisProduk);
+                }
+            }
+
+
             $data_alls = $query->get();
 
             return datatables()->of($data_alls)
@@ -226,12 +237,13 @@ class AdminPranpcController extends Controller
                     return view('components.opsi-tabel-dataexistingadminpranpc', compact('all'));
                 })
                 ->addColumn('nama_user', function ($all) {
-                    return $all->user ? $all->user->name : 'Tidak Ada'; // Mengakses nama pengguna atau teks "Tidak Ada" jika relasi user null
+                    return $all->user ? $all->user->name : 'Tidak Ada';
                 })
-                ->rawColumns(['opsi-tabel-dataexistingadminpranpc']) // Menandai kolom sebagai raw HTML
+                ->rawColumns(['opsi-tabel-dataexistingadminpranpc'])
                 ->toJson();
         }
     }
+
 
 
     public function exportexisting()
@@ -367,8 +379,30 @@ class AdminPranpcController extends Controller
             }
         }])->get();
 
-        // Retrieve all sales
-        $sales = User::where('level', 'user')->get();
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount(['pranpcs as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth);
+            }, 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth)
+                    ->whereNotNull('pranpc_id');
+            }])
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
 
         return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
     }
@@ -457,8 +491,6 @@ class AdminPranpcController extends Controller
         return Excel::download(new SalesReportPranpc($reports), $fileName);
     }
 
-
-
     public function indexreportexistingadminpranpc(Request $request)
     {
         confirmDelete();
@@ -473,25 +505,57 @@ class AdminPranpcController extends Controller
         $currentMonth = Carbon::now()->format('Y-m');
 
         // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $currentMonth, $filterSales) {
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $currentMonth) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
-                ->whereNotNull('all_id') // Ensure only records with all_id are included
-                ->whereHas('alls', function ($query) use ($currentMonth) {
-                    $query->where('nper', '<', $currentMonth);
-                })
-                ->when($filterSales, function ($query) use ($filterSales) {
-                    $query->whereHas('user', function ($query) use ($filterSales) {
-                        $query->where('name', $filterSales);
-                    });
+                ->whereNotNull('all_id'); // Ensure only records with all_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
                 });
+            }
+
+            // Apply nper filter to be less than currentMonth
+            $query->whereHas('alls', function ($q) use ($currentMonth) {
+                $q->where('nper', '<', $currentMonth);
+            });
         }])->get();
 
-        // Retrieve all sales
-        $sales = User::where('level', 'user')->get();
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount([
+                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear, $currentMonth) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->where('nper', '<', $currentMonth); // Always apply the nper filter
+                },
+                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->whereNotNull('all_id');
+                }
+            ])
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->whereNotNull('all_id')
+                ->distinct('all_id')
+                ->count('all_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
 
         return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'filterSales', 'sales'));
     }
+
 
 
 

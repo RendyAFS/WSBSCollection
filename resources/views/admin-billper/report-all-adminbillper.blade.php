@@ -135,22 +135,26 @@
                 Report Progres Sales
             </span>
         </div>
-        <table class="table">
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">No. </th>
-                    <th scope="col">Nama Sales</th>
-                    <th scope="col">Total Assignment</th>
-                    <th scope="col">Total Visit</th>
+                    <th scope="col" class="align-middle">No.</th>
+                    <th scope="col" class="align-middle">Nama Sales</th>
+                    <th scope="col" class="text-center align-middle">WO</th>
+                    <th scope="col" class="text-center align-middle">Total Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Sudah Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Belum Visit</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($sales as $sale)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
-                        <td>{{ $sale->name }}</td>
-                        <td>{{ $sale->total_assignment }}</td>
-                        <td>{{ $sale->total_visit }}</td>
+                        <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
+                        <td class="align-middle">{{ $sale->name }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_assignment }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_sudah_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_belum_visit }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -164,20 +168,20 @@
         </div>
 
         {{-- Table --}}
-        <table class="table">
+        <table class=" table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">No. </th>
-                    <th scope="col">Jenis Voc Kendala</th>
-                    <th scope="col">Total Reports</th>
+                    <th scope="col" class="align-middle">No. </th>
+                    <th scope="col" class="align-middle">Jenis Voc Kendala</th>
+                    <th scope="col" class="text-center align-middle">Total Reports</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($voc_kendalas as $voc_kendala)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
-                        <td>{{ $voc_kendala->voc_kendala }}</td>
-                        <td>{{ $voc_kendala->sales_reports_count }}</td>
+                        <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
+                        <td class="align-middle">{{ $voc_kendala->voc_kendala }}</td>
+                        <td class="text-center align-middle">{{ $voc_kendala->sales_reports_count }}</td>
                     </tr>
                 @endforeach
             </tbody>

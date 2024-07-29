@@ -5,11 +5,9 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Pranpc
+                Filter Data
             </span>
         </div>
-
-        {{-- Filter Form --}}
         {{-- Filter Form --}}
         <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
             <div class="row mb-3">
@@ -126,7 +124,41 @@
                 </div>
             </div>
         </form>
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Report Progres Sales
+            </span>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="align-middle">No.</th>
+                    <th scope="col" class="align-middle">Nama Sales</th>
+                    <th scope="col" class="text-center align-middle">WO</th>
+                    <th scope="col" class="text-center align-middle">Total Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Sudah Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Belum Visit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sales as $sale)
+                    <tr>
+                        <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
+                        <td class="align-middle">{{ $sale->name }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_assignment }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_sudah_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_belum_visit }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Report Pranpc
+            </span>
+        </div>
 
         {{-- Table --}}
         <table class="table">

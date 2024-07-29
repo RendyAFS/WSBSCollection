@@ -184,10 +184,13 @@
                     </li>
                 </ul>
             </div>
-
+            <!-- Manajer Data Collapse Group -->
+            <div class="my-4">
+                {{-- diver --}}
+            </div>
             <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse2" role="button"
                 aria-expanded="false" aria-controls="adminDataManagerCollapse2">
-                Manajer Data Pranpc
+                Manajer Data Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
             <div class="collapse show" id="adminDataManagerCollapse2">

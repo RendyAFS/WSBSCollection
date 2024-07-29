@@ -46,6 +46,16 @@
                                             <option value="Unpaid">Unpaid</option>
                                         </select>
                                     </div>
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_produk_filter">Jenis Produk</label>
+                                        <select id="jenis_produk_filter" name="jenis_produk" class="form-select"
+                                            aria-label="Default select example">
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Internet">Internet</option>
+                                            <option value="Telepon">Telepon</option>
+                                            <option value="Wifi Manage Service">Wifi Manage Service</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <a href="{{ route('existing-adminpranpc.index') }}" class="btn btn-grey">
@@ -146,6 +156,7 @@
                     <th id="th" class="align-middle text-center">Saldo</th>
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
+                    <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Sales</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
@@ -175,6 +186,7 @@
                     data: function(d) {
                         d.nper = $('#nper_filter').val();
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
+                        d.jenis_produk = $('#jenis_produk_filter').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -223,6 +235,11 @@
                     {
                         data: 'nper',
                         name: 'nper',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
                         className: 'align-middle text-center'
                     },
                     {
@@ -285,8 +302,9 @@
             $('#btn-filter').on('click', function() {
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
+                var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = nper + " - " + statusPembayaran;
+                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk ;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

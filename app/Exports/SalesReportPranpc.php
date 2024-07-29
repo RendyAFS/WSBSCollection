@@ -24,6 +24,7 @@ class SalesReportPranpc implements FromCollection, WithHeadings
                 'Nama Sales' => $item->user->name,
                 'VOC & Kendala' => $item->vockendals->voc_kendala,
                 'Follow Up' => $item->follow_up,
+                'Visit' => $item->jmlh_visit,
                 'Evidence Sales' => $item->evidence_sales,
                 'Evidence Pembayaran' => $item->evidence_pembayaran
             ];
@@ -39,6 +40,7 @@ class SalesReportPranpc implements FromCollection, WithHeadings
             'Nama Sales',
             'VOC & Kendala',
             'Follow Up',
+            'Visit  ',
             'Evidence Sales',
             'Evidence Pembayaran'
         ];

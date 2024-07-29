@@ -27,7 +27,7 @@
                                             <label for="user_name" class="form-label fw-bold">User Name</label>
                                             <input type="text" class="form-control" id="user_name"
                                                 value="{{ Auth::user()->name }}" readonly>
-                                            <input type="text" class="form-control"  id="users_id" name="users_id"
+                                            <input type="text" class="form-control" id="users_id" name="users_id"
                                                 value="{{ Auth::user()->id }}">
                                         </div>
                                         <div class="mb-3 d-none">
@@ -74,9 +74,8 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="bill_bln1" class="form-label fw-bold">Bill Bln1</label>
-                                            <input type="text"
-                                                class="form-control bg-secondary text-dark bg-opacity-25" readonly
-                                                id="bill_bln1" name="bill_bln1" value="{{ $pranpc->bill_bln1 }}">
+                                            <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
+                                                readonly id="bill_bln1" name="bill_bln1" value="{{ $pranpc->bill_bln1 }}">
                                         </div>
                                         <div class="mb-3">
                                             <label for="sto" class="form-label fw-bold">STO</label>
@@ -130,11 +129,23 @@
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
                                             <input type="datetime-local" class="form-control" id="waktu_visit"
                                                 name="waktu_visit"
-                                                value="{{ old('waktu_visit', isset($sales_report->waktu_visit) ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i') : '') }}"
+                                                value=""
                                                 required>
                                         </div>
 
-
+                                        <!-- Select Jmlh Visit -->
+                                        <div class="mb-3">
+                                            <label for="jmlh_visit" class="form-label fw-bold">Jumlah Visit</label>
+                                            <select class="form-select" id="jmlh_visit" name="jmlh_visit" required>
+                                                <option value="" disabled selected>Pilih Jumlah Visit</option>
+                                                <option value="Visit 1" {{ $isSalesReportEmpty ? '' : 'disabled' }}>Visit
+                                                    1</option>
+                                                <option value="Visit 2"
+                                                    {{ !$isSalesReportEmpty && $jmlh_visit == 'Visit 1' ? '' : 'disabled' }}>
+                                                    Visit
+                                                    2</option>
+                                            </select>
+                                        </div>
 
                                         <div class="mb-3">
                                             <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>

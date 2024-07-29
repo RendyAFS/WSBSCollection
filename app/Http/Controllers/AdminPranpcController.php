@@ -17,7 +17,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use PDF;
 use Illuminate\Support\Facades\App;
-
+use Illuminate\Support\Facades\Storage;
 
 class AdminPranpcController extends Controller
 {
@@ -119,10 +119,11 @@ class AdminPranpcController extends Controller
         $title = 'Edit Data Plotting PraNPC';
         $pranpc = Pranpc::with('user')->findOrFail($id);
         $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
-        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $sales_report = SalesReport::where('pranpc_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
         return view('admin-pranpc.edit-pranpcadminpranpc', compact('title', 'pranpc', 'user', 'sales_report', 'voc_kendala'));
     }
+
 
 
     public function updatepranpcsadminpranpc(Request $request, $id)
@@ -140,6 +141,7 @@ class AdminPranpcController extends Controller
         $pranpc->email = $request->input('email');
         $pranpc->alamat = $request->input('alamat');
         $pranpc->save();
+
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('pranpc-adminpranpc.index');
@@ -276,10 +278,11 @@ class AdminPranpcController extends Controller
         $title = 'Edit Data Plotting Existing';
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
         return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
+
 
 
     public function updateexistingsadminpranpc(Request $request, $id)
@@ -295,6 +298,7 @@ class AdminPranpcController extends Controller
         $all->umur_customer = $request->input('umur_customer');
         $all->status_pembayaran = $request->input('status_pembayaran');
         $all->save();
+
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('existing-adminpranpc.index');
@@ -346,20 +350,29 @@ class AdminPranpcController extends Controller
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
         $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', ''); // New filter
 
         // Retrieve all voc_kendalas and their related report counts for the specified month and year
         // and include reports with a non-null pranpc_id
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->whereNotNull('pranpc_id'); // Ensure only records with pranpc_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
         }])->get();
 
         // Retrieve all sales
         $sales = User::where('level', 'user')->get();
 
-        return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
+        return view('admin-pranpc.report-pranpc-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
     }
+
 
     public function getDatareportpranpc(Request $request)
     {
@@ -367,13 +380,22 @@ class AdminPranpcController extends Controller
             // Get filter values from request
             $filterMonth = $request->input('month', now()->format('m'));
             $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', ''); // New filter
 
             // Build the query with filters
             $data_report_pranpc = SalesReport::with('pranpcs', 'user', 'vockendals')
                 ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
                 ->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth)
-                ->get();
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_pranpc->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            $data_report_pranpc = $data_report_pranpc->get();
 
             return datatables()->of($data_report_pranpc)
                 ->addIndexColumn()
@@ -383,6 +405,7 @@ class AdminPranpcController extends Controller
                 ->toJson();
         }
     }
+
 
 
     public function downloadAllExcelreportpranpc()
@@ -444,26 +467,32 @@ class AdminPranpcController extends Controller
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
         $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', '');
 
         // Calculate the current date in 'Y-m' format
         $currentMonth = Carbon::now()->format('Y-m');
 
-
-        // Retrieve all voc_kendalas and their related report counts for the specified month and year
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $currentMonth) {
+        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $currentMonth, $filterSales) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->whereNotNull('all_id') // Ensure only records with all_id are included
                 ->whereHas('alls', function ($query) use ($currentMonth) {
                     $query->where('nper', '<', $currentMonth);
+                })
+                ->when($filterSales, function ($query) use ($filterSales) {
+                    $query->whereHas('user', function ($query) use ($filterSales) {
+                        $query->where('name', $filterSales);
+                    });
                 });
         }])->get();
 
         // Retrieve all sales
         $sales = User::where('level', 'user')->get();
 
-        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
+        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'filterSales', 'sales'));
     }
+
 
 
 
@@ -473,6 +502,7 @@ class AdminPranpcController extends Controller
             $currentMonth = Carbon::now()->format('Y-m');
             $month = $request->input('month');
             $year = $request->input('year');
+            $filterSales = $request->input('filter_sales');
 
             // Build the start and end date based on the provided month and year
             $startDate = ($year && $month) ? "$year-$month-01" : null;
@@ -486,6 +516,11 @@ class AdminPranpcController extends Controller
                 ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                     $query->whereBetween('created_at', [$startDate, $endDate]);
                 })
+                ->when($filterSales, function ($query) use ($filterSales) {
+                    $query->whereHas('user', function ($query) use ($filterSales) {
+                        $query->where('name', $filterSales);
+                    });
+                })
                 ->get();
 
             return datatables()->of($data_report_existing)
@@ -496,6 +531,8 @@ class AdminPranpcController extends Controller
                 ->toJson();
         }
     }
+
+
 
 
     public function downloadAllExcelreportexisting()

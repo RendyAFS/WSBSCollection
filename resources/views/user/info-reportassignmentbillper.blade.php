@@ -52,6 +52,13 @@
                                                 value="{{ $sales_report->waktu_visit ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i:s') : '' }}" required>
                                         </div>
 
+                                        <div class="mb-3">
+                                            <label for="jmlh_visit" class="form-label fw-bold">Visit</label>
+                                            <input type="text" class="form-control bg-body-secondary" id="jmlh_visit" name="jmlh_visit"
+                                                value="{{$sales_report->jmlh_visit}}" readonly>
+                                        </div>
+
+
 
                                         <div class="mb-3">
                                             <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>

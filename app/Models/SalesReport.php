@@ -10,7 +10,7 @@ class SalesReport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'all_id', 'pranpc_id'
+        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'all_id', 'pranpc_id', 'jmlh_visit'
     ];
 
     public function user()

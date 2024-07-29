@@ -23,7 +23,14 @@
             <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
                 <a href="{{ route('reportdata.index') }}">
                     <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
-                    Report
+                    Report Pelanggan
+                </a>
+            </li>
+
+            <li class="{{ Route::is('reportsales.index') ? 'active' : '' }}">
+                <a href="{{ route('reportsales.index') }}">
+                    <i class="bi bi-flag{{ Route::is('reportsales.index') ? '-fill' : '' }}"></i>
+                    Report Sales
                 </a>
             </li>
 

@@ -5,14 +5,15 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Existing - Pranpc
+                Report Pranpc
             </span>
         </div>
 
         {{-- Filter Form --}}
+        {{-- Filter Form --}}
         <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
             <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="month" class="form-label fw-bold">Bulan</label>
                     @php
                         // Array of month names in Indonesian
@@ -41,7 +42,7 @@
                     </select>
 
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
                     <select id="year" name="year" class="form-control">
                         @for ($y = now()->year; $y >= 2000; $y--)
@@ -51,7 +52,18 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-4 d-flex align-items-end justify-content-end justify-content-md-start">
+                <div class="col-md-3">
+                    <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
+                    <select id="filter_sales" name="filter_sales" class="form-control">
+                        <option value="">Semua</option>
+                        @foreach ($sales as $sale)
+                            <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
+                                {{ $sale->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
                     <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
                         <i class="bi bi-funnel-fill"></i> Filter
                     </button>
@@ -115,11 +127,12 @@
             </div>
         </form>
 
+
         {{-- Table --}}
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">No.</th>
+                    <th scope="col">No. </th>
                     <th scope="col">Jenis Voc Kendala</th>
                     <th scope="col">Total Reports</th>
                 </tr>
@@ -135,9 +148,9 @@
             </tbody>
         </table>
 
-        <div class="mt-5 mb-2">
+        <div class="mt-5 mb-2 ">
             <span class="fw-bold fs-2">
-                Detail Existing - Pranpc
+                Detail Pranpc
             </span>
         </div>
         {{-- DataTable --}}
@@ -150,6 +163,7 @@
                     <th id="th" class="align-middle text-center">Nama Sales</th>
                     <th id="th" class="align-middle text-center">VOC & Kendala</th>
                     <th id="th" class="align-middle text-center">Follow Up</th>
+                    <th id="th" class="align-middle text-center">Visit</th>
                     <th id="th" class="align-middle text-center">Evidence</th>
                 </tr>
             </thead>
@@ -159,7 +173,6 @@
         </table>
     </div>
 @endsection
-
 @push('scripts')
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
@@ -176,6 +189,7 @@
                         // Add filter data to request
                         d.month = document.getElementById('month').value;
                         d.year = document.getElementById('year').value;
+                        d.filter_sales = document.getElementById('filter_sales').value;
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -236,6 +250,11 @@
                     {
                         data: 'follow_up',
                         name: 'follow_up',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'jmlh_visit',
+                        name: 'jmlh_visit',
                         className: 'align-middle text-center'
                     },
                     {

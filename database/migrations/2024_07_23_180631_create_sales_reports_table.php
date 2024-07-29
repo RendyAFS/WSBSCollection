@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('waktu_visit')->nullable();
             $table->foreignId('voc_kendalas_id')->nullable()->constrained()->onDelete('set null');
             $table->string('follow_up')->nullable();
+            $table->string('jmlh_visit')->nullable();
             $table->string('evidence_sales')->nullable();
             $table->string('evidence_pembayaran')->nullable();
             $table->timestamps();

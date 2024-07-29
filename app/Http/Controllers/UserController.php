@@ -48,10 +48,19 @@ class UserController extends Controller
     {
         $title = 'Info Assignment';
         $all = All::with('user')->findOrFail($id);
-        $voc_kendala = VocKendala::all(); // Assuming you have a model named VocKendala
-        $sales_report = SalesReport::all();
-        return view('user.info-assignmentbillper', compact('title', 'all', 'voc_kendala', 'sales_report'));
+        $voc_kendala = VocKendala::all(); // Mengambil semua data VocKendala
+
+        // Mengambil SalesReport terbaru yang terkait dengan All tertentu
+        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first();
+
+        // Mengecek apakah ada data di sales_report dan mengecek jumlah visit
+        $isSalesReportEmpty = $sales_report ? false : true;
+        $jmlh_visit = $sales_report ? $sales_report->jmlh_visit : null;
+
+        return view('user.info-assignmentbillper', compact('title', 'all', 'voc_kendala', 'sales_report', 'isSalesReportEmpty', 'jmlh_visit'));
     }
+
+
 
 
     public function updateassignmentbillper(Request $request, $id)
@@ -79,6 +88,7 @@ class UserController extends Controller
         $report->waktu_visit = $request->input('waktu_visit');
         $report->voc_kendalas_id = $request->input('voc_kendalas_id');
         $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
 
         // Flag to check if any evidence file is uploaded
         $evidenceUploaded = false;
@@ -182,6 +192,7 @@ class UserController extends Controller
         $report->waktu_visit = $request->input('waktu_visit');
         $report->voc_kendalas_id = $request->input('voc_kendalas_id');
         $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
 
         // Update the status_pembayaran in the related All model
         if ($all) {
@@ -290,8 +301,14 @@ class UserController extends Controller
         $title = 'Info Assignment';
         $pranpc = Pranpc::with('user')->findOrFail($id);
         $voc_kendala = VocKendala::all(); // Assuming you have a model named VocKendala
-        $sales_report = SalesReport::all();
-        return view('user.info-assignmentpranpc', compact('title', 'pranpc', 'voc_kendala', 'sales_report'));
+
+        // Mengambil SalesReport terbaru yang terkait dengan All tertentu
+        $sales_report = SalesReport::where('pranpc_id', $id)->orderBy('created_at', 'desc')->first();
+
+        // Mengecek apakah ada data di sales_report dan mengecek jumlah visit
+        $isSalesReportEmpty = $sales_report ? false : true;
+        $jmlh_visit = $sales_report ? $sales_report->jmlh_visit : null;
+        return view('user.info-assignmentpranpc', compact('title', 'pranpc', 'voc_kendala', 'sales_report', 'isSalesReportEmpty', 'jmlh_visit'));
     }
 
 
@@ -315,7 +332,7 @@ class UserController extends Controller
         $pranpc->users_id = $request->input('users_id');
 
         // Update the SalesReport model
-        $report = SalesReport::where('pranpc_id', $pranpc->id)->firstOrNew(); // Use firstOrNew() to update if exists or create a new one
+        $report = new SalesReport; // Make sure to use findOrFail() to update existing records
         $report->users_id = $request->input('users_id');
         $report->pranpc_id = $request->input('pranpc_id');
         $report->snd = $request->input('snd');
@@ -323,6 +340,7 @@ class UserController extends Controller
         $report->waktu_visit = $request->input('waktu_visit');
         $report->voc_kendalas_id = $request->input('voc_kendalas_id');
         $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
 
         // Handle evidence file uploads
         $evidenceUploaded = false;
@@ -421,6 +439,7 @@ class UserController extends Controller
         $report->waktu_visit = $request->input('waktu_visit');
         $report->voc_kendalas_id = $request->input('voc_kendalas_id');
         $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
 
         // Update the status_pembayaran in the related pranpc model
         if ($pranpc) {

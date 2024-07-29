@@ -80,6 +80,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         // Report Data
         Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
 
+
+        // Report Sales
+        Route::get('/report-sales', [SuperAdminController::class, 'indexreportsales'])->name('reportsales.index');
+
+
         // Tool Pra NPC
         Route::get('/tool-pranpc', [SuperAdminController::class, 'indextoolpranpc'])->name('toolspranpc.index');
         Route::get('gettabeltemppranpcs', [SuperAdminController::class, 'getDataTemppranpcs'])->name('gettabeltemppranpcs');
@@ -97,6 +102,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('update-pranpcs/{id}', [SuperAdminController::class, 'updatepranpcs'])->name('update-pranpcs');
         Route::get('/download/excelpranpc', [SuperAdminController::class, 'exportpranpc'])->name('download.excelpranpc');
         Route::post('/download/filtered/excelpranpc', [SuperAdminController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
+        Route::get('pranpc/pdf/{id}', [SuperAdminController::class, 'generatePDFpranpc'])->name('pranpc.pdf');
         Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
 
 

@@ -12,6 +12,7 @@ use PDF;
 use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -113,10 +114,11 @@ class AdminBillperController extends Controller
         $title = 'Edit Data Plotting';
         $all = All::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
         return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
+
 
 
 
@@ -134,9 +136,11 @@ class AdminBillperController extends Controller
         $all->status_pembayaran = $request->input('status_pembayaran');
         $all->save();
 
+
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('all-adminbillper.index');
     }
+
 
     public function viewPDFreportbillper($id)
     {
@@ -185,19 +189,51 @@ class AdminBillperController extends Controller
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
         $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', '');
+        $jenisBiling = $request->input('jenis_biling', ''); // New filter
 
-        // Retrieve all voc_kendalas and their related report counts for the specified month and year
-        // and only include reports with a non-null all_id
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear) {
+        // Calculate the current date in 'Y-m' format
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $jenisBiling, $currentMonth) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->whereNotNull('all_id'); // Ensure only records with all_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
+
+            // Apply jenis_biling filter if provided
+            if ($jenisBiling === 'Billper') {
+                $query->whereHas('alls', function ($q) use ($currentMonth) {
+                    $q->where('nper', $currentMonth);
+                });
+            } elseif ($jenisBiling === 'Existing') {
+                $query->whereHas('alls', function ($q) use ($currentMonth) {
+                    $q->where('nper', '<', $currentMonth);
+                });
+            }
         }])->get();
 
-        // Retrieve all sales
-        $sales = User::where('level', 'user')->get();
-        return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales'));
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount(['alls as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth);
+            }, 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth);
+            }])
+            ->get();
+
+        return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales', 'jenisBiling'));
     }
+
 
 
     public function getDatareportbillper(Request $request)
@@ -205,12 +241,36 @@ class AdminBillperController extends Controller
         if ($request->ajax()) {
             $filterMonth = $request->input('month', now()->format('m'));
             $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', '');
+            $jenisBiling = $request->input('jenis_biling', ''); // New filter
+
+            // Calculate the current date in 'Y-m' format
+            $currentMonth = Carbon::now()->format('Y-m');
 
             $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
                 ->whereNotNull('all_id') // Ensure only records with all_id are included
                 ->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth)
-                ->get();
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_billper->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            // Apply jenis_biling filter if provided
+            if ($jenisBiling === 'Billper') {
+                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', $currentMonth);
+                });
+            } elseif ($jenisBiling === 'Existing') {
+                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', '<', $currentMonth);
+                });
+            }
+
+            $data_report_billper = $data_report_billper->get();
 
             return datatables()->of($data_report_billper)
                 ->addIndexColumn()
@@ -220,6 +280,8 @@ class AdminBillperController extends Controller
                 ->toJson();
         }
     }
+
+
 
 
     public function downloadAllExcelreportbillper()

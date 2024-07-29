@@ -22,6 +22,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use PDF;
 
 class SuperAdminController extends Controller
 {
@@ -157,7 +158,7 @@ class SuperAdminController extends Controller
                     'email' => $dataMaster->email_address,
                     'sto' => $dataMaster->csto,
                     'umur_customer' => $ageRange,
-                    'produk' => $row1[array_search('INDIHOME', $data1[0])],
+                    'produk' => $row1[array_search('PRODUK', $data1[0])],
                     'nper' => $nperFormatted,
                 ];
             } else {
@@ -898,6 +899,27 @@ class SuperAdminController extends Controller
         }
     }
 
+    public function generatePDFpranpc(Request $request, $id)
+    {
+        $pranpc = Pranpc::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($pranpc->bill_bln + $pranpc->bill_bln1, 2, ',', '.');
+
+        $mintgkDate = \Carbon\Carbon::parse($pranpc->mintgk);
+        $maxtgkDate = \Carbon\Carbon::parse($pranpc->maxtgk);
+
+        $data = [
+            'pranpc' => $pranpc,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'mintgk_bulan' => $mintgkDate->translatedFormat('F Y'),
+            'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
+        ];
+
+        $pdf = PDF::loadView('components.generate-pdf-pranpc', $data);
+        return $pdf->download('invoice.pdf');
+    }
+
     public function editpranpcs($id)
     {
         $title = 'Edit Data PraNPC';
@@ -1020,5 +1042,12 @@ class SuperAdminController extends Controller
         }
 
         return redirect()->route('data-akun.index');
+    }
+
+
+    public function indexreportsales()
+    {
+        $title = 'Report Sales';
+        return view('super-admin.report-sales', compact('title'));
     }
 }

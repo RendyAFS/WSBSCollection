@@ -42,8 +42,10 @@
 
 
                                         <div class="mb-3">
-                                            <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
-                                            <input type="text" class="form-control  bg-body-secondary" id="status_pembayaran " name="status_pembayaran"
+                                            <label for="status_pembayaran" class="form-label fw-bold">Status
+                                                Pembayaran</label>
+                                            <input type="text" class="form-control  bg-body-secondary"
+                                                id="status_pembayaran " name="status_pembayaran"
                                                 value="{{ $all->status_pembayaran }}" readonly>
                                         </div>
                                         <div class="mb-3">
@@ -117,15 +119,24 @@
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
                                             <input type="datetime-local" class="form-control" id="waktu_visit"
                                                 name="waktu_visit"
-                                                value="{{ old('waktu_visit', isset($sales_report->waktu_visit) ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i') : '') }}"
+                                                value=""
                                                 required>
                                         </div>
-
-
+                                        <!-- Select Jmlh Visit -->
+                                        <div class="mb-3">
+                                            <label for="jmlh_visit" class="form-label fw-bold">Jumlah Visit</label>
+                                            <select class="form-select" id="jmlh_visit" name="jmlh_visit" required>
+                                                <option value="" disabled selected>Pilih Jumlah Visit</option>
+                                                <option value="Visit 1" {{ $isSalesReportEmpty ? '' : 'disabled' }}>Visit
+                                                    1</option>
+                                                <option value="Visit 2"
+                                                    {{ !$isSalesReportEmpty && $jmlh_visit == 'Visit 1' ? '' : 'disabled' }}>Visit
+                                                    2</option>
+                                            </select>
+                                        </div>
 
                                         <div class="mb-3">
                                             <label for="voc_kendalas_id" class="form-label fw-bold">Voc Kendala</label>
-
                                             <select class="form-select" id="voc_kendalas_id" name="voc_kendalas_id"
                                                 required>
                                                 <option value="" disabled selected>Pilih Kendala</option>
@@ -147,17 +158,14 @@
                                             <input type="file" class="form-control" id="evidence_sales"
                                                 name="evidence_sales" accept="image/*" required>
                                         </div>
-
                                         <div class="mb-3">
                                             <div class="form-check">
                                                 <input class="form-check-input border border-dark" type="checkbox"
                                                     id="toggleEvidencePembayaran" name="toggleEvidencePembayaran">
-                                                <label class="form-check-label" for="toggleEvidencePembayaran">
-                                                    Tambah Evidence Pembayaran
-                                                </label>
+                                                <label class="form-check-label" for="toggleEvidencePembayaran">Tambah
+                                                    Evidence Pembayaran</label>
                                             </div>
                                         </div>
-
                                         <div class="mb-3" id="evidencePembayaranWrapper" style="display: none;">
                                             <label for="evidence_pembayaran" class="form-label fw-bold">Evidence
                                                 Pembayaran</label>
@@ -168,6 +176,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="d-flex justify-content-center mt-3">
                         <a href="{{ route('assignmentbillper.index') }}" class="btn btn-grey w-25 me-2">Batal</a>

@@ -5,17 +5,15 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Billper - Existing
+                Filter Data
             </span>
         </div>
-
         {{-- Filter Form --}}
         <form id="filterForm" action="{{ route('report-all-adminbillper.index') }}" method="GET">
             <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="month" class="form-label fw-bold">Bulan</label>
                     @php
-                        // Array of month names in Indonesian
                         $months = [
                             '01' => 'Januari',
                             '02' => 'Februari',
@@ -40,7 +38,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
                     <select id="year" name="year" class="form-control">
                         @for ($y = now()->year; $y >= 2000; $y--)
@@ -50,7 +48,26 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-4 d-flex align-items-end justify-content-end justify-content-md-start">
+                <div class="col-md-3">
+                    <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
+                    <select id="filter_sales" name="filter_sales" class="form-control">
+                        <option value="">Semua</option>
+                        @foreach ($sales as $sale)
+                            <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
+                                {{ $sale->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="jenis_biling" class="form-label fw-bold mt-3 mt-md-0">Jenis Billing</label>
+                    <select id="jenis_biling" name="jenis_biling" class="form-control">
+                        <option value="">Semua</option>
+                        <option value="Billper" {{ $jenisBiling == 'Billper' ? 'selected' : '' }}>Billper</option>
+                        <option value="Existing" {{ $jenisBiling == 'Existing' ? 'selected' : '' }}>Existing</option>
+                    </select>
+                </div>
+                <div class="col-md-12 mt-3 d-flex justify-content-end align-items-end">
                     <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
                         <i class="bi bi-funnel-fill"></i> Filter
                     </button>
@@ -113,6 +130,38 @@
                 </div>
             </div>
         </form>
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Report Progres Sales
+            </span>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">No. </th>
+                    <th scope="col">Nama Sales</th>
+                    <th scope="col">Total Assignment</th>
+                    <th scope="col">Total Visit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sales as $sale)
+                    <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
+                        <td>{{ $sale->name }}</td>
+                        <td>{{ $sale->total_assignment }}</td>
+                        <td>{{ $sale->total_visit }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Report Billper - Existing
+            </span>
+        </div>
 
         {{-- Table --}}
         <table class="table">
@@ -148,6 +197,7 @@
                     <th id="th" class="align-middle text-center">Nama Sales</th>
                     <th id="th" class="align-middle text-center">VOC & Kendala</th>
                     <th id="th" class="align-middle text-center">Follow Up</th>
+                    <th id="th" class="align-middle text-center">Visit</th>
                     <th id="th" class="align-middle text-center">Evidence</th>
                 </tr>
             </thead>
@@ -171,6 +221,8 @@
                     data: function(d) {
                         d.month = document.getElementById('month').value;
                         d.year = document.getElementById('year').value;
+                        d.filter_sales = document.getElementById('filter_sales').value;
+                        d.jenis_biling = document.getElementById('jenis_biling').value; // New filter
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -234,6 +286,11 @@
                         className: 'align-middle text-center'
                     },
                     {
+                        data: 'jmlh_visit',
+                        name: 'jmlh_visit',
+                        className: 'align-middle text-center'
+                    },
+                    {
                         data: 'evidence',
                         name: 'evidence',
                         className: 'align-middle text-center'
@@ -241,6 +298,8 @@
                 ]
             });
         });
+
+
         // Input date now
         document.addEventListener('DOMContentLoaded', function() {
             var dateInput = document.getElementById('tahun_bulan');

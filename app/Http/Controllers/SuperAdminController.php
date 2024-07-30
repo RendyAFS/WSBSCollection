@@ -12,6 +12,8 @@ use App\Models\All;
 use App\Models\DataMaster;
 use App\Models\Pranpc;
 use App\Models\Riwayat;
+use App\Models\RiwayatAll;
+use App\Models\RiwayatPranpc;
 use App\Models\SalesReport;
 use App\Models\TempAll;
 use App\Models\TempDataMaster;
@@ -534,6 +536,8 @@ class SuperAdminController extends Controller
     public function updatealls(Request $request, $id)
     {
         $all = All::findOrFail($id);
+
+        // Update data dengan data baru
         $all->nama = $request->input('nama');
         $all->no_inet = $request->input('no_inet');
         $all->saldo = $request->input('saldo');
@@ -543,7 +547,22 @@ class SuperAdminController extends Controller
         $all->produk = $request->input('produk');
         $all->umur_customer = $request->input('umur_customer');
         $all->status_pembayaran = $request->input('status_pembayaran');
+        $all->nper = $request->input('nper');
         $all->save();
+
+        // Simpan data yang sudah diperbarui ke tabel riwayat
+        RiwayatAll::create([
+            'nama' => $all->nama,
+            'no_inet' => $all->no_inet,
+            'saldo' => $all->saldo,
+            'no_tlf' => $all->no_tlf,
+            'email' => $all->email,
+            'sto' => $all->sto,
+            'umur_customer' => $all->umur_customer,
+            'produk' => $all->produk,
+            'status_pembayaran' => $all->status_pembayaran,
+            'nper' => $all->nper,
+        ]);
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('all.index');
@@ -660,6 +679,22 @@ class SuperAdminController extends Controller
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('all.index');
     }
+
+
+    public function indexallriwayat()
+    {
+        $title = 'Data Riwayat All';
+        return view('super-admin.riwayat-data-all', compact('title'));
+    }
+
+    public function getDataallsriwayat(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_alls = RiwayatAll::query(); // atau gunakan paginate jika perlu
+            return datatables()->of($data_alls)->toJson();
+        }
+    }
+
 
 
     // Report Data
@@ -904,6 +939,8 @@ class SuperAdminController extends Controller
         }
     }
 
+
+
     public function generatePDFpranpc(Request $request, $id)
     {
         $pranpc = Pranpc::findOrFail($id);
@@ -933,10 +970,11 @@ class SuperAdminController extends Controller
         $pranpc = Pranpc::findOrFail($id);
         return view('super-admin.edit-pranpc', compact('title', 'pranpc'));
     }
-
     public function updatepranpcs(Request $request, $id)
     {
         $pranpc = Pranpc::findOrFail($id);
+
+        // Update data dengan data baru
         $pranpc->nama = $request->input('nama');
         $pranpc->status_pembayaran = $request->input('status_pembayaran');
         $pranpc->snd = $request->input('snd');
@@ -949,6 +987,21 @@ class SuperAdminController extends Controller
         $pranpc->email = $request->input('email');
         $pranpc->alamat = $request->input('alamat');
         $pranpc->save();
+
+        // Simpan data yang sudah diperbarui ke tabel riwayat
+        RiwayatPranpc::create([
+            'nama' => $pranpc->nama,
+            'status_pembayaran' => $pranpc->status_pembayaran,
+            'snd' => $pranpc->snd,
+            'sto' => $pranpc->sto,
+            'bill_bln' => $pranpc->bill_bln,
+            'bill_bln1' => $pranpc->bill_bln1,
+            'mintgk' => $pranpc->mintgk,
+            'maxtgk' => $pranpc->maxtgk,
+            'multi_kontak1' => $pranpc->multi_kontak1,
+            'email' => $pranpc->email,
+            'alamat' => $pranpc->alamat,
+        ]);
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('pranpc.index');
@@ -993,14 +1046,27 @@ class SuperAdminController extends Controller
     }
 
 
-
-
     public function destroypranpcs($id)
     {
         $pranpc = Pranpc::findOrFail($id);
         $pranpc->delete();
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('pranpc.index');
+    }
+
+    public function indexpranpcriwayat()
+    {
+        confirmDelete();
+        $title = 'Data Riwayat PraNPC';
+        return view('super-admin.riwayat-data-pranpc', compact('title'));
+    }
+
+    public function getDatapranpcsriwayat(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_pranpcs = RiwayatPranpc::query(); // atau gunakan paginate jika perlu
+            return datatables()->of($data_pranpcs)->toJson();
+        }
     }
 
 

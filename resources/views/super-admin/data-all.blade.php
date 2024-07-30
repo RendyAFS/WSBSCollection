@@ -73,6 +73,9 @@
                     </div>
                 </div>
 
+                {{-- Button Riwayat --}}
+                <a class="btn btn-white me-2" href="{{route('allriwayat.index')}}" role="button"><i class="bi bi-clock-fill"></i> Riwayat</a>
+
                 <!-- Button trigger modal Pembayaran-->
                 <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
                     data-bs-target="#modalCekPembayaran">

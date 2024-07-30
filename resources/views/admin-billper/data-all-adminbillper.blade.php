@@ -55,6 +55,16 @@
                                             <option value="Unpaid">Unpaid</option>
                                         </select>
                                     </div>
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_produk_filter">Jenis Produk</label>
+                                        <select id="jenis_produk_filter" name="jenis_produk" class="form-select"
+                                            aria-label="Default select example">
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Internet">Internet</option>
+                                            <option value="Telepon">Telepon</option>
+                                            <option value="Wifi Manage Service">Wifi Manage Service</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <a href="{{ route('all-adminbillper.index') }}" class="btn btn-grey">
@@ -69,7 +79,6 @@
                         </div>
                     </div>
                 </div>
-
                 {{-- BTN Donwload --}}
                 <div class="btn-group">
                     <a href="{{ route('download.exceladminbillper') }}" class="btn btn-green">
@@ -98,12 +107,22 @@
                                         </div>
                                         <div class="form-group mb-3">
                                             <label for="status_pembayaran">Status Pembayaran</label>
-                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
-                                                aria-label="Default select example" required>
+                                            <select id="status_pembayaran_download" name="status_pembayaran"
+                                                class="form-select" aria-label="Default select example" required>
                                                 <option selected value="Semua">Semua</option>
                                                 <option value="Paid">Paid</option>
                                                 <option value="Pending">Pending</option>
                                                 <option value="Unpaid">Unpaid</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="jenis_produk_download">Jenis Produk</label>
+                                            <select id="jenis_produk_download" name="jenis_produk" class="form-select"
+                                                aria-label="Default select example">
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Telepon">Telepon</option>
+                                                <option value="Wifi Manage Service">Wifi Manage Service</option>
                                             </select>
                                         </div>
                                     </div>
@@ -153,6 +172,7 @@
                     <th id="th" class="align-middle text-center">Saldo</th>
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
+                    <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Sales</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
@@ -183,8 +203,9 @@
                         d.jenis_data = $('#jenis_data_filter').val();
                         d.nper = $('#nper_filter').val();
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
+                        d.jenis_produk = $('#jenis_produk_filter').val();
                     },
-                    beforeSend: function() {
+                    reSend: function() {
                         $('#loadingScreen').removeClass('d-none');
                     },
                     complete: function() {
@@ -231,6 +252,11 @@
                     {
                         data: 'nper',
                         name: 'nper',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
                         className: 'align-middle text-center'
                     },
                     {
@@ -294,8 +320,9 @@
                 var jenisData = $('#jenis_data_filter').val();
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
+                var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
+                var infoText = jenisData + " - " + nper + " - " + statusPembayaran + " - " + jenisProduk;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

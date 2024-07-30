@@ -81,8 +81,20 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
 
 
-        // Report Sales
-        Route::get('/report-sales', [SuperAdminController::class, 'indexreportsales'])->name('reportsales.index');
+        // Report Sales Billper existing
+        Route::get('/report-salesbillperexisting', [SuperAdminController::class, 'indexreportsalesbillperexisting'])->name('reportsalesbillperexisting.index');
+        Route::get('/get-data-reportbillpersuperadmin', [SuperAdminController::class, 'getDatareportbillpersuperadmin'])->name('getDatareportbillpersuperadmin');
+        Route::get('/download/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadAllExcelreportbillpersuperadmin'])->name('download.excelreportbillpersuperadmin');
+        Route::post('/download/filtered/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportbillpersuperadmin'])->name('download.filtered.excelreportbillpersuperadmin');
+
+
+        // Report Sales pranpc
+        Route::get('/report-salespranpc', [SuperAdminController::class, 'indexreportsalespranpc'])->name('reportsalespranpc.index');
+        Route::get('/get-data-reportpranpcsuperadmin', [SuperAdminController::class, 'getDatareportpranpcsuperadmin'])->name('getDatareportpranpcsuperadmin');
+        Route::get('/download/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadAllExcelreportpranpcsuperadmin'])->name('download.excelreportpranpcsuperadmin');
+        Route::post('/download/filtered/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportpranpcsuperadmin'])->name('download.filtered.excelreportpranpcsuperadmin');
+
+
 
 
         // Tool Pra NPC
@@ -204,6 +216,5 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('info-reportassignmentpranpc/{id}', [UserController::class, 'inforeportassignmentpranpc'])->name('info-reportassignmentpranpc');
         Route::post('update-reportassignmentpranpc/{id}', [UserController::class, 'updatereportassignmentpranpc'])->name('update-reportassignmentpranpc');
         Route::post('/reset-reportassignmentpranpc/{id}', [UserController::class, 'resetReportAssignmentpranpc'])->name('reset-reportassignmentpranpc');
-
     });
 });

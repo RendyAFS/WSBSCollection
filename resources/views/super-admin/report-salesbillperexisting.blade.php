@@ -1,16 +1,17 @@
-@extends('layouts.app-admin')
+@extends('layouts.app-super-admin')
+
 @extends('layouts.loading')
 
 @section('content')
     <div class="card shadow shadow-sm">
         <div class="card-body">
-            <div class="mb-4">
+            <div class="mb-3">
                 <span class="fw-bold fs-2">
                     Filter Data
                 </span>
             </div>
             {{-- Filter Form --}}
-            <form id="filterForm" action="{{ route('report-all-adminbillper.index') }}" method="GET">
+            <form id="filterForm" action="{{ route('reportsalesbillperexisting.index') }}" method="GET">
                 <div class="row mb-3">
                     <div class="col-md-3">
                         <label for="month" class="form-label fw-bold">Bulan</label>
@@ -140,7 +141,7 @@
             Detail Billper - Existing
         </span>
         <div class="btn-group">
-            <a href="{{ route('download.excelreportbillper') }}" class="btn btn-green">
+            <a href="{{ route('download.excelreportbillpersuperadmin') }}" class="btn btn-green">
                 <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
             </a>
             <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
@@ -154,7 +155,7 @@
                             <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="downloadForm" action="{{ route('download.filtered.excelreportbillper') }}"
+                        <form id="downloadForm" action="{{ route('download.filtered.excelreportbillpersuperadmin') }}"
                             method="POST">
                             @csrf
                             <div class="modal-body">
@@ -195,8 +196,10 @@
             </ul>
         </div>
     </div>
+
     {{-- New Table --}}
-    <table class="table table-hover table-bordered datatable shadow" id="datareportbillper" style="width: 100%">
+    <table class="table table-hover table-bordered datatable shadow" id="datareportbillpersuperadmin"
+        style="width: 100%">
         <thead>
             <tr>
                 <th id="th" class="align-middle text-center">SND</th>
@@ -218,13 +221,13 @@
 @push('scripts')
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
-            var dataTable = new DataTable('#datareportbillper', {
+            var dataTable = new DataTable('#datareportbillpersuperadmin', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('getDatareportbillper') }}",
+                    url: "{{ route('getDatareportbillpersuperadmin') }}",
                     type: 'GET',
                     data: function(d) {
                         d.month = document.getElementById('month').value;

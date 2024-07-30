@@ -4,18 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
 use App\Exports\PranpcExport;
+use App\Exports\SalesReportBillperExisting;
+use App\Exports\SalesReportPranpc;
 use App\Imports\DataMasterImport;
 use App\Imports\PranpcImport;
 use App\Models\All;
 use App\Models\DataMaster;
 use App\Models\Pranpc;
 use App\Models\Riwayat;
+use App\Models\SalesReport;
 use App\Models\TempAll;
 use App\Models\TempDataMaster;
 use App\Models\TempPranpc;
 use App\Models\User;
+use App\Models\VocKendala;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
@@ -916,7 +921,9 @@ class SuperAdminController extends Controller
             'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
         ];
 
-        $pdf = PDF::loadView('components.generate-pdf-pranpc', $data);
+        $pdf = App::make('dompdf.wrapper');
+        // $pdf->loadView('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+        $pdf->loadView('components.generate-pdf-pranpc', $data);
         return $pdf->download('invoice.pdf');
     }
 
@@ -1045,9 +1052,313 @@ class SuperAdminController extends Controller
     }
 
 
-    public function indexreportsales()
+    // report sales BIllper Existing
+    public function indexreportsalesbillperexisting(Request $request)
     {
-        $title = 'Report Sales';
-        return view('super-admin.report-sales', compact('title'));
+        $title = 'Report Sales Billper Existing';
+        confirmDelete();
+
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', '');
+        $jenisBiling = $request->input('jenis_biling', ''); // New filter
+
+        // Calculate the current date in 'Y-m' format
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $jenisBiling, $currentMonth) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('all_id'); // Ensure only records with all_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
+
+            // Apply jenis_biling filter if provided
+            if ($jenisBiling === 'Billper') {
+                $query->whereHas('alls', function ($q) use ($currentMonth) {
+                    $q->where('nper', $currentMonth);
+                });
+            } elseif ($jenisBiling === 'Existing') {
+                $query->whereHas('alls', function ($q) use ($currentMonth) {
+                    $q->where('nper', '<', $currentMonth);
+                });
+            }
+        }])->get();
+
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount([
+                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear, $currentMonth, $jenisBiling) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth);
+
+                    // Apply jenis_biling filter if provided
+                    if ($jenisBiling === 'Billper') {
+                        $query->where('nper', $currentMonth);
+                    } elseif ($jenisBiling === 'Existing') {
+                        $query->where('nper', '<', $currentMonth);
+                    }
+                },
+                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->whereNotNull('all_id');
+                }
+            ])
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->whereNotNull('all_id')
+                ->distinct('all_id')
+                ->count('all_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
+
+        return view('super-admin.report-salesbillperexisting', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales', 'jenisBiling'));
+    }
+
+    public function getDatareportbillpersuperadmin(Request $request)
+    {
+        if ($request->ajax()) {
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', '');
+            $jenisBiling = $request->input('jenis_biling', ''); // New filter
+
+            // Calculate the current date in 'Y-m' format
+            $currentMonth = Carbon::now()->format('Y-m');
+
+            $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
+                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_billper->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            // Apply jenis_biling filter if provided
+            if ($jenisBiling === 'Billper') {
+                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', $currentMonth);
+                });
+            } elseif ($jenisBiling === 'Existing') {
+                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
+                    $query->where('nper', '<', $currentMonth);
+                });
+            }
+
+            $data_report_billper = $data_report_billper->get();
+
+            return datatables()->of($data_report_billper)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-buttons-adminbillper', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function downloadAllExcelreportbillpersuperadmin()
+    {
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->get();
+
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper-Existing_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportbillpersuperadmin(Request $request)
+    {
+        $reports = SalesReport::with('alls', 'user', 'vockendals')
+            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
+    }
+
+
+
+    // report sales Pranpc
+    public function indexreportsalespranpc(Request $request)
+    {
+        $title = 'Report Sales Pranpc';
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', ''); // New filter
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month and year
+        // and include reports with a non-null pranpc_id
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('pranpc_id'); // Ensure only records with pranpc_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
+        }])->get();
+
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount(['pranpcs as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth);
+            }, 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                $query->whereYear('created_at', $filterYear)
+                    ->whereMonth('created_at', $filterMonth)
+                    ->whereNotNull('pranpc_id');
+            }])
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
+
+        return view('super-admin.report-salespranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
+    }
+
+    public function getDatareportpranpcsuperadmin(Request $request)
+    {
+        if ($request->ajax()) {
+            // Get filter values from request
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', ''); // New filter
+
+            // Build the query with filters
+            $data_report_pranpc = SalesReport::with('pranpcs', 'user', 'vockendals')
+                ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_pranpc->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            $data_report_pranpc = $data_report_pranpc->get();
+
+            return datatables()->of($data_report_pranpc)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-pranpc-buttons-adminpranpc', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+
+
+    public function downloadAllExcelreportpranpcsuperadmin()
+    {
+        $reports = SalesReport::with('pranpcs', 'user', 'vockendals')
+            ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+            ->get();
+
+        return Excel::download(new SalesReportPranpc($reports), 'Report_Pranpc_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportpranpcsuperadmin(Request $request)
+    {
+        $reports = SalesReport::with('pranpcs', 'user', 'vockendals')
+            ->whereNotNull('pranpc_id') // Ensure only records with pranpc_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportPranpc($reports), $fileName);
     }
 }

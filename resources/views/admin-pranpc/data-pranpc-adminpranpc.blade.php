@@ -411,7 +411,7 @@
                 var bulanFilter = $('#bulan_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
 
-                var infoText = yearFilter + "-" + bulanFilter + " - " + statusPembayaran;
+                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

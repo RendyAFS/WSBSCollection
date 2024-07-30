@@ -12,6 +12,7 @@ use PDF;
 use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -40,6 +41,7 @@ class AdminBillperController extends Controller
         if ($request->ajax()) {
             $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
 
+            // Filter berdasarkan jenis_data
             if ($request->has('jenis_data')) {
                 $jenisData = $request->input('jenis_data');
                 $currentMonth = Carbon::now()->format('Y-m');
@@ -51,11 +53,13 @@ class AdminBillperController extends Controller
                 }
             }
 
+            // Filter berdasarkan nper
             if ($request->has('nper')) {
                 $nper = $request->input('nper');
                 $query->where('nper', 'LIKE', "%$nper%");
             }
 
+            // Filter berdasarkan status_pembayaran
             if ($request->has('status_pembayaran')) {
                 $statusPembayaran = $request->input('status_pembayaran');
                 if ($statusPembayaran != 'Semua') {
@@ -63,6 +67,16 @@ class AdminBillperController extends Controller
                 }
             }
 
+            // Filter berdasarkan jenis_produk
+            if ($request->has('jenis_produk')) {
+                $jenisProduk = $request->input('jenis_produk');
+                if ($jenisProduk !== 'Semua') {
+                    $query->where('produk', '=', $jenisProduk);
+                }
+            }
+
+
+            // Ambil data dan kembalikan sebagai JSON dengan Datatables
             $data_alls = $query->get();
 
             return datatables()->of($data_alls)
@@ -78,6 +92,7 @@ class AdminBillperController extends Controller
         }
     }
 
+
     public function exportbillper()
     {
         $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
@@ -89,6 +104,7 @@ class AdminBillperController extends Controller
     {
         $bulanTahun = $request->input('nper');
         $statusPembayaran = $request->input('status_pembayaran');
+        $jenisProduk = $request->input('jenis_produk');
 
         // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
@@ -99,15 +115,20 @@ class AdminBillperController extends Controller
         // Filter berdasarkan status_pembayaran jika tidak "Semua"
         if ($statusPembayaran && $statusPembayaran !== 'Semua') {
             $query->where('status_pembayaran', $statusPembayaran);
-        } else {
+        }
+
+        // Filter berdasarkan jenis_produk jika tidak "Semua"
+        if ($jenisProduk && $jenisProduk !== 'Semua') {
+            $query->where('produk', $jenisProduk);
         }
 
         // Ambil data yang sudah difilter
         $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
     }
+
 
     public function editallsadminbillper($id)
     {
@@ -222,17 +243,45 @@ class AdminBillperController extends Controller
 
         // Retrieve all sales with total assignments and total visits
         $sales = User::where('level', 'user')
-            ->withCount(['alls as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
-                $query->whereYear('created_at', $filterYear)
-                    ->whereMonth('created_at', $filterMonth);
-            }, 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
-                $query->whereYear('created_at', $filterYear)
-                    ->whereMonth('created_at', $filterMonth);
-            }])
+            ->withCount([
+                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear, $currentMonth, $jenisBiling) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth);
+
+                    // Apply jenis_biling filter if provided
+                    if ($jenisBiling === 'Billper') {
+                        $query->where('nper', $currentMonth);
+                    } elseif ($jenisBiling === 'Existing') {
+                        $query->where('nper', '<', $currentMonth);
+                    }
+                },
+                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->whereNotNull('all_id');
+                }
+            ])
             ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->whereNotNull('all_id')
+                ->distinct('all_id')
+                ->count('all_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
+
 
         return view('admin-billper.report-all-adminbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales', 'jenisBiling'));
     }
+
+
 
 
 

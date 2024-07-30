@@ -150,7 +150,7 @@ class UserController extends Controller
             $query = SalesReport::with('alls') // Ensure 'alls' relationship is eager loaded
                 ->whereHas('alls', function ($query) use ($userId) {
                     $query->where('users_id', $userId)
-                        ->where('status_pembayaran', 'Pending');
+                        ->whereIn('status_pembayaran', ['Pending', 'Paid']);
                 });
 
             $data_sales_reports = $query->get(); // Get the data
@@ -397,8 +397,9 @@ class UserController extends Controller
             $query = SalesReport::with('pranpcs') // Ensure 'pranpcs' relationship is eager loaded
                 ->whereHas('pranpcs', function ($query) use ($userId) {
                     $query->where('users_id', $userId)
-                        ->where('status_pembayaran', 'Pending');
+                        ->whereIn('status_pembayaran', ['Pending', 'Paid']);
                 });
+
 
             $data_sales_reports = $query->get(); // Get the data
 

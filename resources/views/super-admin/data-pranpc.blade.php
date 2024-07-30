@@ -83,6 +83,9 @@
                     </div>
                 </div>
 
+                {{-- Button Riwayat --}}
+                <a class="btn btn-white me-2" href="{{route('pranpcriwayat.index')}}" role="button"><i class="bi bi-clock-fill"></i> Riwayat</a>
+
                 {{-- BTN DOWNLOAD --}}
                 <div class="btn-group">
                     <a href="{{ route('download.excelpranpc') }}" class="btn btn-green">

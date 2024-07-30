@@ -5,7 +5,7 @@
         <div class="left-side">
             <div class="login-box">
                 <div class="header-landingpage text-center mt-5 mb-5 pb-5 d-block d-md-none">
-                    <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="Logo 1" class="logohead">
+                    <img src="{{  asset('storage/file_assets/logo-telkom.png') }}" alt="Logo 1" class="logohead">
                 </div>
                 <div class="d-flex flex-column align-items-center mt-5 pt-5">
                     <span class="fs-2 fw-bold"> Witel SBS Data Collection </span>
@@ -19,9 +19,9 @@
             </div>
         </div>
         <div class="right-side"
-            style="background-image: url('{{ Vite::asset('resources/images/telkom-sbs.png') }}'); background-size: cover; background-position: center;">
+            style="background-image: url('{{  asset('storage/file_assets/telkom-sbs.png') }}'); background-size: cover; background-position: center;">
             <div class="logo-container">
-                <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt="Logo 1" class="logo">
+                <img src="{{  asset('storage/file_assets/logo-telkom.png') }}" alt="Logo 1" class="logo">
             </div>
         </div>
     </div>

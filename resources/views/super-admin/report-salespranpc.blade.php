@@ -1,146 +1,140 @@
-@extends('layouts.app-admin')
+@extends('layouts.app-super-admin')
+
 @extends('layouts.loading')
 
 @section('content')
-    <div class="card shadow shadow-sm">
-        <div class="card-body">
-            <div class="mb-4">
-                <span class="fw-bold fs-2">
-                    Filter Data
-                </span>
-            </div>
-            {{-- Filter Form --}}
-            <form id="filterForm" action="{{ route('report-all-adminbillper.index') }}" method="GET">
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label for="month" class="form-label fw-bold">Bulan</label>
-                        @php
-                            $months = [
-                                '01' => 'Januari',
-                                '02' => 'Februari',
-                                '03' => 'Maret',
-                                '04' => 'April',
-                                '05' => 'Mei',
-                                '06' => 'Juni',
-                                '07' => 'Juli',
-                                '08' => 'Agustus',
-                                '09' => 'September',
-                                '10' => 'Oktober',
-                                '11' => 'November',
-                                '12' => 'Desember',
-                            ];
-                        @endphp
-
-                        <select id="month" name="month" class="form-control">
-                            @foreach ($months as $value => $name)
-                                <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
-                        <select id="year" name="year" class="form-control">
-                            @for ($y = now()->year; $y >= 2000; $y--)
-                                <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
-                                    {{ $y }}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
-                        <select id="filter_sales" name="filter_sales" class="form-control">
-                            <option value="">Semua</option>
-                            @foreach ($sales as $sale)
-                                <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
-                                    {{ $sale->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="jenis_biling" class="form-label fw-bold mt-3 mt-md-0">Jenis Billing</label>
-                        <select id="jenis_biling" name="jenis_biling" class="form-control">
-                            <option value="">Semua</option>
-                            <option value="Billper" {{ $jenisBiling == 'Billper' ? 'selected' : '' }}>Billper</option>
-                            <option value="Existing" {{ $jenisBiling == 'Existing' ? 'selected' : '' }}>Existing
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-12 mt-3 d-flex justify-content-end align-items-end">
-                        <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
-                            <i class="bi bi-funnel-fill"></i> Filter
-                        </button>
-
-                    </div>
+    <div class="px-3 py-4">
+        <div class="card shadow shadow-sm">
+            <div class="card-body">
+                <div class="mb-3">
+                    <span class="fw-bold fs-2">
+                        Filter Data
+                    </span>
                 </div>
-            </form>
+                {{-- Filter Form --}}
+                <form id="filterForm" action="{{ route('reportsalespranpc.index') }}" method="GET">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="month" class="form-label fw-bold">Bulan</label>
+                            @php
+                                // Array of month names in Indonesian
+                                $months = [
+                                    '01' => 'Januari',
+                                    '02' => 'Februari',
+                                    '03' => 'Maret',
+                                    '04' => 'April',
+                                    '05' => 'Mei',
+                                    '06' => 'Juni',
+                                    '07' => 'Juli',
+                                    '08' => 'Agustus',
+                                    '09' => 'September',
+                                    '10' => 'Oktober',
+                                    '11' => 'November',
+                                    '12' => 'Desember',
+                                ];
+                            @endphp
+
+                            <select id="month" name="month" class="form-control">
+                                @foreach ($months as $value => $name)
+                                    <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
+                            <select id="year" name="year" class="form-control">
+                                @for ($y = now()->year; $y >= 2000; $y--)
+                                    <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
+                                        {{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
+                            <select id="filter_sales" name="filter_sales" class="form-control">
+                                <option value="">Semua</option>
+                                @foreach ($sales as $sale)
+                                    <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
+                                        {{ $sale->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
+                            <button type="submit" class="btn btn-secondary mt-3 mt-md-0 me-2">
+                                <i class="bi bi-funnel-fill"></i> Filter
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="mb-4">
-        <span class="fw-bold fs-2">
-            Report Progres Sales
-        </span>
-    </div>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col" class="align-middle">No.</th>
-                <th scope="col" class="align-middle">Nama Sales</th>
-                <th scope="col" class="text-center align-middle">WO</th>
-                <th scope="col" class="text-center align-middle">Total Visit</th>
-                <th scope="col" class="text-center align-middle">WO Sudah Visit</th>
-                <th scope="col" class="text-center align-middle">WO Belum Visit</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($sales as $sale)
+
+        <div class="mb-4">
+            <span class="fw-bold fs-2">
+                Report Progres Sales
+            </span>
+        </div>
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
-                    <td class="align-middle">{{ $sale->name }}</td>
-                    <td class="text-center align-middle">{{ $sale->total_assignment }}</td>
-                    <td class="text-center align-middle">{{ $sale->total_visit }}</td>
-                    <td class="text-center align-middle">{{ $sale->wo_sudah_visit }}</td>
-                    <td class="text-center align-middle">{{ $sale->wo_belum_visit }}</td>
+                    <th scope="col" class="align-middle">No.</th>
+                    <th scope="col" class="align-middle">Nama Sales</th>
+                    <th scope="col" class="text-center align-middle">WO</th>
+                    <th scope="col" class="text-center align-middle">Total Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Sudah Visit</th>
+                    <th scope="col" class="text-center align-middle">WO Belum Visit</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-
-    <div class="mb-4">
+            </thead>
+            <tbody>
+                @foreach ($sales as $sale)
+                    <tr>
+                        <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
+                        <td class="align-middle">{{ $sale->name }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_assignment }}</td>
+                        <td class="text-center align-middle">{{ $sale->total_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_sudah_visit }}</td>
+                        <td class="text-center align-middle">{{ $sale->wo_belum_visit }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
         <span class="fw-bold fs-2">
-            Report Billper - Existing
+            Report Pranpc
         </span>
     </div>
 
     {{-- Table --}}
-    <table class=" table table-hover">
+    <table class="table">
         <thead>
             <tr>
-                <th scope="col" class="align-middle">No. </th>
-                <th scope="col" class="align-middle">Jenis Voc Kendala</th>
-                <th scope="col" class="text-center align-middle">Total Reports</th>
+                <th scope="col">No. </th>
+                <th scope="col">Jenis Voc Kendala</th>
+                <th scope="col">Total Reports</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($voc_kendalas as $voc_kendala)
                 <tr>
-                    <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
-                    <td class="align-middle">{{ $voc_kendala->voc_kendala }}</td>
-                    <td class="text-center align-middle">{{ $voc_kendala->sales_reports_count }}</td>
+                    <th scope="row">{{ $loop->iteration }}</th>
+                    <td>{{ $voc_kendala->voc_kendala }}</td>
+                    <td>{{ $voc_kendala->sales_reports_count }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
     <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
         <span class="fw-bold fs-2">
-            Detail Billper - Existing
+            Detail Pranpc
         </span>
         <div class="btn-group">
-            <a href="{{ route('download.excelreportbillper') }}" class="btn btn-green">
+            <a href="{{ route('download.excelreportpranpcsuperadmin') }}" class="btn btn-green">
                 <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
             </a>
             <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
@@ -154,21 +148,20 @@
                             <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="downloadForm" action="{{ route('download.filtered.excelreportbillper') }}"
-                            method="POST">
+                        <form id="downloadForm" action="{{ route('download.filtered.excelreportpranpcsuperadmin') }}" method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="form-group mb-3">
                                     <label for="tahun_bulan">Pilih Bulan-Tahun</label>
-                                    <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control"
-                                        required>
+                                    <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control" required>
                                 </div>
                                 <div class="form-group mb-3">
                                     <label for="nama_sales">Nama Sales</label>
                                     <select id="nama_sales" name="nama_sales" class="form-select">
                                         <option value="">Semua</option>
                                         @foreach ($sales as $sale)
-                                            <option value="{{ $sale->name }}">{{ $sale->name }}</option>
+                                            <option value="{{ $sale->name }}">{{ $sale->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -195,8 +188,8 @@
             </ul>
         </div>
     </div>
-    {{-- New Table --}}
-    <table class="table table-hover table-bordered datatable shadow" id="datareportbillper" style="width: 100%">
+    {{-- DataTable --}}
+    <table class="table table-hover table-bordered datatable shadow" id="datareportpranpcsuperadmin" style="width: 100%">
         <thead>
             <tr>
                 <th id="th" class="align-middle text-center">SND</th>
@@ -218,19 +211,20 @@
 @push('scripts')
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
-            var dataTable = new DataTable('#datareportbillper', {
+            // Initialize DataTable
+            var dataTable = new DataTable('#datareportpranpcsuperadmin', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('getDatareportbillper') }}",
+                    url: "{{ route('getDatareportpranpcsuperadmin') }}",
                     type: 'GET',
                     data: function(d) {
+                        // Add filter data to request
                         d.month = document.getElementById('month').value;
                         d.year = document.getElementById('year').value;
                         d.filter_sales = document.getElementById('filter_sales').value;
-                        d.jenis_biling = document.getElementById('jenis_biling').value; // New filter
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -269,8 +263,8 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'alls.nama',
-                        name: 'alls.nama',
+                        data: 'pranpcs.nama',
+                        name: 'pranpcs.nama',
                         className: 'align-middle text-center'
                     },
                     {
@@ -303,13 +297,9 @@
                         name: 'evidence',
                         className: 'align-middle text-center'
                     }
-                ]
+                ],
             });
-        });
-
-
-        // Input date now
-        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date for month input
             var dateInput = document.getElementById('tahun_bulan');
             var now = new Date();
             var month = ('0' + (now.getMonth() + 1)).slice(-2);

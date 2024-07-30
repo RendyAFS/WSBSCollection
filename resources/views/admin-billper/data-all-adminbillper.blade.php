@@ -107,12 +107,22 @@
                                         </div>
                                         <div class="form-group mb-3">
                                             <label for="status_pembayaran">Status Pembayaran</label>
-                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
-                                                aria-label="Default select example" required>
+                                            <select id="status_pembayaran_download" name="status_pembayaran"
+                                                class="form-select" aria-label="Default select example" required>
                                                 <option selected value="Semua">Semua</option>
                                                 <option value="Paid">Paid</option>
                                                 <option value="Pending">Pending</option>
                                                 <option value="Unpaid">Unpaid</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="jenis_produk_download">Jenis Produk</label>
+                                            <select id="jenis_produk_download" name="jenis_produk" class="form-select"
+                                                aria-label="Default select example">
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Telepon">Telepon</option>
+                                                <option value="Wifi Manage Service">Wifi Manage Service</option>
                                             </select>
                                         </div>
                                     </div>

@@ -19,20 +19,35 @@
                     Data Master
                 </a>
             </li>
+            <div class="my-4">
+                {{-- diver --}}
+            </div>
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataReportCollapse" role="button"
+                aria-expanded="false" aria-controls="dataReportCollapse">
+                Report Data
+                <i class="bi bi-chevron-down float-end"></i>
+            </span>
+            <div class="collapse show" id="dataReportCollapse">
+                <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
+                    <a href="{{ route('reportdata.index') }}">
+                        <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
+                        Report Pelanggan
+                    </a>
+                </li>
 
-            <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
-                <a href="{{ route('reportdata.index') }}">
-                    <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
-                    Report Pelanggan
-                </a>
-            </li>
-
-            <li class="{{ Route::is('reportsales.index') ? 'active' : '' }}">
-                <a href="{{ route('reportsales.index') }}">
-                    <i class="bi bi-flag{{ Route::is('reportsales.index') ? '-fill' : '' }}"></i>
-                    Report Sales
-                </a>
-            </li>
+                <li class="{{ Route::is('reportsalesbillperexisting.index') ? 'active' : '' }}">
+                    <a href="{{ route('reportsalesbillperexisting.index') }}">
+                        <i class="bi bi-flag{{ Route::is('reportsalesbillperexisting.index') ? '-fill' : '' }}"></i>
+                        Report Sales Bilper-Existing
+                    </a>
+                </li>
+                <li class="{{ Route::is('reportsalespranpc.index') ? 'active' : '' }}">
+                    <a href="{{ route('reportsalespranpc.index') }}">
+                        <i class="bi bi-flag{{ Route::is('reportsalespranpc.index') ? '-fill' : '' }}"></i>
+                        Report Sales Pranpc
+                    </a>
+                </li>
+            </div>
 
             <!-- Manajer Data Collapse Group -->
             <div class="my-4">

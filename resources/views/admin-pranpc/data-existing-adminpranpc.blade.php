@@ -108,6 +108,16 @@
                                                 <option value="Unpaid">Unpaid</option>
                                             </select>
                                         </div>
+                                        <div class="form-group mb-3">
+                                            <label for="jenis_produk_download">Jenis Produk</label>
+                                            <select id="jenis_produk_download" name="jenis_produk" class="form-select"
+                                                aria-label="Default select example">
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Telepon">Telepon</option>
+                                                <option value="Wifi Manage Service">Wifi Manage Service</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" id="btn-filter-download"
@@ -304,7 +314,7 @@
                 var statusPembayaran = $('#status_pembayaran_filter').val();
                 var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk ;
+                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

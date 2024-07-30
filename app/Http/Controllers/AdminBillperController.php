@@ -104,6 +104,7 @@ class AdminBillperController extends Controller
     {
         $bulanTahun = $request->input('nper');
         $statusPembayaran = $request->input('status_pembayaran');
+        $jenisProduk = $request->input('jenis_produk');
 
         // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
@@ -114,15 +115,20 @@ class AdminBillperController extends Controller
         // Filter berdasarkan status_pembayaran jika tidak "Semua"
         if ($statusPembayaran && $statusPembayaran !== 'Semua') {
             $query->where('status_pembayaran', $statusPembayaran);
-        } else {
+        }
+
+        // Filter berdasarkan jenis_produk jika tidak "Semua"
+        if ($jenisProduk && $jenisProduk !== 'Semua') {
+            $query->where('produk', $jenisProduk);
         }
 
         // Ambil data yang sudah difilter
         $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
     }
+
 
     public function editallsadminbillper($id)
     {

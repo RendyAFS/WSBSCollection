@@ -20,6 +20,7 @@
                     <th id="th" class="align-middle text-center">Bill Bln</th>
                     <th id="th" class="align-middle text-center">Bill Bln1</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
+                    <th id="th" class="align-middle text-center">Waktu Visit</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
@@ -115,6 +116,11 @@
                                 return '<span class="badge text-bg-success">Paid</span>';
                             return data;
                         }
+                    },
+                    {
+                        data: 'waktu_visit',
+                        name: 'waktu_visit',
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'opsi-tabel-reportassignmentpranpc',

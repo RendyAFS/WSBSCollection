@@ -3,127 +3,75 @@
 
 @section('content')
     <div class="px-3 py-4">
-        <div class="mb-4">
-            <span class="fw-bold fs-2">
-                Filter Data
-            </span>
-        </div>
         {{-- Filter Form --}}
-        <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="month" class="form-label fw-bold">Bulan</label>
-                    @php
-                        // Array of month names in Indonesian
-                        $months = [
-                            '01' => 'Januari',
-                            '02' => 'Februari',
-                            '03' => 'Maret',
-                            '04' => 'April',
-                            '05' => 'Mei',
-                            '06' => 'Juni',
-                            '07' => 'Juli',
-                            '08' => 'Agustus',
-                            '09' => 'September',
-                            '10' => 'Oktober',
-                            '11' => 'November',
-                            '12' => 'Desember',
-                        ];
-                    @endphp
+        <div class="card shadow shadow-sm">
+            <div class="card-body">
+                <div class="mb-3">
+                    <span class="fw-bold fs-2">
+                        Filter Data
+                    </span>
+                </div>
+                <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="month" class="form-label fw-bold">Bulan</label>
+                            @php
+                                // Array of month names in Indonesian
+                                $months = [
+                                    '01' => 'Januari',
+                                    '02' => 'Februari',
+                                    '03' => 'Maret',
+                                    '04' => 'April',
+                                    '05' => 'Mei',
+                                    '06' => 'Juni',
+                                    '07' => 'Juli',
+                                    '08' => 'Agustus',
+                                    '09' => 'September',
+                                    '10' => 'Oktober',
+                                    '11' => 'November',
+                                    '12' => 'Desember',
+                                ];
+                            @endphp
 
-                    <select id="month" name="month" class="form-control">
-                        @foreach ($months as $value => $name)
-                            <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </select>
+                            <select id="month" name="month" class="form-control">
+                                @foreach ($months as $value => $name)
+                                    <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                </div>
-                <div class="col-md-3">
-                    <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
-                    <select id="year" name="year" class="form-control">
-                        @for ($y = now()->year; $y >= 2000; $y--)
-                            <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
-                                {{ $y }}
-                            </option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
-                    <select id="filter_sales" name="filter_sales" class="form-control">
-                        <option value="">Semua</option>
-                        @foreach ($sales as $sale)
-                            <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
-                                {{ $sale->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
-                    <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
-                        <i class="bi bi-funnel-fill"></i> Filter
-                    </button>
-                    <div class="btn-group">
-                        <a href="{{ route('download.excelreportexisting') }}" class="btn btn-green">
-                            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
-                        </a>
-                        <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu p-3">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <form id="downloadForm" action="{{ route('download.filtered.excelreportexisting') }}"
-                                        method="POST">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="form-group mb-3">
-                                                <label for="tahun_bulan">Pilih Bulan-Tahun</label>
-                                                <input type="month" id="tahun_bulan" name="tahun_bulan"
-                                                    class="form-control" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="nama_sales">Nama Sales</label>
-                                                <select id="nama_sales" name="nama_sales" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    @foreach ($sales as $sale)
-                                                        <option value="{{ $sale->name }}">{{ $sale->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="voc_kendala">VOC & Kendala</label>
-                                                <select id="voc_kendala" name="voc_kendala" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    @foreach ($voc_kendalas as $voc_kendala)
-                                                        <option value="{{ $voc_kendala->voc_kendala }}">
-                                                            {{ $voc_kendala->voc_kendala }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" id="btn-filter-download"
-                                                class="btn btn-green btn-filter-download">
-                                                <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
+                            <select id="year" name="year" class="form-control">
+                                @for ($y = now()->year; $y >= 2000; $y--)
+                                    <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
+                                        {{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
+                            <select id="filter_sales" name="filter_sales" class="form-control">
+                                <option value="">Semua</option>
+                                @foreach ($sales as $sale)
+                                    <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
+                                        {{ $sale->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
+                            <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
+                                <i class="bi bi-funnel-fill"></i> Filter
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </form>
+        </div>
         <div class="mb-4">
             <span class="fw-bold fs-2">
                 Report Progres Sales
@@ -180,10 +128,66 @@
             </tbody>
         </table>
 
-        <div class="mt-5 mb-2 ">
+        <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
             <span class="fw-bold fs-2">
                 Detail Pranpc
             </span>
+            <div class="btn-group">
+                <a href="{{ route('download.excelreportexisting') }}" class="btn btn-green">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
+                </a>
+                <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu p-3">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="downloadForm" action="{{ route('download.filtered.excelreportexisting') }}"
+                                method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="tahun_bulan">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="nama_sales">Nama Sales</label>
+                                        <select id="nama_sales" name="nama_sales" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($sales as $sale)
+                                                <option value="{{ $sale->name }}">{{ $sale->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="voc_kendala">VOC & Kendala</label>
+                                        <select id="voc_kendala" name="voc_kendala" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($voc_kendalas as $voc_kendala)
+                                                <option value="{{ $voc_kendala->voc_kendala }}">
+                                                    {{ $voc_kendala->voc_kendala }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="btn-filter-download"
+                                        class="btn btn-green btn-filter-download">
+                                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ul>
+            </div>
         </div>
         {{-- DataTable --}}
         <table class="table table-hover table-bordered datatable shadow" id="datareportexisting" style="width: 100%">

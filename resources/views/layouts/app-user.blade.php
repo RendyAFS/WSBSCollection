@@ -40,7 +40,7 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg ">
                 <div class="container-fluid d-flex align-items-center justify-content-between">
-                    <img src="{{ Vite::asset('resources/images/logo-telkom2.png') }}" alt=""
+                    <img src="{{  asset('storage/file_assets/logo-telkom2.png') }}" alt=""
                         id="nav-logo-telkom">
 
                     <div class="dropdown ms-auto" id="drowpdown-account">

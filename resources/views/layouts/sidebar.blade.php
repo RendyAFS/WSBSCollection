@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <div id="sidebar">
     <div class="sidebar-header d-flex align-items-center">
-        <img src="{{ Vite::asset('resources/images/logo-telkom2.png') }}" alt="" id="side-logo-telkom">
+        <img src="{{  asset('storage/file_assets/logo-telkom2.png') }}" alt="" id="side-logo-telkom">
         <span class="fs-4 fw-bold">Data Collection</span>
     </div>
     <ul class="list-unstyled components p-4">

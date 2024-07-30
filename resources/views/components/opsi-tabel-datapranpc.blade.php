@@ -31,8 +31,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="pdfForm{{ $pranpc->id }}">Download
+                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-secondary" form="pdfForm{{ $pranpc->id }}">Download
                         PDF</button>
                 </div>
             </div>

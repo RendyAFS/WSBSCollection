@@ -117,6 +117,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('update-pranpcs/{id}', [SuperAdminController::class, 'updatepranpcs'])->name('update-pranpcs');
         Route::get('/download/excelpranpc', [SuperAdminController::class, 'exportpranpc'])->name('download.excelpranpc');
         Route::post('/download/filtered/excelpranpc', [SuperAdminController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
+        Route::get('viewpranpc/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFpranpc'])->name('viewpranpc.pdf');
         Route::get('pranpc/pdf/{id}', [SuperAdminController::class, 'generatePDFpranpc'])->name('pranpc.pdf');
         Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
         Route::get('/data-pranp-criwayat', [SuperAdminController::class, 'indexpranpcriwayat'])->name('pranpcriwayat.index');

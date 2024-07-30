@@ -9,7 +9,7 @@
                     <div class="card">
                         <div class="card-header fs-5 fw-bold" id="calc-stunting">Informasi</div>
                         <div class="d-flex justify-content-center mt-3 mb-4">
-                            <img src="{{ Vite::asset('resources/images/logo-telkom.png') }}" alt=""
+                            <img src="{{  asset('storage/file_assets/logo-telkom.png') }}" alt=""
                                 id="home-logo-telkom">
                         </div>
                         <div class="card-body">

@@ -70,8 +70,12 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('gettabelalls', [SuperAdminController::class, 'getDataalls'])->name('gettabelalls');
         Route::get('edit-alls/{id}', [SuperAdminController::class, 'editalls'])->name('edit-alls');
         Route::post('update-alls/{id}', [SuperAdminController::class, 'updatealls'])->name('update-alls');
+        Route::get('/superadmin/billper/{id}/view', [SuperAdminController::class, 'viewPDFreportbillpersuperadmin'])->name('view-pdf-report-billpersuperadmin');
+        Route::get('/superadmin/billper/{id}/download', [SuperAdminController::class, 'downloadPDFreportbillpersuperadmin'])->name('download-pdf-report-billpersuperadmin');
         Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
         Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
+        Route::get('viewbillperexisting/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFbillperexisting'])->name('viewbillperexisting.pdf');
+        Route::get('billperexisting/pdf/{id}', [SuperAdminController::class, 'generatePDFbillperexisting'])->name('billperexisting.pdf');
         Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
         Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
         Route::delete('/destroy-alls/{id}', [SuperAdminController::class, 'destroyalls'])->name('destroy-alls');
@@ -115,6 +119,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('gettabelpranpcs', [SuperAdminController::class, 'getDatapranpcs'])->name('gettabelpranpcs');
         Route::get('edit-pranpcs/{id}', [SuperAdminController::class, 'editpranpcs'])->name('edit-pranpcs');
         Route::post('update-pranpcs/{id}', [SuperAdminController::class, 'updatepranpcs'])->name('update-pranpcs');
+        Route::get('/superadminadmin/pranpc/{id}/view', [SuperAdminController::class, 'viewPDFreportpranpcsuperadmin'])->name('view-pdf-report-pranpcsuperadmin');
+        Route::get('/superadminadmin/pranpc/{id}/download', [SuperAdminController::class, 'downloadPDFreportpranpcsuperadmin'])->name('download-pdf-report-pranpcsuperadmin');
         Route::get('/download/excelpranpc', [SuperAdminController::class, 'exportpranpc'])->name('download.excelpranpc');
         Route::post('/download/filtered/excelpranpc', [SuperAdminController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.excelpranpc');
         Route::get('viewpranpc/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFpranpc'])->name('viewpranpc.pdf');
@@ -141,6 +147,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
         Route::post('/download/filtered/exceladminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.exceladminbillper');
         Route::get('edit-allsadminbillper/{id}', [AdminBillperController::class, 'editallsadminbillper'])->name('edit-allsadminbillper');
+        Route::get('viewbillperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'viewgeneratePDFbillperexistingadminbillper'])->name('viewbillperexistingadminbillper.pdf');
+        Route::get('billperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'generatePDFbillperexistingadminbillper'])->name('billperexistingadminbillper.pdf');
         Route::post('update-allsadminbillper/{id}', [AdminBillperController::class, 'updateallsadminbillper'])->name('update-allsadminbillper');
         Route::get('/admin/billper/{id}/view', [AdminBillperController::class, 'viewPDFreportbillper'])->name('view-pdf-report-billper');
         Route::get('/admin/billper/{id}/download', [AdminBillperController::class, 'downloadPDFreportbillper'])->name('download-pdf-report-billper');
@@ -163,6 +171,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('/download/filtered/exceladminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelpranpc'])->name('download.filtered.exceladminpranpc');
         Route::get('edit-pranpcsadminpranpc/{id}', [AdminPranpcController::class, 'editpranpcsadminpranpc'])->name('edit-pranpcsadminpranpc');
         Route::post('update-pranpcsadminpranpc/{id}', [AdminPranpcController::class, 'updatepranpcsadminpranpc'])->name('update-pranpcsadminpranpc');
+        Route::get('viewpranpcadminpranpc/pdf/{id}', [AdminPranpcController::class, 'viewgeneratePDFpranpcadminpranpc'])->name('viewpranpcadminpranpc.pdf');
+        Route::get('pranpcadminpranpc/pdf/{id}', [AdminPranpcController::class, 'generatePDFpranpcadminpranpc'])->name('pranpcadminpranpc.pdf');
         Route::get('/admin/pranpc/{id}/view', [AdminPranpcController::class, 'viewPDFreportpranpc'])->name('view-pdf-report-pranpc');
         Route::get('/admin/pranpc/{id}/download', [AdminPranpcController::class, 'downloadPDFreportpranpc'])->name('download-pdf-report-pranpc');
         Route::get('/download/excelreportpranpc', [AdminPranpcController::class, 'downloadAllExcelreportpranpc'])->name('download.excelreportpranpc');
@@ -179,6 +189,9 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('/download/filtered/excelexistingadminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelexisting'])->name('download.filtered.excelexistingadminpranpc');
         Route::get('edit-existingsadminpranpc/{id}', [AdminPranpcController::class, 'editexistingsadminpranpc'])->name('edit-existingsadminpranpc');
         Route::post('update-existingsadminpranpc/{id}', [AdminPranpcController::class, 'updateexistingsadminpranpc'])->name('update-existingsadminpranpc');
+        Route::get('viewexistingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'viewgeneratePDFexistingadminpranpc'])->name('viewexistingadminpranpc.pdf');
+        Route::get('existingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'generatePDFexistingadminpranpc'])->name('existingadminpranpc.pdf');
+        Route::get('/admin/pranpc/{id}/view', [AdminPranpcController::class, 'viewPDFreportpranpc'])->name('view-pdf-report-pranpc');
         Route::get('/admin/existing/{id}/view', [AdminPranpcController::class, 'viewPDFreportexisting'])->name('view-pdf-report-existing');
         Route::get('/admin/existing/{id}/download', [AdminPranpcController::class, 'downloadPDFreportexisting'])->name('download-pdf-report-existing');
         Route::get('/download/excelreportexisting', [AdminPranpcController::class, 'downloadAllExcelreportexisting'])->name('download.excelreportexisting');

@@ -525,11 +525,66 @@ class SuperAdminController extends Controller
         }
     }
 
+    public function viewgeneratePDFbillperexisting(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-billperexisting', $data);
+    }
+
+
+
+    public function generatePDFbillperexisting(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-billperexisting', $data);
+        return $pdf->download('invoice.pdf');
+    }
+
     public function editalls($id)
     {
         $title = 'Edit Data All';
         $all = All::findOrFail($id);
-        return view('super-admin.edit-all', compact('title', 'all'));
+        $user = $all->user ? $all->user : 'Tidak ada';
+        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $voc_kendala = VocKendala::all();
+        return view('super-admin.edit-all', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
 
 
@@ -566,6 +621,31 @@ class SuperAdminController extends Controller
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('all.index');
+    }
+
+    public function viewPDFreportbillpersuperadmin($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportbillpersuperadmin($id)
+    {
+        $all = All::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report - ' . $all->nama . '-' . $all->no_inet . '/' . ($all->user ? $all->user->name : 'Unknown') . '-' . ($all->user ? $all->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
     }
 
     public function checkFilePembayaran(Request $request)
@@ -1001,7 +1081,10 @@ class SuperAdminController extends Controller
     {
         $title = 'Edit Data PraNPC';
         $pranpc = Pranpc::findOrFail($id);
-        return view('super-admin.edit-pranpc', compact('title', 'pranpc'));
+        $user = $pranpc->user ? $pranpc->user->name : 'Tidak ada'; // Ambil name atau 'Tidak ada'
+        $sales_report = SalesReport::where('pranpc_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $voc_kendala = VocKendala::all();
+        return view('super-admin.edit-pranpc', compact('title', 'pranpc', 'user', 'sales_report', 'voc_kendala'));
     }
     public function updatepranpcs(Request $request, $id)
     {
@@ -1039,6 +1122,32 @@ class SuperAdminController extends Controller
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('pranpc.index');
     }
+
+    public function viewPDFreportpranpcsuperadmin($id)
+    {
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportpranpcsuperadmin($id)
+    {
+        $pranpc = Pranpc::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('pranpc_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report-' . $pranpc->nama . '-' . $pranpc->snd . '/' . ($pranpc->user ? $pranpc->user->name : 'Unknown') . '-' . ($pranpc->user ? $pranpc->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-reportpranpc-adminpranpc', compact('pranpc', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
 
 
     public function exportpranpc()

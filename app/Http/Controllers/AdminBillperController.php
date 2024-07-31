@@ -141,6 +141,58 @@ class AdminBillperController extends Controller
     }
 
 
+    public function viewgeneratePDFbillperexistingadminbillper(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-billperexisting', $data);
+    }
+
+
+
+    public function generatePDFbillperexistingadminbillper(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-billperexisting', $data);
+        return $pdf->download('invoice.pdf');
+    }
+
 
 
     public function updateallsadminbillper(Request $request, $id)

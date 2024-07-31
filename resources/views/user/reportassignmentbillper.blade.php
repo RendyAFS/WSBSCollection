@@ -20,6 +20,7 @@
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
+                    <th id="th" class="align-middle text-center">Visit</th>
                     <th id="th" class="align-middle text-center">Waktu Visit</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
@@ -111,6 +112,11 @@
                             }
                             return data;
                         }
+                    },
+                    {
+                        data: 'jmlh_visit',
+                        name: 'jmlh_visit',
+                        className: 'align-middle text-center',
                     },
                     {
                         data: 'waktu_visit',

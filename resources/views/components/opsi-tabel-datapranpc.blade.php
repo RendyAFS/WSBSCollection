@@ -5,12 +5,14 @@
         </div>
     </a>
     <!-- Button trigger modal -->
-    <button type="button" class="btn border border-0 d-flex align-items-center" data-bs-toggle="modal"
-        data-bs-target="#exampleModal{{ $pranpc->id }}">
-        <div class="text-green">
-            <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
-        </div>
-    </button>
+    @if ($pranpc->status_pembayaran !== 'Paid' && $pranpc->status_pembayaran !== 'Pending')
+        <button type="button" class="btn border border-0 d-flex align-items-center" data-bs-toggle="modal"
+            data-bs-target="#exampleModal{{ $pranpc->id }}">
+            <div class="text-green">
+                <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+            </div>
+        </button>
+    @endif
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal{{ $pranpc->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"

@@ -9,7 +9,7 @@
             /* Mengatur ukuran halaman menjadi A4 */
             margin: 0;
             margin-top: 20pt;
-            margin-bottom: 20pt;
+            margin-bottom: 0pt;
             margin-left: 30pt;
             margin-right: 30pt;
         }
@@ -21,7 +21,7 @@
             margin: 0;
             /* Menghapus margin default */
             padding-top: 20pt;
-            padding-bottom: 20pt;
+            padding-bottom: 0pt;
             padding-left: 30pt;
             padding-right: 30pt;
         }
@@ -41,6 +41,7 @@
             display: inline-block;
             vertical-align: bottom;
             width: 75%;
+            margin-top: 60px;
         }
 
         .header-image {
@@ -95,7 +96,6 @@
 
         .footer-content {
             float: right;
-            font-family: "Arial MT", Arial, sans-serif;
             font-size: 10pt;
             /* Ukuran font untuk footer */
         }
@@ -108,6 +108,17 @@
         .footer-image img {
             width: 125px;
             height: auto;
+        }
+
+        .footer-2 {
+            width: 100%;
+            margin-top: 285px;
+        }
+
+        .footer-content-2 {
+            float: left;
+            font-size: 10pt;
+            /* Ukuran font untuk footer */
         }
 
         .contact-list {
@@ -185,11 +196,16 @@
                 <div class="footer-image">
                     <img src="{{ $image_src }}" alt="footer-image">
                 </div>
-                <p style="font-weight: bold; font-family: 'Arial MT', Arial, sans-serif; font-size: 10pt;">
-                    <s style="text-decoration: underline"> Munarti </s> <br>
-                    <s style="text-decoration: underline"> Manager Business Service </s> <br>
+                <p style="font-weight: normal;">
+                    <s style="text-decoration: none"> Munarti </s> <br>
+                    <s style="text-decoration: none"> Manager Business Service </s> <br>
                     Witel Surabaya Selatan
                 </p>
+
+            </div>
+        </div>
+        <div class="footer-2">
+            <div class="footer-content-2">
                 <div class="contact-list">
                     <p>Contact person:<br>
                         Collection witel SBS: 085176897993<br>

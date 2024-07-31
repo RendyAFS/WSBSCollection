@@ -149,6 +149,59 @@ class AdminPranpcController extends Controller
         return redirect()->route('pranpc-adminpranpc.index');
     }
 
+    public function viewgeneratePDFpranpcadminpranpc(Request $request, $id)
+    {
+        $pranpc = Pranpc::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($pranpc->bill_bln + $pranpc->bill_bln1, 2, ',', '.');
+
+        $mintgkDate = \Carbon\Carbon::parse($pranpc->mintgk);
+        $maxtgkDate = \Carbon\Carbon::parse($pranpc->maxtgk);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'pranpc' => $pranpc,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'mintgk_bulan' => $mintgkDate->translatedFormat('F Y'),
+            'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-pranpc', $data);
+    }
+
+    public function generatePDFpranpcadminpranpc(Request $request, $id)
+    {
+        $pranpc = Pranpc::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($pranpc->bill_bln + $pranpc->bill_bln1, 2, ',', '.');
+
+        $mintgkDate = \Carbon\Carbon::parse($pranpc->mintgk);
+        $maxtgkDate = \Carbon\Carbon::parse($pranpc->maxtgk);
+
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $src = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'pranpc' => $pranpc,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'mintgk_bulan' => $mintgkDate->translatedFormat('F Y'),
+            'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
+            'image_src' => $src,
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-pranpc', $data);
+        return $pdf->download('invoice.pdf');
+    }
+
     public function viewPDFreportpranpc($id)
     {
         $pranpc = Pranpc::with('user')->findOrFail($id);
@@ -323,6 +376,58 @@ class AdminPranpcController extends Controller
         return redirect()->route('existing-adminpranpc.index');
     }
 
+    public function viewgeneratePDFexistingadminpranpc(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-billperexisting', $data);
+    }
+
+
+
+    public function generatePDFexistingadminpranpc(Request $request, $id)
+    {
+        $all = All::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($all->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'all' => $all,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-billperexisting', $data);
+        return $pdf->download('invoice.pdf');
+    }
+
     public function viewPDFreportexisting($id)
     {
         $all = All::with('user')->findOrFail($id);
@@ -494,7 +599,7 @@ class AdminPranpcController extends Controller
         }
 
         $fileName .= '.xlsx';
-        
+
         return Excel::download(new SalesReportPranpc($reports), $fileName);
     }
 

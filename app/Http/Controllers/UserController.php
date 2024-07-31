@@ -90,18 +90,12 @@ class UserController extends Controller
         $report->follow_up = $request->input('follow_up');
         $report->jmlh_visit = $request->input('jmlh_visit');
 
-        // Flag to check if any evidence file is uploaded
-        $evidenceUploaded = false;
-
         // Handle evidence_sales file upload
         if ($request->hasFile('evidence_sales')) {
             $file = $request->file('evidence_sales');
             $filename = $all->nama . '_' . $all->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_sales = $filename;
-
-            // Set flag to true if evidence_sales is uploaded
-            $evidenceUploaded = true;
         }
 
         // Handle evidence_pembayaran file upload
@@ -110,15 +104,15 @@ class UserController extends Controller
             $filename = $all->nama . '_' . $all->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_pembayaran = $filename;
-
-            // Set flag to true if evidence_pembayaran is uploaded
-            $evidenceUploaded = true;
         }
 
-        // If any evidence file is uploaded, change status_pembayaran to "Pending"
-        if ($evidenceUploaded) {
+        // If voc_kendalas_id is "Tidak Ada" (id = 1), set status_pembayaran to "Pending"
+        if ($request->input('voc_kendalas_id') == 1) {
             $all->status_pembayaran = 'Pending';
+        } else {
+            $all->status_pembayaran = 'Unpaid';
         }
+
 
         // Save the updated All model
         $all->save();
@@ -129,6 +123,7 @@ class UserController extends Controller
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('assignmentbillper.index');
     }
+
 
 
 
@@ -342,8 +337,6 @@ class UserController extends Controller
         $report->follow_up = $request->input('follow_up');
         $report->jmlh_visit = $request->input('jmlh_visit');
 
-        // Handle evidence file uploads
-        $evidenceUploaded = false;
 
         // Handle evidence_sales file upload
         if ($request->hasFile('evidence_sales')) {
@@ -351,7 +344,6 @@ class UserController extends Controller
             $filename = $pranpc->nama . '_' . $pranpc->snd . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_sales = $filename;
-            $evidenceUploaded = true;
         }
 
         // Handle evidence_pembayaran file upload
@@ -360,12 +352,15 @@ class UserController extends Controller
             $filename = $pranpc->nama . '_' . $pranpc->snd . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_pembayaran = $filename;
-            $evidenceUploaded = true;
         }
 
-        // Update status_pembayaran if any evidence file is uploaded
-        if ($evidenceUploaded) {
+
+
+        // If voc_kendalas_id is "Tidak Ada" (id = 1), set status_pembayaran to "Pending"
+        if ($request->input('voc_kendalas_id') == 1) {
             $pranpc->status_pembayaran = 'Pending';
+        } else {
+            $pranpc->status_pembayaran = 'Unpaid';
         }
 
         // Save the updated Pranpc model

@@ -38,6 +38,9 @@ class VocKendalaSeeder extends Seeder
             [
                 'voc_kendala' => 'Pindah Alamat',
             ],
+            [
+                'voc_kendala' => 'Tidak Bertemu',
+            ],
 
         ]);
     }

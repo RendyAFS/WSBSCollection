@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <div id="sidebar">
     <div class="sidebar-header d-flex align-items-center">
-        <img src="{{  asset('storage/file_assets/logo-telkom2.png') }}" alt="" id="side-logo-telkom">
+        <img src="{{ asset('storage/file_assets/logo-telkom2.png') }}" alt="" id="side-logo-telkom">
         <span class="fs-4 fw-bold">Data Collection</span>
     </div>
     <ul class="list-unstyled components p-4">
@@ -19,35 +19,6 @@
                     Data Master
                 </a>
             </li>
-            <div class="my-4">
-                {{-- diver --}}
-            </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataReportCollapse" role="button"
-                aria-expanded="false" aria-controls="dataReportCollapse">
-                Report Data
-                <i class="bi bi-chevron-down float-end"></i>
-            </span>
-            <div class="collapse show" id="dataReportCollapse">
-                <li class="{{ Route::is('reportdata.index') ? 'active' : '' }}">
-                    <a href="{{ route('reportdata.index') }}">
-                        <i class="bi bi-flag{{ Route::is('reportdata.index') ? '-fill' : '' }}"></i>
-                        Report Pelanggan
-                    </a>
-                </li>
-
-                <li class="{{ Route::is('reportsalesbillperexisting.index') ? 'active' : '' }}">
-                    <a href="{{ route('reportsalesbillperexisting.index') }}">
-                        <i class="bi bi-flag{{ Route::is('reportsalesbillperexisting.index') ? '-fill' : '' }}"></i>
-                        Report Sales Bilper-Existing
-                    </a>
-                </li>
-                <li class="{{ Route::is('reportsalespranpc.index') ? 'active' : '' }}">
-                    <a href="{{ route('reportsalespranpc.index') }}">
-                        <i class="bi bi-flag{{ Route::is('reportsalespranpc.index') ? '-fill' : '' }}"></i>
-                        Report Sales Pranpc
-                    </a>
-                </li>
-            </div>
 
             <!-- Manajer Data Collapse Group -->
             <div class="my-4">
@@ -72,7 +43,19 @@
                             Data All
                         </a>
                     </li>
-
+                    <li class="{{ Route::is('reportdatabillperexisting.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportdatabillperexisting.index') }}">
+                            <i class="bi bi-flag{{ Route::is('reportdatabillperexisting.index') ? '-fill' : '' }}"></i>
+                            Report Pelanggan
+                        </a>
+                    </li>
+                    <li class="{{ Route::is('reportsalesbillperexisting.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportsalesbillperexisting.index') }}">
+                            <i
+                                class="bi bi-flag{{ Route::is('reportsalesbillperexisting.index') ? '-fill' : '' }}"></i>
+                            Report Sales
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -98,6 +81,19 @@
                         <a href="{{ route('pranpc.index') }}">
                             <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index') ? '-fill' : '' }}"></i>
                             Data Pra NPC
+                        </a>
+                    </li>
+                    <li class="{{ Route::is('reportdatapranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportdatapranpc.index') }}">
+                            <i class="bi bi-flag{{ Route::is('reportdatapranpc.index') ? '-fill' : '' }}"></i>
+                            Report Pelanggan
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::is('reportsalespranpc.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportsalespranpc.index') }}">
+                            <i class="bi bi-flag{{ Route::is('reportsalespranpc.index') ? '-fill' : '' }}"></i>
+                            Report Sales
                         </a>
                     </li>
                 </ul>

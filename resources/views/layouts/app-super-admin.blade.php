@@ -28,6 +28,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    {{-- APEX CHART --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.51.0/apexcharts.min.js" integrity="sha512-rgvuw7+rpm6cEJOUFmmzb2UWUVWg2VkIbmw6vMoWjbX/7CsyPgiMvrXhzZJbS0Ow1Bq/3illaZaqQej1n3AA7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.51.0/apexcharts.min.css" integrity="sha512-n+A0Xug6+j9/fCBVPoCihITLoICIB2FTqjESx+kwYdF5bzpblXz11zaILuLYmN3yk2WyMTw53sah9tTiojgySg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 
 <body>

@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Report Data
+                Report Data Billper Existing
                 <span id="info-filter">
                     @if (isset($nper) && !$show_all)
                         - {{ strftime('%B %Y', strtotime($nper)) }}
@@ -27,7 +27,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('reportdata.index') }}" method="GET">
+                            <form id="filterForm" action="{{ route('reportdatabillperexisting.index') }}" method="GET">
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="filter_type">Jenis Filter</label>
@@ -43,6 +43,18 @@
                                         <label for="nper">Pilih Bulan-Tahun</label>
                                         <input type="month" id="nper" name="nper" value=""
                                             class="form-control">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_data">Jenis data</label>
+                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
+                                            aria-label="Default select example" required>
+                                            <option value="Semua" {{ $jenis_data === 'Semua' ? 'selected' : '' }}>Semua
+                                            </option>
+                                            <option value="Billper" {{ $jenis_data === 'Billper' ? 'selected' : '' }}>
+                                                Billper</option>
+                                            <option value="Existing" {{ $jenis_data === 'Existing' ? 'selected' : '' }}>
+                                                Existing</option>
+                                        </select>
                                     </div>
                                     <div class="d-flex justify-content-end">
                                         <div class="form-check">
@@ -109,37 +121,32 @@
                 <th id="th" class="align-middle text-center">Unpaid</th>
             </tr>
         </thead>
-        <tbody id="tabel-report-body">
-            @foreach ($reports as $data)
+        <tbody>
+            @foreach ($reports as $report)
                 <tr>
-                    <td class="align-middle">{{ $filter_type === 'umur_customer' ? $data->umur_customer : $data->sto }}
-                    </td>
-                    <td class="align-middle text-center">{{ $data->total_ssl }}</td>
-                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_saldo, 0, ',', '.') }}
-                    </td>
-                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_paid, 0, ',', '.') }}</td>
-                    <td class="align-middle text-center">{{ 'Rp' . number_format($data->total_unpaid, 0, ',', '.') }}
-                    </td>
+                    <td id="td" class="align-middle">
+                        {{ $filter_type === 'umur_customer' ? $report->umur_customer : $report->sto }}</td>
+                    <td id="td" class="align-middle text-center">{{ $report->total_ssl }}</td>
+                    <td id="td" class="align-middle text-center">
+                        Rp{{ number_format($report->total_saldo, 0, ',', '.') }}</td>
+                    <td id="td" class="align-middle text-center">
+                        Rp{{ number_format($report->total_paid, 0, ',', '.') }}</td>
+                    <td id="td" class="align-middle text-center">
+                        Rp{{ number_format($report->total_unpaid, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
-        <tfoot>
-            <tr class="table-secondary">
-                <td class="align-middle"><strong>Total</strong></td>
-                <td class="align-middle text-center"><strong>{{ $total_ssl }}</strong></td>
-                <td class="align-middle text-center">
-                    <strong>{{ 'Rp' . number_format($total_saldo, 0, ',', '.') }}</strong>
-                </td>
-                <td class="align-middle text-center">
-                    <strong>{{ 'Rp' . number_format($total_paid, 0, ',', '.') }}</strong>
-                </td>
-                <td class="align-middle text-center">
-                    <strong>{{ 'Rp' . number_format($total_unpaid, 0, ',', '.') }}</strong>
+        <tfoot class="table-secondary">
+            <tr>
+                <td class="align-middle fw-bold">Total</td>
+                <td class="align-middle fw-bold text-center">{{ $total_ssl }}</td>
+                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_saldo, 0, ',', '.') }}</td>
+                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_paid, 0, ',', '.') }}</td>
+                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_unpaid, 0, ',', '.') }}
                 </td>
             </tr>
         </tfoot>
     </table>
-    </div>
 @endsection
 @push('scripts')
     <script type="module">

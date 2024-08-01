@@ -84,8 +84,12 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
-        // Report Data
-        Route::get('/report-data', [SuperAdminController::class, 'indexreport'])->name('reportdata.index');
+        // Report Data Billper Existing
+        Route::get('/report-databillperexisting', [SuperAdminController::class, 'indexreportbillperexisting'])->name('reportdatabillperexisting.index');
+
+
+        // Report Data Billper Existing
+        Route::get('/report-datapranpc', [SuperAdminController::class, 'indexreportpranpc'])->name('reportdatapranpc.index');
 
 
         // Report Sales Billper existing

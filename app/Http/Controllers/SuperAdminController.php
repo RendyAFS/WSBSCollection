@@ -777,10 +777,10 @@ class SuperAdminController extends Controller
 
 
 
-    // Report Data
-    public function indexreport(Request $request)
+    // Report Data Billper Existing
+    public function indexreportbillperexisting(Request $request)
     {
-        $title = 'Report All';
+        $title = 'Report Billper Existing';
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
@@ -791,6 +791,7 @@ class SuperAdminController extends Controller
         $filter_type = $request->input('filter_type', 'sto');
         $nper = $request->input('nper');
         $show_all = $request->input('show_all');
+        $jenis_data = $request->input('jenis_data', 'Semua');
 
         // Determine the column to group by based on the filter type
         $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
@@ -816,6 +817,18 @@ class SuperAdminController extends Controller
             $query->where('nper', $nper);
         }
 
+        // Apply jenis_data filter
+        if ($request->has('jenis_data')) {
+            $jenisData = $request->input('jenis_data');
+            $currentMonth = Carbon::now()->format('Y-m');
+
+            if ($jenisData == 'Billper') {
+                $query->where('nper', '=', $currentMonth);
+            } elseif ($jenisData == 'Existing') {
+                $query->where('nper', '<', $currentMonth);
+            }
+        }
+
         $reports = $query->groupBy($group_column)->get();
 
         $total_ssl = $reports->sum('total_ssl');
@@ -823,8 +836,76 @@ class SuperAdminController extends Controller
         $total_paid = $reports->sum('total_paid');
         $total_unpaid = $reports->sum('total_unpaid');
 
-        return view('super-admin.report-data', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'show_all', 'riwayats'));
+        return view('super-admin.report-databillperexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'show_all', 'jenis_data', 'riwayats'));
     }
+
+
+
+    // Report Data Pranpc
+    public function indexreportpranpc(Request $request)
+    {
+        $title = 'Report Pranpc';
+
+        // Fetch filter values
+        $year = $request->input('year');
+        $bulan = $request->input('bulan');
+        $show_all = $request->input('show_all', false);
+
+        // Query with optional filter
+        $query = Pranpc::select(
+            'sto', // Selalu gunakan 'sto' untuk pengelompokan
+            DB::raw('COUNT(*) as total_ssl'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln1')
+        );
+
+        // Exclude rows where sto is 'N/A'
+        $query->where('sto', '!=', 'N/A');
+
+        // Apply filter by year and month range if show_all is not checked
+        if (!$show_all && $year && $bulan) {
+            $bulanRange = explode('-', $bulan);
+            $startMonth = $bulanRange[0];
+            $endMonth = $bulanRange[1];
+
+            $startMintgk = $year . '-' . $startMonth;
+            $endMaxtgk = $year . '-' . $endMonth;
+
+            $query->where('mintgk', '>=', $startMintgk)
+                ->where('maxtgk', '<=', $endMaxtgk);
+        }
+
+        $reports = $query->groupBy('sto')->get();
+
+        $total_ssl = $reports->sum('total_ssl');
+        $total_bill_bln = $reports->sum('total_bill_bln');
+        $total_bill_bln1 = $reports->sum('total_bill_bln1');
+        $total_paid_bill_bln = $reports->sum('total_paid_bill_bln');
+        $total_paid_bill_bln1 = $reports->sum('total_paid_bill_bln1');
+        $total_unpaid_bill_bln = $reports->sum('total_unpaid_bill_bln');
+        $total_unpaid_bill_bln1 = $reports->sum('total_unpaid_bill_bln1');
+
+        return view('super-admin.report-datapranpc', compact(
+            'title',
+            'reports',
+            'total_ssl',
+            'total_bill_bln',
+            'total_bill_bln1',
+            'total_paid_bill_bln',
+            'total_paid_bill_bln1',
+            'total_unpaid_bill_bln',
+            'total_unpaid_bill_bln1',
+            'year',
+            'bulan',
+            'show_all'
+        ));
+    }
+
+
 
 
 

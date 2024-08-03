@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-left">
-    <form action="{{ route('destroy-tempalls', ['id' => $tempall->id]) }}" method="POST" class="delete-form">
+    <form action="{{ route('destroy-tempbillpers', ['id' => $tempbillper->id]) }}" method="POST" class="delete-form">
         @csrf
         @method('delete')
         <button type="submit" class="btn border border-0 btn-delete text-red">

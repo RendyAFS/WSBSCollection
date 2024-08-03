@@ -10,7 +10,7 @@
             </span>
         </div>
 
-        <form id="uploadForm" action="{{ route('vlookup.perform') }}" method="POST" enctype="multipart/form-data">
+        <form id="uploadForm" action="{{ route('vlookup.performbillper') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
@@ -34,7 +34,7 @@
                     <div class="header-desc">
                         <div class="d-flex justify-content-between">
                             <span class="fs-5 fw-bold mb-3">Deskripsi File</span>
-                            <a href="{{ route('tools.index') }}" id="resetLink"
+                            <a href="{{ route('toolsbillper.index') }}" id="resetLink"
                                 class="text-danger fw-bold link-underline link-underline-opacity-0 d-none">
                                 <i class="bi bi-x-lg"></i> Reset
                             </a>
@@ -60,7 +60,7 @@
                     Preview data
                 </span>
                 <div class="contain-btn-save d-flex">
-                    @if ($temp_alls->isEmpty())
+                    @if ($temp_billpers->isEmpty())
                         {{-- None --}}
                     @else
                         <form action="{{ route('savealls') }}" method="POST">
@@ -71,7 +71,7 @@
                             </button>
                         </form>
 
-                        <form action="{{ route('deleteAllTempalls') }}" method="POST">
+                        <form action="{{ route('deleteAllTempbillpers') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-delete-all">
                                 <i class="bi bi-trash-fill"></i> Hapus Semua
@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <table class="table table-hover table-bordered datatable shadow" id="tabeltempalls" style="width: 100%">
+            <table class="table table-hover table-bordered datatable shadow" id="tabeltempbillpers" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
                         <th id="th" class="align-middle">Nper</th>
@@ -104,13 +104,13 @@
     <script>
         // DataTable initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabeltempalls', {
+            var dataTable = new DataTable('#tabeltempbillpers', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabeltempalls') }}",
+                    url: "{{ route('gettabeltempbillpers') }}",
                     type: 'GET',
                     beforeSend: function() {
                         // Tampilkan loading screen sebelum ajax request
@@ -314,7 +314,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '{{ route('tools.index') }}';
+                        window.location.href = '{{ route('toolsbillper.index') }}';
                     } else {
                         throw new Error('Network response was not ok.');
                     }
@@ -360,7 +360,7 @@
     `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
-            fetch('{{ route('vlookup.checkFile1') }}', {
+            fetch('{{ route('vlookup.checkFile1billper') }}', {
                     method: 'POST',
                     body: formData,
                     headers: {

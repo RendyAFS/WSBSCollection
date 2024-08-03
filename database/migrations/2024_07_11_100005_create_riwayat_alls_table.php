@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('riwayat_alls', function (Blueprint $table) {
+        Schema::create('riwayat_billpers', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->nullable();
             $table->string('no_inet')->nullable();

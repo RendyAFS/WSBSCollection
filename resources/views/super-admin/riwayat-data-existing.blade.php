@@ -6,11 +6,11 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Riwayat Data Billper
+                Riwayat Data Existing
             </span>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelbillpersriwayat" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelexistingsriwayat" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nama</th>
@@ -33,13 +33,13 @@
     <script type="module">
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelbillpersriwayat', {
+            var dataTable = new DataTable('#tabelexistingsriwayat', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelbillpersriwayat') }}",
+                    url: "{{ route('gettabelexistingsriwayat') }}",
                     type: 'GET',
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');

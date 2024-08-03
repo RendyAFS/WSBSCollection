@@ -6,11 +6,11 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Tools Pranpc
+                Tools Existing
             </span>
         </div>
 
-        <form id="uploadForm" action="{{ route('upload.perform') }}" method="POST" enctype="multipart/form-data">
+        <form id="uploadForm" action="{{ route('vlookup.performexisting') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
@@ -18,7 +18,7 @@
                         <div class="card-body">
                             <div class="header-card mb-3">
                                 <h5 class="card-title">Upload File</h5>
-                                <h6 class="card-subtitle mb-2 text-body-secondary">PRANPC</h6>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">SND</h6>
                             </div>
                             <input class="form-control" type="file" name="file1" id="file1" required>
                             <div id="file1Status" class="fw-bold fst-italic"></div>
@@ -34,7 +34,7 @@
                     <div class="header-desc">
                         <div class="d-flex justify-content-between">
                             <span class="fs-5 fw-bold mb-3">Deskripsi File</span>
-                            <a href="{{ route('toolspranpc.index') }}" id="resetLink"
+                            <a href="{{ route('toolsexisting.index') }}" id="resetLink"
                                 class="text-danger fw-bold link-underline link-underline-opacity-0 d-none">
                                 <i class="bi bi-x-lg"></i> Reset
                             </a>
@@ -47,8 +47,8 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-secondary mt-3 w-50" id="uploadBtn" disabled>
-                        <i class="bi bi-upload"></i> Upload Data
+                    <button type="submit" class="btn btn-secondary mt-3 w-50" id="vlookupBtn" disabled>
+                        <i class="bi bi-intersect"></i> Vlookup Data
                     </button>
                 </div>
             </div>
@@ -60,10 +60,10 @@
                     Preview data
                 </span>
                 <div class="contain-btn-save d-flex">
-                    @if ($temp_pranpcs->isEmpty())
+                    @if ($temp_existings->isEmpty())
                         {{-- None --}}
                     @else
-                        <form action="{{ route('savepranpcs') }}" method="POST">
+                        <form action="{{ route('saveexistings') }}" method="POST">
                             @csrf
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
                             <button type="submit" class="btn btn-green btn-save me-2" id="btn-save">
@@ -71,7 +71,7 @@
                             </button>
                         </form>
 
-                        <form action="{{ route('deleteAllTemppranpcs') }}" method="POST">
+                        <form action="{{ route('deleteAllTempexistings') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-delete-all">
                                 <i class="bi bi-trash-fill"></i> Hapus Semua
@@ -81,17 +81,18 @@
                 </div>
             </div>
 
-            <table class="table table-hover table-bordered datatable shadow" id="tabeltemppranpcs" style="width: 100%">
+            <table class="table table-hover table-bordered datatable shadow" id="tabeltempexistings" style="width: 100%">
                 <thead class="fw-bold">
                     <tr>
+                        <th id="th" class="align-middle">Nper</th>
                         <th id="th" class="align-middle">Nama</th>
                         <th id="th" class="align-middle text-center">No. Inet</th>
-                        <th id="th" class="align-middle text-center">STO</th>
-                        <th id="th" class="align-middle text-center">Bill Bln</th>
-                        <th id="th" class="align-middle text-center">Bill Bln1</th>
-                        <th id="th" class="align-middle text-center">No Hp</th>
+                        <th id="th" class="align-middle text-center">Saldo</th>
+                        <th id="th" class="align-middle text-center">No. Tlf</th>
                         <th id="th" class="align-middle">Email</th>
-                        <th id="th" class="align-middle text-center">Alamat</th>
+                        <th id="th" class="align-middle text-center">STO</th>
+                        <th id="th" class="align-middle text-center">Umur Customer</th>
+                        <th id="th" class="align-middle text-center">Produk</th>
                         <th id="th" class="align-middle text-center">Opsi</th>
                     </tr>
                 </thead>
@@ -103,13 +104,13 @@
     <script>
         // DataTable initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabeltemppranpcs', {
+            var dataTable = new DataTable('#tabeltempexistings', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabeltemppranpcs') }}",
+                    url: "{{ route('gettabeltempexistings') }}",
                     type: 'GET',
                     beforeSend: function() {
                         // Tampilkan loading screen sebelum ajax request
@@ -125,39 +126,32 @@
                     }
                 },
                 columns: [{
+                        data: 'nper',
+                        name: 'nper',
+                        className: 'align-middle',
+                        visible: false
+                    },
+                    {
                         data: 'nama',
                         name: 'nama',
-                        className: 'align-middle',
+                        className: 'align-middle'
                     },
                     {
-                        data: 'snd',
-                        name: 'snd',
+                        data: 'no_inet',
+                        name: 'no_inet',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'sto',
-                        name: 'sto',
-                        className: 'align-middle text-center'
-                    },
-                    {
-                        data: 'bill_bln',
-                        name: 'bill_bln',
+                        data: 'saldo',
+                        name: 'saldo',
                         className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         }
                     },
                     {
-                        data: 'bill_bln1',
-                        name: 'bill_bln1',
-                        className: 'align-middle text-center',
-                        render: function(data, type, row) {
-                            return formatRupiah(data, 'Rp. ');
-                        }
-                    },
-                    {
-                        data: 'multi_kontak1',
-                        name: 'multi_kontak1',
+                        data: 'no_tlf',
+                        name: 'no_tlf',
                         className: 'align-middle text-center'
                     },
                     {
@@ -166,13 +160,24 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'alamat',
-                        name: 'alamat',
+                        data: 'sto',
+                        name: 'sto',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'opsi-tabel-datatemppranpc',
-                        name: 'opsi-tabel-datatemppranpc',
+                        data: 'umur_customer',
+                        name: 'umur_customer',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'produk',
+                        name: 'produk',
+                        className: 'align-middle text-center',
+                        visible: false
+                    },
+                    {
+                        data: 'opsi-tabel-datatempexisting',
+                        name: 'opsi-tabel-datatempexisting',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
@@ -254,9 +259,9 @@
                         showCancelButton: true,
                         confirmButtonText: "Ya, simpan!",
                         cancelButtonText: "Batal",
+                        reverseButtons: true,
                         confirmButtonColor: '#831a16',
-                        cancelButtonColor: '#727375',
-                        reverseButtons: true
+                        cancelButtonColor: '#727375'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();
@@ -281,9 +286,9 @@
                     showCancelButton: true,
                     confirmButtonText: "Ya, hapus semua!",
                     cancelButtonText: "Batal",
+                    reverseButtons: true,
                     confirmButtonColor: '#831a16',
-                    cancelButtonColor: '#727375',
-                    reverseButtons: true
+                    cancelButtonColor: '#727375'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
@@ -309,7 +314,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '{{ route('toolspranpc.index') }}';
+                        window.location.href = '{{ route('toolsexisting.index') }}';
                     } else {
                         throw new Error('Network response was not ok.');
                     }
@@ -332,7 +337,7 @@
             document.getElementById('loadingScreen').classList.add('d-none');
         }
 
-        // Check file 1 dan Upload
+        // Check file 1 dan Vlookup
         document.getElementById('checkFile1').addEventListener('click', function() {
             let formData = new FormData();
             formData.append('file1', document.getElementById('file1').files[0]);
@@ -341,7 +346,7 @@
             file1StatusElement.innerText = '';
             file1StatusElement.classList.remove('text-success', 'text-danger');
 
-            let uploadButton = document.getElementById('uploadBtn');
+            let vlookupButton = document.getElementById('vlookupBtn');
 
             let checkFileButton = document.getElementById('checkFile1');
             checkFileButton.classList.add('d-none');
@@ -355,7 +360,7 @@
     `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
-            fetch('{{ route('upload.checkFile1pranpc') }}', {
+            fetch('{{ route('vlookup.checkFile1existing') }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -373,11 +378,11 @@
                     if (data.status === 'success') {
                         file1StatusElement.classList.add('text-success');
                         checkFileButton.disabled = true;
-                        uploadButton.disabled = false;
+                        vlookupButton.disabled = false;
                     } else {
                         file1StatusElement.classList.add('text-danger');
                         checkFileButton.disabled = false;
-                        uploadButton.disabled = true;
+                        vlookupButton.disabled = true;
                     }
                 });
         });
@@ -391,7 +396,7 @@
             let fileSizeLabel = document.getElementById('fileSizeLabel');
             let resetLink = document.getElementById('resetLink');
             let file1StatusElement = document.getElementById('file1Status');
-            let uploadButton = document.getElementById('uploadBtn'); // Tambahkan ini
+            let vlookupButton = document.getElementById('vlookupBtn'); // Tambahkan ini
 
             if (file1) {
                 fileNotUploaded.classList.add('d-none');
@@ -411,8 +416,8 @@
                 file1StatusElement.innerText = '';
                 file1StatusElement.classList.remove('text-success', 'text-danger');
 
-                // Tambahkan ini untuk menonaktifkan tombol upload
-                uploadButton.disabled = true;
+                // Tambahkan ini untuk menonaktifkan tombol vlookup
+                vlookupButton.disabled = true;
             } else {
                 fileNotUploaded.classList.remove('d-none');
                 fileNameLabel.classList.add('d-none');
@@ -424,8 +429,8 @@
                 file1StatusElement.innerText = '';
                 file1StatusElement.classList.remove('text-success', 'text-danger');
 
-                // Tambahkan ini untuk menonaktifkan tombol upload
-                uploadButton.disabled = true;
+                // Tambahkan ini untuk menonaktifkan tombol vlookup
+                vlookupButton.disabled = true;
             }
         });
     </script>

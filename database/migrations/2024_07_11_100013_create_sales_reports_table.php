@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('sales_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('users_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('all_id')->nullable()->constrained('alls')->onDelete('set null');
-            $table->foreignId('pranpc_id')->nullable()->constrained('pranpcs')->onDelete('set null');
+            $table->foreignId('billper_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('existing_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('pranpc_id')->nullable()->constrained()->onDelete('set null');
             $table->string('snd')->nullable();
             $table->string('witel')->nullable();
             $table->string('waktu_visit')->nullable();

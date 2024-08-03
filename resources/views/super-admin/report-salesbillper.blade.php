@@ -104,7 +104,7 @@
 
     <div class="mb-4">
         <span class="fw-bold fs-2">
-            Report Billper - Existing
+            Report Billper
         </span>
     </div>
 
@@ -129,7 +129,7 @@
     </table>
     <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
         <span class="fw-bold fs-2">
-            Detail Billper - Existing
+            Detail Billper
         </span>
         <div class="btn-group">
             <a href="{{ route('download.excelreportbillpersuperadmin') }}" class="btn btn-green">

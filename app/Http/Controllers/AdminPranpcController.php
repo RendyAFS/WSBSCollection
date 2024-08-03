@@ -6,7 +6,7 @@ use App\Exports\AllExport;
 use App\Exports\PranpcExport;
 use App\Exports\SalesReportBillperExisting;
 use App\Exports\SalesReportPranpc;
-use App\Models\All;
+use App\Models\Billper;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\User;
@@ -246,7 +246,7 @@ class AdminPranpcController extends Controller
     {
         confirmDelete();
         $title = 'Data Existing';
-        $existings = All::all();
+        $existings = Billper::all();
         $users = User::where('level', 'User')->get();
         return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
     }
@@ -254,7 +254,7 @@ class AdminPranpcController extends Controller
     public function getDataexistingsadminpranpc(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query()->with('user');
+            $query = Billper::query()->with('user');
 
             $currentMonth = Carbon::now()->format('Y-m');
 
@@ -302,7 +302,7 @@ class AdminPranpcController extends Controller
     public function exportexisting()
     {
         $currentMonth = Carbon::now()->format('Y-m');
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
+        $allData = Billper::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
             ->where('nper', '<', $currentMonth)
             ->get();
 
@@ -324,7 +324,7 @@ class AdminPranpcController extends Controller
         $currentMonth = Carbon::now()->format('Y-m');
 
         // Query untuk mengambil data berdasarkan rentang nper
-        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
+        $query = Billper::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
             ->where('nper', '<', $currentMonth); // Filter data with nper < current month
 
         // Filter berdasarkan status_pembayaran jika tidak "Semua"
@@ -348,9 +348,9 @@ class AdminPranpcController extends Controller
     public function editexistingsadminpranpc($id)
     {
         $title = 'Edit Data Plotting Existing';
-        $all = All::with('user')->findOrFail($id);
+        $all = Billper::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
         return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
@@ -359,7 +359,7 @@ class AdminPranpcController extends Controller
 
     public function updateexistingsadminpranpc(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $all->nama = $request->input('nama');
         $all->no_inet = $request->input('no_inet');
         $all->saldo = $request->input('saldo');
@@ -378,7 +378,7 @@ class AdminPranpcController extends Controller
 
     public function viewgeneratePDFexistingadminpranpc(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
 
         $nper = \Carbon\Carbon::parse($all->nper);
@@ -404,7 +404,7 @@ class AdminPranpcController extends Controller
 
     public function generatePDFexistingadminpranpc(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
 
         $nper = \Carbon\Carbon::parse($all->nper);
@@ -430,8 +430,8 @@ class AdminPranpcController extends Controller
 
     public function viewPDFreportexisting($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $all = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
         return view('components.pdf-reportexisting-adminpranpc', compact('all', 'sales_report', 'voc_kendala'));
@@ -439,8 +439,8 @@ class AdminPranpcController extends Controller
 
     public function downloadPDFreportexisting($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $all = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
@@ -459,7 +459,7 @@ class AdminPranpcController extends Controller
         $userId = $request->input('user_id');
 
         // Update data dengan user_id yang dipilih
-        All::whereIn('id', $ids)->update(['users_id' => $userId]);
+        Billper::whereIn('id', $ids)->update(['users_id' => $userId]);
 
         return response()->json(['success' => true]);
     }
@@ -620,7 +620,7 @@ class AdminPranpcController extends Controller
         $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $currentMonth) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
-                ->whereNotNull('all_id'); // Ensure only records with all_id are included
+                ->whereNotNull('billper_id'); // Ensure only records with billper_id are included
 
             // Apply sales filter if provided
             if ($filterSales) {
@@ -646,7 +646,7 @@ class AdminPranpcController extends Controller
                 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
                         ->whereMonth('created_at', $filterMonth)
-                        ->whereNotNull('all_id');
+                        ->whereNotNull('billper_id');
                 }
             ])
             ->get();
@@ -657,9 +657,9 @@ class AdminPranpcController extends Controller
                 ->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->where('users_id', $sale->id)
-                ->whereNotNull('all_id')
-                ->distinct('all_id')
-                ->count('all_id');
+                ->whereNotNull('billper_id')
+                ->distinct('billper_id')
+                ->count('billper_id');
 
             $sale->wo_sudah_visit = $wo_sudah_visit;
             $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
@@ -685,7 +685,7 @@ class AdminPranpcController extends Controller
             $endDate = ($year && $month) ? Carbon::parse($startDate)->endOfMonth()->format('Y-m-d') : null;
 
             $data_report_existing = SalesReport::with('alls', 'user', 'vockendals')
-                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereNotNull('billper_id') // Ensure only records with billper_id are included
                 ->whereHas('alls', function ($query) use ($currentMonth) {
                     $query->where('nper', '<', $currentMonth);
                 })
@@ -715,7 +715,7 @@ class AdminPranpcController extends Controller
     {
         $currentMonth = Carbon::now()->format('Y-m');
         $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id')
+            ->whereNotNull('billper_id')
             ->whereHas('alls', function ($query) use ($currentMonth) {
                 $query->where('nper', '<', $currentMonth);
             })
@@ -730,7 +730,7 @@ class AdminPranpcController extends Controller
         $currentMonth = Carbon::now()->format('Y-m');
 
         $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
             ->whereHas('alls', function ($query) use ($currentMonth) {
                 $query->where('nper', '<', $currentMonth);
             })

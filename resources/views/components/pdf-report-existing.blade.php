@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Data Billper</title>
+    <title>Data Existing</title>
     <style>
         body {
             font-family: 'Arial, sans-serif';
@@ -94,30 +94,30 @@
 <body>
     <div class="card-body">
         <div class="contain-header mb-3">
-            <h5 class="card-title">{{ $billper->nama }}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ $billper->no_inet }}</h6>
+            <h5 class="card-title">{{ $existing->nama }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ $existing->no_inet }}</h6>
         </div>
         <hr class="border border-dark border-3 opacity-75 my-4">
         <div class="contain-form">
             <div class="mb-3">
                 <label for="nama" class="form-label fw-bold">Nama</label>
-                <div class="text-bg-secondary">{{ $billper->nama }}</div>
+                <div class="text-bg-secondary">{{ $existing->nama }}</div>
             </div>
             <div class="mb-3">
                 <label for="no_inet" class="form-label fw-bold">No. Inet</label>
-                <div class="text-bg-secondary">{{ $billper->no_inet }}</div>
+                <div class="text-bg-secondary">{{ $existing->no_inet }}</div>
             </div>
             <div class="mb-3">
                 <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
-                <div class="text-bg-secondary">{{ $billper->status_pembayaran }}</div>
+                <div class="text-bg-secondary">{{ $existing->status_pembayaran }}</div>
             </div>
             <div class="mb-3">
                 <label for="no_tlf" class="form-label fw-bold">Nomor Telfon</label>
-                <div class="text-bg-secondary">{{ $billper->no_tlf }}</div>
+                <div class="text-bg-secondary">{{ $existing->no_tlf }}</div>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label fw-bold">Email</label>
-                <div class="text-bg-secondary">{{ $billper->email }}</div>
+                <div class="text-bg-secondary">{{ $existing->email }}</div>
             </div>
             <?php
 
@@ -131,31 +131,31 @@
             ?>
             <div class="mb-3">
                 <label for="saldo" class="form-label fw-bold">Saldo</label>
-                <div class="text-bg-secondary">{{ formatRupiah($billper->saldo) }}</div>
+                <div class="text-bg-secondary">{{ formatRupiah($existing->saldo) }}</div>
             </div>
             <div class="mb-3">
                 <label for="sto" class="form-label fw-bold">STO</label>
-                <div class="text-bg-secondary">{{ $billper->sto }}</div>
+                <div class="text-bg-secondary">{{ $existing->sto }}</div>
             </div>
             <div class="mb-3">
                 <label for="umur_customer" class="form-label fw-bold">Umur Customer</label>
-                <div class="text-bg-secondary">{{ $billper->umur_customer }}</div>
+                <div class="text-bg-secondary">{{ $existing->umur_customer }}</div>
             </div>
             <div class="mb-3">
                 <label for="produk" class="form-label fw-bold">Produk</label>
-                <div class="text-bg-secondary">{{ $billper->produk }}</div>
+                <div class="text-bg-secondary">{{ $existing->produk }}</div>
             </div>
             <div class="mb-3">
                 <label for="nper" class="form-label fw-bold">NPER</label>
-                <div class="text-bg-secondary">{{ $billper->nper }}</div>
+                <div class="text-bg-secondary">{{ $existing->nper }}</div>
             </div>
         </div>
 
         <div class="page-break"></div> <!-- This will create a page break when printing -->
         <div class="card-body">
             <div class="contain-header mb-3">
-                <h5 class="card-title">{{ $billper->user ? $billper->user->name : 'Tidak ada' }}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary"> {{ $billper->user ? $billper->user->nik : 'Tidak ada' }}
+                <h5 class="card-title">{{ $existing->user ? $existing->user->name : 'Tidak ada' }}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary"> {{ $existing->user ? $existing->user->nik : 'Tidak ada' }}
                 </h6>
             </div>
             <hr class="border border-dark border-3 opacity-75 my-4">
@@ -163,11 +163,11 @@
             <div class="contain-form">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Email</label>
-                    <div class="text-bg-secondary">{{ $billper->user ? $billper->user->email : 'Tidak ada' }}</div>
+                    <div class="text-bg-secondary">{{ $existing->user ? $existing->user->email : 'Tidak ada' }}</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">No Telfon</label>
-                    <div class="text-bg-secondary">{{ $billper->user ? $billper->user->no_hp : 'Tidak ada' }}</div>
+                    <div class="text-bg-secondary">{{ $existing->user ? $existing->user->no_hp : 'Tidak ada' }}</div>
                 </div>
 
                 {{-- Report --}}

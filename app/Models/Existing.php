@@ -19,6 +19,6 @@ class Existing extends Model
 
     public function salesReports()
     {
-        return $this->hasMany(SalesReport::class, 'all_id');
+        return $this->hasMany(SalesReport::class, 'existing_id');
     }
 }

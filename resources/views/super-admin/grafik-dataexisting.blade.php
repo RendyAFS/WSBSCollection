@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2">
-                Grafik Data Billper
+                Grafik Data Existing
             </span>
             <div class="d-flex">
                 <!-- Button Filter modal -->
@@ -12,7 +12,7 @@
                     <i class="bi bi-funnel-fill"></i> Filter
                 </button>
 
-                <a href="{{ route('reportdatabillper.index') }}" class="btn btn-green ">
+                <a href="{{ route('reportdataexisting.index') }}" class="btn btn-green ">
                     <i class="bi bi-table"></i> Table
                 </a>
 
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div id="chartpelangganbillper"></div>
+    <div id="chartpelangganexisting"></div>
 @endsection
 
 @push('scripts')
@@ -222,7 +222,7 @@
             }
         };
 
-        var chart = new ApexCharts(document.querySelector("#chartpelangganbillper"), options);
+        var chart = new ApexCharts(document.querySelector("#chartpelangganexisting"), options);
         chart.render();
     </script>
 @endpush

@@ -59,7 +59,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('/vlookup/checkFile1/billper', [SuperAdminController::class, 'checkFile1billper'])->name('vlookup.checkFile1billper');
         Route::post('/vlookup-billper', [SuperAdminController::class, 'vlookupbillper'])->name('vlookup.performbillper');
         Route::get('gettabeltempbillpers', [SuperAdminController::class, 'getDataTempbillpers'])->name('gettabeltempbillpers');
-        Route::post('/savebillpers', [SuperAdminController::class, 'savetempbillpers'])->name('savealls');
+        Route::post('/savebillpers', [SuperAdminController::class, 'savetempbillpers'])->name('savebillpers');
         Route::post('deleteAllTempbillpers', [SuperAdminController::class, 'deleteAllTempbillpers'])->name('deleteAllTempbillpers');
         Route::delete('/destroy-tempbillpers/{id}', [SuperAdminController::class, 'destroyTempbillpers'])->name('destroy-tempbillpers');
 
@@ -71,8 +71,8 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('update-billpers/{id}', [SuperAdminController::class, 'updatebillpers'])->name('update-billpers');
         Route::get('/superadmin/billper/{id}/view', [SuperAdminController::class, 'viewPDFreportbillpersuperadmin'])->name('view-pdf-report-billpersuperadmin');
         Route::get('/superadmin/billper/{id}/download', [SuperAdminController::class, 'downloadPDFreportbillpersuperadmin'])->name('download-pdf-report-billpersuperadmin');
-        Route::get('/download/excelbilpersuperadmin', [SuperAdminController::class, 'exportbillpersuperadmin'])->name('download.excelbillpersuperadmin');
-        Route::post('/download/filtered/excelbilpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelbillpersuperadmin'])->name('download.filtered.excelbillpersuperadmin');
+        Route::get('/download/excelbillpersuperadmin', [SuperAdminController::class, 'exportbillpersuperadmin'])->name('download.excelbillpersuperadmin');
+        Route::post('/download/filtered/excelbillpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelbillpersuperadmin'])->name('download.filtered.excelbillpersuperadmin');
         Route::get('viewbillper/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFbillper'])->name('viewbillper.pdf');
         Route::get('billper/pdf/{id}', [SuperAdminController::class, 'generatePDFbillper'])->name('billper.pdf');
         Route::post('/cek-filepembayaranbillper', [SuperAdminController::class, 'checkFilePembayaranbillper'])->name('cek.filepembayaranbillper');
@@ -93,9 +93,45 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
+        // Tool Existing
+        Route::get('/tool-existing', [SuperAdminController::class, 'indextoolexisting'])->name('toolsexisting.index');
+        Route::post('/vlookup/checkFile1/existing', [SuperAdminController::class, 'checkFile1existing'])->name('vlookup.checkFile1existing');
+        Route::post('/vlookup-existing', [SuperAdminController::class, 'vlookupexisting'])->name('vlookup.performexisting');
+        Route::get('gettabeltempexistings', [SuperAdminController::class, 'getDataTempexistings'])->name('gettabeltempexistings');
+        Route::post('/saveexistings', [SuperAdminController::class, 'savetempexistings'])->name('saveexistings');
+        Route::post('deleteAllTempexistings', [SuperAdminController::class, 'deleteAllTempexistings'])->name('deleteAllTempexistings');
+        Route::delete('/destroy-tempexistings/{id}', [SuperAdminController::class, 'destroyTempexistings'])->name('destroy-tempexistings');
+
+        // Data Existing
+        Route::get('/data-existing', [SuperAdminController::class, 'indexexisting'])->name('existing.index');
+        Route::get('gettabelexistings', [SuperAdminController::class, 'getDataexistings'])->name('gettabelexistings');
+        Route::get('edit-existings/{id}', [SuperAdminController::class, 'editexistings'])->name('edit-existings');
+        Route::post('update-existings/{id}', [SuperAdminController::class, 'updateexistings'])->name('update-existings');
+        Route::get('/superadmin/existing/{id}/view', [SuperAdminController::class, 'viewPDFreportexistingsuperadmin'])->name('view-pdf-report-existingsuperadmin');
+        Route::get('/superadmin/existing/{id}/download', [SuperAdminController::class, 'downloadPDFreportexistingsuperadmin'])->name('download-pdf-report-existingsuperadmin');
+        Route::get('/download/excelexistingsuperadmin', [SuperAdminController::class, 'exportexistingsuperadmin'])->name('download.excelexistingsuperadmin');
+        Route::post('/download/filtered/excelexistingsuperadmin', [SuperAdminController::class, 'downloadFilteredExcelexistingsuperadmin'])->name('download.filtered.excelexistingsuperadmin');
+        Route::get('viewexisting/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFexisting'])->name('viewexisting.pdf');
+        Route::get('existing/pdf/{id}', [SuperAdminController::class, 'generatePDFexisting'])->name('existing.pdf');
+        Route::post('/cek-filepembayaranexisting', [SuperAdminController::class, 'checkFilePembayaranexisting'])->name('cek.filepembayaranexisting');
+        Route::post('/cek-pembayaranexisting', [SuperAdminController::class, 'cekPembayaranexisting'])->name('cek-pembayaranexisting');
+        Route::delete('/destroy-existings/{id}', [SuperAdminController::class, 'destroyexistings'])->name('destroy-existings');
+        Route::get('/data-existing-riwayat', [SuperAdminController::class, 'indexexistingriwayat'])->name('existingriwayat.index');
+        Route::get('gettabelexistingsriwayat', [SuperAdminController::class, 'getDataexistingsriwayat'])->name('gettabelexistingsriwayat');
+
+        // Report Data Existing
+        Route::get('/report-dataexisting', [SuperAdminController::class, 'indexreportexisting'])->name('reportdataexisting.index');
+        Route::get('/grafik-dataexisting', [SuperAdminController::class, 'indexgrafikexisting'])->name('grafikdataexisting.index');
+
+        // Report Sales Existing
+        Route::get('/report-salesexisting', [SuperAdminController::class, 'indexreportsalesexisting'])->name('reportsalesexisting.index');
+        Route::get('/get-data-reportexistingsuperadmin', [SuperAdminController::class, 'getDatareportexistingsuperadmin'])->name('getDatareportexistingsuperadmin');
+        Route::get('/download/excelreportexistingsuperadmin', [SuperAdminController::class, 'downloadAllExcelreportexistingsuperadmin'])->name('download.excelreportexistingsuperadmin');
+        Route::post('/download/filtered/excelreportexistingsuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportexistingsuperadmin'])->name('download.filtered.excelreportexistingsuperadmin');
 
 
-        
+
+
 
         // Tool Pra NPC
         Route::get('/tool-pranpc', [SuperAdminController::class, 'indextoolpranpc'])->name('toolspranpc.index');

@@ -34,17 +34,6 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         // Dashboard
         Route::get('/super-admin', [SuperAdminController::class, 'index'])->name('super-admin.index');
 
-
-        // Tool
-        Route::get('/tool', [SuperAdminController::class, 'indextool'])->name('tools.index');
-        Route::post('/vlookup/checkFile1', [SuperAdminController::class, 'checkFile1'])->name('vlookup.checkFile1');
-        Route::post('/vlookup', [SuperAdminController::class, 'vlookup'])->name('vlookup.perform');
-        Route::get('gettabeltempalls', [SuperAdminController::class, 'getDataTempalls'])->name('gettabeltempalls');
-        Route::post('/savealls', [SuperAdminController::class, 'savetempalls'])->name('savealls');
-        Route::post('deleteAllTempalls', [SuperAdminController::class, 'deleteAllTempalls'])->name('deleteAllTempalls');
-        Route::delete('/destroy-tempalls/{id}', [SuperAdminController::class, 'destroyTempalls'])->name('destroy-tempalls');
-
-
         // Data Master
         Route::get('/data-master', [SuperAdminController::class, 'indexdatamaster'])->name('datamaster.index');
         Route::get('gettabeldatamaster', [SuperAdminController::class, 'getDatamasters'])->name('gettabeldatamaster');
@@ -65,7 +54,17 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
-        // Data All
+        // Tool Billper
+        Route::get('/tool-billper', [SuperAdminController::class, 'indextoolbillper'])->name('toolsbillper.index');
+        Route::post('/vlookup/checkFile1/billper', [SuperAdminController::class, 'checkFile1billper'])->name('vlookup.checkFile1billper');
+        Route::post('/vlookup-billper', [SuperAdminController::class, 'vlookupbillper'])->name('vlookup.performbillper');
+        Route::get('gettabeltempbillpers', [SuperAdminController::class, 'getDataTempbillpers'])->name('gettabeltempbillpers');
+        Route::post('/savebillpers', [SuperAdminController::class, 'savetempbillpers'])->name('savealls');
+        Route::post('deleteAllTempbillpers', [SuperAdminController::class, 'deleteAllTempbillpers'])->name('deleteAllTempbillpers');
+        Route::delete('/destroy-tempbillpers/{id}', [SuperAdminController::class, 'destroyTempbillpers'])->name('destroy-tempbillpers');
+
+
+        // Data Billper
         Route::get('/data-billper', [SuperAdminController::class, 'indexbillper'])->name('billper.index');
         Route::get('gettabelbillpers', [SuperAdminController::class, 'getDatabillpers'])->name('gettabelbillpers');
         Route::get('edit-billpers/{id}', [SuperAdminController::class, 'editbillpers'])->name('edit-billpers');
@@ -82,11 +81,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/data-billper-riwayat', [SuperAdminController::class, 'indexbillperriwayat'])->name('billperriwayat.index');
         Route::get('gettabelbillpersriwayat', [SuperAdminController::class, 'getDatabillpersriwayat'])->name('gettabelbillpersriwayat');
 
-        // Report Data Billper existing
+        // Report Data Billper
         Route::get('/report-databillper', [SuperAdminController::class, 'indexreportbillper'])->name('reportdatabillper.index');
         Route::get('/grafik-databillper', [SuperAdminController::class, 'indexgrafikbillper'])->name('grafikdatabillper.index');
 
-        // Report Sales Billper existing
+        // Report Sales Billper
         Route::get('/report-salesbillper', [SuperAdminController::class, 'indexreportsalesbillper'])->name('reportsalesbillper.index');
         Route::get('/get-data-reportbillpersuperadmin', [SuperAdminController::class, 'getDatareportbillpersuperadmin'])->name('getDatareportbillpersuperadmin');
         Route::get('/download/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadAllExcelreportbillpersuperadmin'])->name('download.excelreportbillpersuperadmin');
@@ -94,6 +93,9 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
+
+
+        
 
         // Tool Pra NPC
         Route::get('/tool-pranpc', [SuperAdminController::class, 'indextoolpranpc'])->name('toolspranpc.index');

@@ -42,15 +42,15 @@ class SuperAdminController extends Controller
 
 
     // TOOL
-    public function indextool()
+    public function indextoolbillper()
     {
         confirmDelete();
         $title = 'Tool';
-        $temp_alls = TempAll::all();
-        return view('super-admin.tools', compact('title', 'temp_alls'));
+        $temp_billpers = TempAll::all();
+        return view('super-admin.tools-billper', compact('title', 'temp_billpers'));
     }
 
-    public function checkFile1(Request $request)
+    public function checkFile1billper(Request $request)
     {
         ini_set('memory_limit', '2048M');  // Increase memory limit
         set_time_limit(300);  // Increase max execution time
@@ -85,7 +85,7 @@ class SuperAdminController extends Controller
     }
 
 
-    public function vlookup(Request $request)
+    public function vlookupbillper(Request $request)
     {
         ini_set('memory_limit', '2048M');  // Increase memory limit
         set_time_limit(300);  // max_execution_time=300
@@ -207,20 +207,20 @@ class SuperAdminController extends Controller
 
 
 
-    public function getDataTempalls(Request $request)
+    public function getDataTempbillpers(Request $request)
     {
         if ($request->ajax()) {
-            $data_tempalls = TempAll::all();
-            return datatables()->of($data_tempalls)
+            $data_tempbillpers = TempAll::all();
+            return datatables()->of($data_tempbillpers)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-datatempall', function ($tempall) {
-                    return view('components.opsi-tabel-tempall', compact('tempall'));
+                ->addColumn('opsi-tabel-datatempall', function ($tempbillper) {
+                    return view('components.opsi-tabel-tempbillper', compact('tempbillper'));
                 })
                 ->toJson();
         }
     }
 
-    public function savetempalls()
+    public function savetempbillpers()
     {
         // Ambil data dari temp_alls
         $tempAlls = TempAll::all();
@@ -250,24 +250,24 @@ class SuperAdminController extends Controller
 
         // Redirect ke halaman tools.index atau halaman lainnya
         Alert::success('Data Berhasil Tersimpan');
-        return redirect()->route('tools.index')->with('success', 'Data Berhasil Tersimpan');
+        return redirect()->route('toolsbillper.index')->with('success', 'Data Berhasil Tersimpan');
     }
 
-    public function deleteAllTempalls()
+    public function deleteAllTempbillpers()
     {
         // Kosongkan table temp_alls
         TempAll::truncate();
 
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('tools.index');
+        return redirect()->route('toolsbillper.index');
     }
 
-    public function destroyTempalls($id)
+    public function destroyTempbillpers($id)
     {
         $data = TempAll::findOrFail($id);
         $data->delete();
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('tools.index');
+        return redirect()->route('toolsbillper.index');
     }
 
     // Data Master
@@ -514,11 +514,11 @@ class SuperAdminController extends Controller
                 }
             }
 
-            $data_alls = $query->get();
-            return datatables()->of($data_alls)
+            $data_billpers = $query->get();
+            return datatables()->of($data_billpers)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-dataall', function ($all) {
-                    return view('components.opsi-tabel-dataall', compact('all'));
+                ->addColumn('opsi-tabel-dataall', function ($billper) {
+                    return view('components.opsi-tabel-databillper', compact('billper'));
                 })
                 ->toJson();
         }
@@ -1082,8 +1082,8 @@ class SuperAdminController extends Controller
     public function getDataTemppranpcs(Request $request)
     {
         if ($request->ajax()) {
-            $data_tempalls = TempPranpc::all();
-            return datatables()->of($data_tempalls)
+            $data_temppranpcs = TempPranpc::all();
+            return datatables()->of($data_temppranpcs)
                 ->addIndexColumn()
                 ->addColumn('opsi-tabel-datatemppranpc', function ($temppranpc) {
                     return view('components.opsi-tabel-temppranpc', compact('temppranpc'));

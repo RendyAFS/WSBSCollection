@@ -31,9 +31,9 @@
             </span>
             <div class="collapse show" id="dataManagerCollapsebillper">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
-                        <a href="{{ route('tools.index') }}">
-                            <i class="bi bi-wrench-adjustable-circle{{ Route::is('tools.index') ? '-fill' : '' }}"></i>
+                    <li class="{{ Route::is('toolsbillper.index') ? 'active' : '' }}">
+                        <a href="{{ route('toolsbillper.index') }}">
+                            <i class="bi bi-wrench-adjustable-circle{{ Route::is('toolsbillper.index') ? '-fill' : '' }}"></i>
                             Tool
                         </a>
                     </li>
@@ -73,9 +73,9 @@
             </span>
             <div class="collapse show" id="dataManagerCollapseexisting">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
-                        <a href="{{ route('tools.index') }}">
-                            <i class="bi bi-wrench-adjustable-circle{{ Route::is('tools.index') ? '-fill' : '' }}"></i>
+                    <li class="{{ Route::is('toolsbillper.index') ? 'active' : '' }}">
+                        <a href="{{ route('toolsbillper.index') }}">
+                            <i class="bi bi-wrench-adjustable-circle{{ Route::is('toolsbillper.index') ? '-fill' : '' }}"></i>
                             Tool
                         </a>
                     </li>

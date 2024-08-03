@@ -41,18 +41,6 @@ class AdminBillperController extends Controller
         if ($request->ajax()) {
             $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
 
-            // Filter berdasarkan jenis_data
-            if ($request->has('jenis_data')) {
-                $jenisData = $request->input('jenis_data');
-                $currentMonth = Carbon::now()->format('Y-m');
-
-                if ($jenisData == 'Billper') {
-                    $query->where('nper', '=', $currentMonth);
-                } elseif ($jenisData == 'Existing') {
-                    $query->where('nper', '<', $currentMonth);
-                }
-            }
-
             // Filter berdasarkan nper
             if ($request->has('nper')) {
                 $nper = $request->input('nper');

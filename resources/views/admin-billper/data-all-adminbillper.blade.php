@@ -1,6 +1,6 @@
 @extends('layouts.app-admin')
 
-@include('layouts.loading')
+@extends('layouts.loading')
 
 @section('content')
     <div class="px-3 py-4">
@@ -31,15 +31,6 @@
                             <form id="filterForm" action="{{ route('adminbillper.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
-                                    <div class="form-group mb-3">
-                                        <label for="jenis_data">Jenis data</label>
-                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
-                                            aria-label="Default select example" required>
-                                            <option selected value="Semua">Semua</option>
-                                            <option value="Billper">Billper</option>
-                                            <option value="Existing">Existing</option>
-                                        </select>
-                                    </div>
                                     <div class="form-group mb-3">
                                         <label for="nper_filter">Pilih NPER</label>
                                         <input type="month" id="nper_filter" name="nper_filter" class="form-control"
@@ -200,7 +191,6 @@
                     url: "{{ route('gettabelallsadminbillper') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.jenis_data = $('#jenis_data_filter').val();
                         d.nper = $('#nper_filter').val();
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
                         d.jenis_produk = $('#jenis_produk_filter').val();
@@ -317,12 +307,11 @@
             });
 
             $('#btn-filter').on('click', function() {
-                var jenisData = $('#jenis_data_filter').val();
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
                 var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = jenisData + " - " + nper + " - " + statusPembayaran + " - " + jenisProduk;
+                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

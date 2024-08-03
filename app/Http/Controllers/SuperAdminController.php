@@ -491,17 +491,8 @@ class SuperAdminController extends Controller
     {
         if ($request->ajax()) {
             $query = All::query();
-
-            if ($request->has('jenis_data')) {
-                $jenisData = $request->input('jenis_data');
-                $currentMonth = Carbon::now()->format('Y-m');
-
-                if ($jenisData == 'Billper') {
-                    $query->where('nper', '=', $currentMonth);
-                } elseif ($jenisData == 'Existing') {
-                    $query->where('nper', '<', $currentMonth);
-                }
-            }
+            $currentMonth = Carbon::now()->format('Y-m');
+            $currentDay = Carbon::now()->day;
 
             if ($request->has('nper')) {
                 $nper = $request->input('nper');
@@ -515,6 +506,14 @@ class SuperAdminController extends Controller
                 }
             }
 
+            // Filter berdasarkan jenis_produk
+            if ($request->has('jenis_produk')) {
+                $jenisProduk = $request->input('jenis_produk');
+                if ($jenisProduk !== 'Semua') {
+                    $query->where('produk', '=', $jenisProduk);
+                }
+            }
+
             $data_alls = $query->get();
             return datatables()->of($data_alls)
                 ->addIndexColumn()
@@ -524,6 +523,8 @@ class SuperAdminController extends Controller
                 ->toJson();
         }
     }
+
+
 
     public function viewgeneratePDFbillperexisting(Request $request, $id)
     {
@@ -730,6 +731,8 @@ class SuperAdminController extends Controller
     {
         $bulanTahun = $request->input('nper');
         $statusPembayaran = $request->input('status_pembayaran');
+        $jenisProduk = $request->input('jenis_produk');
+
 
         // Format input nper ke format yang sesuai dengan kebutuhan database
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
@@ -743,11 +746,16 @@ class SuperAdminController extends Controller
         } else {
         }
 
+        // Filter berdasarkan jenis_produk jika tidak "Semua"
+        if ($jenisProduk && $jenisProduk !== 'Semua') {
+            $query->where('produk', $jenisProduk);
+        }
+
         // Ambil data yang sudah difilter
         $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
     }
 
 
@@ -791,7 +799,6 @@ class SuperAdminController extends Controller
         $filter_type = $request->input('filter_type', 'sto');
         $nper = $request->input('nper');
         $show_all = $request->input('show_all');
-        $jenis_data = $request->input('jenis_data', 'Semua');
 
         // Determine the column to group by based on the filter type
         $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
@@ -802,7 +809,8 @@ class SuperAdminController extends Controller
             DB::raw('COUNT(*) as total_ssl'),
             DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_saldo'),
             DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid')
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending')
         );
 
         // Exclude rows where sto or umur_customer is 'N/A'
@@ -817,28 +825,113 @@ class SuperAdminController extends Controller
             $query->where('nper', $nper);
         }
 
-        // Apply jenis_data filter
-        if ($request->has('jenis_data')) {
-            $jenisData = $request->input('jenis_data');
-            $currentMonth = Carbon::now()->format('Y-m');
-
-            if ($jenisData == 'Billper') {
-                $query->where('nper', '=', $currentMonth);
-            } elseif ($jenisData == 'Existing') {
-                $query->where('nper', '<', $currentMonth);
-            }
-        }
-
         $reports = $query->groupBy($group_column)->get();
 
         $total_ssl = $reports->sum('total_ssl');
         $total_saldo = $reports->sum('total_saldo');
         $total_paid = $reports->sum('total_paid');
         $total_unpaid = $reports->sum('total_unpaid');
+        $total_pending = $reports->sum('total_pending');
 
-        return view('super-admin.report-databillperexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'nper', 'filter_type', 'show_all', 'jenis_data', 'riwayats'));
+        return view('super-admin.report-databillperexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
     }
 
+    public function indexgrafikbillperexisting(Request $request)
+    {
+        $title = 'Grafik Billper Existing';
+        $selectedYear = $request->input('year', date('Y')); // Default to current year if no year is selected
+        $jenisGrafik = $request->input('jenis_grafik', 'Billing'); // Default to Billing if no type is selected
+
+        if ($jenisGrafik === 'SSL') {
+            // Query for SSL
+            $data = DB::table('alls')
+                ->select(
+                    DB::raw('COUNT(*) as total_ssl'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN 1 ELSE 0 END) as total_paid'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN 1 ELSE 0 END) as total_unpaid'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN 1 ELSE 0 END) as total_pending'),
+                    DB::raw('SUBSTRING(nper, 6, 2) as month'),
+                    DB::raw('SUBSTRING(nper, 1, 4) as year')
+                )
+                ->whereRaw("SUBSTRING(nper, 1, 4) = ?", [$selectedYear])
+                ->groupBy('year', 'month')
+                ->get();
+            $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+            $chartData = [
+                'categories' => [],
+                'total_ssl' => [],
+                'total_paid' => [],
+                'total_unpaid' => [],
+                'total_pending' => []
+            ];
+
+            foreach ($months as $key => $month) {
+                $chartData['categories'][] = $month;
+                $monthData = $data->firstWhere('month', $key);
+
+                if ($monthData) {
+                    $chartData['total_ssl'][] = $monthData->total_ssl;
+                    $chartData['total_paid'][] = $monthData->total_paid;
+                    $chartData['total_unpaid'][] = $monthData->total_unpaid;
+                    $chartData['total_pending'][] = $monthData->total_pending;
+                    $chartData['billing'][] = $monthData->total_ssl ? number_format(($monthData->total_paid / $monthData->total_ssl) * 100, 2) : 0;
+                } else {
+                    $chartData['total_ssl'][] = 0;
+                    $chartData['total_paid'][] = 0;
+                    $chartData['total_unpaid'][] = 0;
+                    $chartData['total_pending'][] = 0;
+                    $chartData['billing'][] = 0;
+                }
+            }
+        } else {
+            // Query for Billing
+            $data = DB::table('alls')
+                ->select(
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
+                    DB::raw("SUM(saldo) as total"),
+                    DB::raw("SUBSTRING(nper, 6, 2) as month"),
+                    DB::raw("SUBSTRING(nper, 1, 4) as year")
+                )
+                ->whereRaw("SUBSTRING(nper, 1, 4) = ?", [$selectedYear])
+                ->groupBy('year', 'month')
+                ->get();
+
+            $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+            $chartData = [
+                'categories' => [],
+                'paid' => [],
+                'unpaid' => [],
+                'pending' => [],
+                'total' => [],
+                'billing' => []
+            ];
+
+            foreach ($months as $key => $month) {
+                $chartData['categories'][] = $month;
+                $monthData = $data->firstWhere('month', $key);
+
+                if ($monthData) {
+                    $chartData['paid'][] = $monthData->paid;
+                    $chartData['unpaid'][] = $monthData->unpaid;
+                    $chartData['pending'][] = $monthData->pending;
+                    $chartData['total'][] = $monthData->total;
+                    $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
+                } else {
+                    $chartData['paid'][] = 0;
+                    $chartData['unpaid'][] = 0;
+                    $chartData['pending'][] = 0;
+                    $chartData['total'][] = 0;
+                    $chartData['billing'][] = 0;
+                }
+            }
+        }
+
+        return view('super-admin.grafik-databillperexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
+    }
 
 
     // Report Data Pranpc
@@ -860,7 +953,9 @@ class SuperAdminController extends Controller
             DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln'),
             DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln1'),
             DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln1')
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln1')
         );
 
         // Exclude rows where sto is 'N/A'
@@ -888,6 +983,8 @@ class SuperAdminController extends Controller
         $total_paid_bill_bln1 = $reports->sum('total_paid_bill_bln1');
         $total_unpaid_bill_bln = $reports->sum('total_unpaid_bill_bln');
         $total_unpaid_bill_bln1 = $reports->sum('total_unpaid_bill_bln1');
+        $total_pending_bill_bln = $reports->sum('total_pending_bill_bln');
+        $total_pending_bill_bln1 = $reports->sum('total_pending_bill_bln1');
 
         return view('super-admin.report-datapranpc', compact(
             'title',
@@ -899,11 +996,75 @@ class SuperAdminController extends Controller
             'total_paid_bill_bln1',
             'total_unpaid_bill_bln',
             'total_unpaid_bill_bln1',
+            'total_pending_bill_bln',
+            'total_pending_bill_bln1',
             'year',
             'bulan',
             'show_all'
         ));
     }
+
+
+    public function indexgrafikpranpc()
+    {
+        $title = 'Grafik Billper Existing';
+
+        // Fetch data from the database
+        $data = DB::table('alls')
+            ->select(
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
+                DB::raw("SUM(saldo) as total"),
+                DB::raw("SUBSTRING(nper, 6, 2) as month"),
+                DB::raw("SUBSTRING(nper, 1, 4) as year")
+            )
+            ->groupBy('year', 'month')
+            ->get();
+
+        // Log the raw data for debugging
+        // Log::info('Raw Data:', $data->toArray());
+
+
+        // Process data to match the required format
+        $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+        $chartData = [
+            'categories' => [],
+            'paid' => [],
+            'unpaid' => [],
+            'pending' => [],
+            'total' => [],
+            'billing' => []
+        ];
+
+        foreach ($months as $key => $month) {
+            $chartData['categories'][] = $month;
+            $monthData = $data->firstWhere('month', $key);
+
+            if ($monthData) {
+                $chartData['paid'][] = $monthData->paid;
+                $chartData['unpaid'][] = $monthData->unpaid;
+                $chartData['pending'][] = $monthData->pending;
+                $chartData['total'][] = $monthData->total;
+                $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
+            } else {
+                $chartData['paid'][] = 0;
+                $chartData['unpaid'][] = 0;
+                $chartData['pending'][] = 0;
+                $chartData['total'][] = 0;
+                $chartData['billing'][] = 0;
+            }
+        }
+
+        // Log the processed chart data for debugging
+        // Log::info('Chart Data:', $chartData);
+
+        // dd($data, $chartData);
+
+        return view('super-admin.grafik-datapranpc', compact('title', 'chartData'));
+    }
+
 
 
 
@@ -1351,13 +1512,12 @@ class SuperAdminController extends Controller
         $filterMonth = $request->input('month', now()->format('m'));
         $filterYear = $request->input('year', now()->format('Y'));
         $filterSales = $request->input('filter_sales', '');
-        $jenisBiling = $request->input('jenis_biling', ''); // New filter
 
         // Calculate the current date in 'Y-m' format
         $currentMonth = Carbon::now()->format('Y-m');
 
         // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $jenisBiling, $currentMonth) {
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->whereNotNull('all_id'); // Ensure only records with all_id are included
@@ -1369,31 +1529,16 @@ class SuperAdminController extends Controller
                 });
             }
 
-            // Apply jenis_biling filter if provided
-            if ($jenisBiling === 'Billper') {
-                $query->whereHas('alls', function ($q) use ($currentMonth) {
-                    $q->where('nper', $currentMonth);
-                });
-            } elseif ($jenisBiling === 'Existing') {
-                $query->whereHas('alls', function ($q) use ($currentMonth) {
-                    $q->where('nper', '<', $currentMonth);
-                });
-            }
+
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
         $sales = User::where('level', 'user')
             ->withCount([
-                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear, $currentMonth, $jenisBiling) {
+                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
                         ->whereMonth('created_at', $filterMonth);
 
-                    // Apply jenis_biling filter if provided
-                    if ($jenisBiling === 'Billper') {
-                        $query->where('nper', $currentMonth);
-                    } elseif ($jenisBiling === 'Existing') {
-                        $query->where('nper', '<', $currentMonth);
-                    }
                 },
                 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
@@ -1417,7 +1562,7 @@ class SuperAdminController extends Controller
             $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
         }
 
-        return view('super-admin.report-salesbillperexisting', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales', 'jenisBiling'));
+        return view('super-admin.report-salesbillperexisting', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
     }
 
     public function getDatareportbillpersuperadmin(Request $request)

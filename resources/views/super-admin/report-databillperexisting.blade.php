@@ -44,18 +44,6 @@
                                         <input type="month" id="nper" name="nper" value=""
                                             class="form-control">
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label for="jenis_data">Jenis data</label>
-                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
-                                            aria-label="Default select example" required>
-                                            <option value="Semua" {{ $jenis_data === 'Semua' ? 'selected' : '' }}>Semua
-                                            </option>
-                                            <option value="Billper" {{ $jenis_data === 'Billper' ? 'selected' : '' }}>
-                                                Billper</option>
-                                            <option value="Existing" {{ $jenis_data === 'Existing' ? 'selected' : '' }}>
-                                                Existing</option>
-                                        </select>
-                                    </div>
                                     <div class="d-flex justify-content-end">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="flexCheckDefault"
@@ -76,7 +64,7 @@
                 </div>
 
                 <!-- Button trigger modal Riwayat-->
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalRiwayat">
+                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modalRiwayat">
                     <i class="bi bi-clock-history"></i> Riwayat
                 </button>
 
@@ -107,6 +95,10 @@
                         </div>
                     </div>
                 </div>
+
+                <a href="{{ route('grafikdatabillperexisting.index') }}" class="btn btn-green ">
+                    <i class="bi bi-clipboard-data"></i> Grafik
+                </a>
             </div>
         </div>
     </div>
@@ -119,6 +111,7 @@
                 <th id="th" class="align-middle text-center">Saldo Awal</th>
                 <th id="th" class="align-middle text-center">Paid</th>
                 <th id="th" class="align-middle text-center">Unpaid</th>
+                <th id="th" class="align-middle text-center">Pending</th>
             </tr>
         </thead>
         <tbody>
@@ -133,6 +126,8 @@
                         Rp{{ number_format($report->total_paid, 0, ',', '.') }}</td>
                     <td id="td" class="align-middle text-center">
                         Rp{{ number_format($report->total_unpaid, 0, ',', '.') }}</td>
+                    <td id="td" class="align-middle text-center">
+                        Rp{{ number_format($report->total_pending, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -143,6 +138,8 @@
                 <td class="align-middle fw-bold text-center">Rp{{ number_format($total_saldo, 0, ',', '.') }}</td>
                 <td class="align-middle fw-bold text-center">Rp{{ number_format($total_paid, 0, ',', '.') }}</td>
                 <td class="align-middle fw-bold text-center">Rp{{ number_format($total_unpaid, 0, ',', '.') }}
+                </td>
+                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_pending, 0, ',', '.') }}
                 </td>
             </tr>
         </tfoot>

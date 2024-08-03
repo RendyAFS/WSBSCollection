@@ -31,18 +31,9 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('pranpc.index') }}" method="POST">
+                            <form id="filterForm" action="{{ route('all.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
-                                    <div class="form-group mb-3">
-                                        <label for="jenis_data">Jenis data</label>
-                                        <select id="jenis_data_filter" name="jenis_data" class="form-select"
-                                            aria-label="Default select example" required>
-                                            <option selected value="Semua">Semua</option>
-                                            <option value="Billper">Billper</option>
-                                            <option value="Existing">Existing</option>
-                                        </select>
-                                    </div>
                                     <div class="form-group mb-3">
                                         <label for="nper_filter">Pilih NPER</label>
                                         <input type="month" id="nper_filter" name="nper_filter" class="form-control"
@@ -56,6 +47,16 @@
                                             <option value="Paid">Paid</option>
                                             <option value="Pending">Pending</option>
                                             <option value="Unpaid">Unpaid</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="jenis_produk_filter">Jenis Produk</label>
+                                        <select id="jenis_produk_filter" name="jenis_produk" class="form-select"
+                                            aria-label="Default select example">
+                                            <option selected value="Semua">Semua</option>
+                                            <option value="Internet">Internet</option>
+                                            <option value="Telepon">Telepon</option>
+                                            <option value="Wifi Manage Service">Wifi Manage Service</option>
                                         </select>
                                     </div>
                                 </div>
@@ -74,7 +75,8 @@
                 </div>
 
                 {{-- Button Riwayat --}}
-                <a class="btn btn-white me-2" href="{{route('allriwayat.index')}}" role="button"><i class="bi bi-clock-fill"></i> Riwayat</a>
+                <a class="btn btn-white me-2" href="{{ route('allriwayat.index') }}" role="button"><i
+                        class="bi bi-clock-fill"></i> Riwayat</a>
 
                 <!-- Button trigger modal Pembayaran-->
                 <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
@@ -97,11 +99,13 @@
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="nper">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="nper" name="nper" class="form-control" required>
+                                        <input type="month" id="nper" name="nper" class="form-control"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="formFile" class="form-label">Upload File SND</label>
-                                        <input class="form-control" type="file" id="formFile" name="file" required>
+                                        <input class="form-control" type="file" id="formFile" name="file"
+                                            required>
                                         <div id="filecekpembayaran" class="fw-bold fst-italic"></div>
                                         <div class="d-flex justify-content-end mt-3">
                                             <button type="button" id="checkFilePembayaran"
@@ -156,6 +160,16 @@
                                                 <option value="Unpaid">Unpaid</option>
                                             </select>
                                         </div>
+                                        <div class="form-group mb-3">
+                                            <label for="jenis_produk_download">Jenis Produk</label>
+                                            <select id="jenis_produk_download" name="jenis_produk" class="form-select"
+                                                aria-label="Default select example">
+                                                <option selected value="Semua">Semua</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Telepon">Telepon</option>
+                                                <option value="Wifi Manage Service">Wifi Manage Service</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" id="btn-filter-download"
@@ -203,9 +217,9 @@
                     url: "{{ route('gettabelalls') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.jenis_data = $('#jenis_data_filter').val();
                         d.nper = $('#nper_filter').val();
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
+                        d.jenis_produk = $('#jenis_produk_filter').val();
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -264,7 +278,6 @@
                         data: 'produk',
                         name: 'produk',
                         className: 'align-middle text-center',
-                        visible: false
                     },
                     {
                         data: 'status_pembayaran',
@@ -313,11 +326,10 @@
             });
 
             $('#btn-filter').on('click', function() {
-                var jenisData = $('#jenis_data_filter').val();
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
 
-                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
+                var infoText = nper + " - " + statusPembayaran;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

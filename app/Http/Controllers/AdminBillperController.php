@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AllExport;
 use App\Exports\SalesReportBillperExisting;
-use App\Models\All;
+use App\Models\Billper;
 use App\Models\SalesReport;
 use App\Models\User;
 use App\Models\VocKendala;
@@ -31,7 +31,7 @@ class AdminBillperController extends Controller
     {
         confirmDelete();
         $title = 'Data All';
-        $alls = All::all();
+        $alls = Billper::all();
         $users = User::where('level', 'User')->get();
         return view('admin-billper.data-all-adminbillper', compact('title', 'alls', 'users'));
     }
@@ -39,7 +39,7 @@ class AdminBillperController extends Controller
     public function getDatabillpersadminbillper(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
+            $query = Billper::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
 
             // Filter berdasarkan nper
             if ($request->has('nper')) {
@@ -83,7 +83,7 @@ class AdminBillperController extends Controller
 
     public function exportbillper()
     {
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+        $allData = Billper::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         return Excel::download(new AllExport($allData), 'Data-Billper-Existing.xlsx');
     }
@@ -98,7 +98,7 @@ class AdminBillperController extends Controller
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
         // Query untuk mengambil data berdasarkan rentang nper
-        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+        $query = Billper::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
 
         // Filter berdasarkan status_pembayaran jika tidak "Semua"
         if ($statusPembayaran && $statusPembayaran !== 'Semua') {
@@ -121,9 +121,9 @@ class AdminBillperController extends Controller
     public function editbillpersadminbillper($id)
     {
         $title = 'Edit Data Plotting';
-        $all = All::with('user')->findOrFail($id);
+        $all = Billper::with('user')->findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
         return view('admin-billper.edit-alladminbillper', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
@@ -131,7 +131,7 @@ class AdminBillperController extends Controller
 
     public function viewgeneratePDFbillperexistingadminbillper(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
 
         $nper = \Carbon\Carbon::parse($all->nper);
@@ -157,7 +157,7 @@ class AdminBillperController extends Controller
 
     public function generatePDFbillperexistingadminbillper(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
 
         $nper = \Carbon\Carbon::parse($all->nper);
@@ -185,7 +185,7 @@ class AdminBillperController extends Controller
 
     public function updatebillpersadminbillper(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $all->nama = $request->input('nama');
         $all->no_inet = $request->input('no_inet');
         $all->saldo = $request->input('saldo');
@@ -205,8 +205,8 @@ class AdminBillperController extends Controller
 
     public function viewPDFreportbillper($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $all = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
         return view('components.pdf-report-billper', compact('all', 'sales_report', 'voc_kendala'));
@@ -214,8 +214,8 @@ class AdminBillperController extends Controller
 
     public function downloadPDFreportbillper($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $all = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
@@ -235,7 +235,7 @@ class AdminBillperController extends Controller
         $userId = $request->input('user_id');
 
         // Update data dengan user_id yang dipilih
-        All::whereIn('id', $ids)->update(['users_id' => $userId]);
+        Billper::whereIn('id', $ids)->update(['users_id' => $userId]);
 
         return response()->json(['success' => true]);
     }
@@ -259,7 +259,7 @@ class AdminBillperController extends Controller
         $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
-                ->whereNotNull('all_id'); // Ensure only records with all_id are included
+                ->whereNotNull('billper_id'); // Ensure only records with billper_id are included
 
             // Apply sales filter if provided
             if ($filterSales) {
@@ -280,7 +280,7 @@ class AdminBillperController extends Controller
                 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
                         ->whereMonth('created_at', $filterMonth)
-                        ->whereNotNull('all_id');
+                        ->whereNotNull('billper_id');
                 }
             ])
             ->get();
@@ -291,9 +291,9 @@ class AdminBillperController extends Controller
                 ->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->where('users_id', $sale->id)
-                ->whereNotNull('all_id')
-                ->distinct('all_id')
-                ->count('all_id');
+                ->whereNotNull('billper_id')
+                ->distinct('billper_id')
+                ->count('billper_id');
 
             $sale->wo_sudah_visit = $wo_sudah_visit;
             $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
@@ -318,7 +318,7 @@ class AdminBillperController extends Controller
             $currentMonth = Carbon::now()->format('Y-m');
 
             $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
-                ->whereNotNull('all_id') // Ensure only records with all_id are included
+                ->whereNotNull('billper_id') // Ensure only records with billper_id are included
                 ->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth);
 
@@ -346,7 +346,7 @@ class AdminBillperController extends Controller
     public function downloadAllExcelreportbillper()
     {
         $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
             ->get();
 
         return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper-Existing_Semua.xlsx');
@@ -355,7 +355,7 @@ class AdminBillperController extends Controller
     public function downloadFilteredExcelreportbillper(Request $request)
     {
         $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id') // Ensure only records with all_id are included
+            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
             ->when($request->tahun_bulan, function ($query) use ($request) {
                 $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
                     ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);

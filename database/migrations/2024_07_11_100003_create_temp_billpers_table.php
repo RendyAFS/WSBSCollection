@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alls', function (Blueprint $table) {
+        Schema::create('temp_billpers', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->nullable();
             $table->string('no_inet')->nullable();
@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('produk')->nullable();
             $table->string('status_pembayaran')->nullable();
             $table->string('nper')->nullable();
-            $table->foreignId('users_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('billpers');
+        Schema::dropIfExists('temp_billpers');
     }
 };

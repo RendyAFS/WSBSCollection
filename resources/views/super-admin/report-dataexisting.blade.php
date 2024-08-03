@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Report Data Billper
+                Report Data Existing
                 <span id="info-filter">
                     @if (isset($nper) && !$show_all)
                         - {{ strftime('%B %Y', strtotime($nper)) }}
@@ -96,7 +96,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('grafikdatabillper.index') }}" class="btn btn-green ">
+                <a href="{{ route('grafikdataexisting.index') }}" class="btn btn-green ">
                     <i class="bi bi-clipboard-data"></i> Grafik
                 </a>
             </div>

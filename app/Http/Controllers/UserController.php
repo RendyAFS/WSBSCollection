@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\All;
+use App\Models\Billper;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\VocKendala;
@@ -31,7 +31,7 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
-            $query = All::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
+            $query = Billper::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
                 ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
 
             $data_alls = $query->get();
@@ -47,11 +47,11 @@ class UserController extends Controller
     public function infoassignmentbillper($id)
     {
         $title = 'Info Assignment';
-        $all = All::with('user')->findOrFail($id);
+        $all = Billper::with('user')->findOrFail($id);
         $voc_kendala = VocKendala::all(); // Mengambil semua data VocKendala
 
         // Mengambil SalesReport terbaru yang terkait dengan All tertentu
-        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first();
+        $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first();
 
         // Mengecek apakah ada data di sales_report dan mengecek jumlah visit
         $isSalesReportEmpty = $sales_report ? false : true;
@@ -66,7 +66,7 @@ class UserController extends Controller
     public function updateassignmentbillper(Request $request, $id)
     {
         // Update the All model
-        $all = All::findOrFail($id);
+        $all = Billper::findOrFail($id);
         $all->nama = $request->input('nama');
         $all->no_inet = $request->input('no_inet');
         $all->saldo = $request->input('saldo');
@@ -82,7 +82,7 @@ class UserController extends Controller
         // Update the SalesReport model
         $report = new SalesReport; // Make sure to use findOrFail() to update existing records
         $report->users_id = $request->input('users_id');
-        $report->all_id = $request->input('all_id');
+        $report->billper_id = $request->input('billper_id');
         $report->snd = $request->input('snd');
         $report->witel = $request->input('witel');
         $report->waktu_visit = $request->input('waktu_visit');

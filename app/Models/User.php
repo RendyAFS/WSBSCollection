@@ -46,9 +46,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function alls()
+    public function billpers()
     {
-        return $this->hasMany(All::class, 'users_id');
+        return $this->hasMany(Billper::class, 'users_id');
+    }
+    public function existings()
+    {
+        return $this->hasMany(Billper::class, 'users_id');
     }
     public function pranpcs()
     {

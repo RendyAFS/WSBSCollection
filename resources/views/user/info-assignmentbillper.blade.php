@@ -35,8 +35,8 @@
                                                 value="{{ $all->no_inet }}">
                                         </div>
                                         <div class="mb-3 d-none">
-                                            <label for="all_id" class="form-label">id</label>
-                                            <input type="text" class="form-control" id="all_id" name="all_id"
+                                            <label for="billper_id" class="form-label">id</label>
+                                            <input type="text" class="form-control" id="billper_id" name="billper_id"
                                                 value="{{ $all->id }}">
                                         </div>
 

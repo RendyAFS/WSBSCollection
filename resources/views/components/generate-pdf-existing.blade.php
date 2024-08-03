@@ -154,12 +154,12 @@
         </div>
         <div class="content">
             <p>Surabaya, {{ $date }}</p>
-            <p>Kepada Yth.<br>Bpk/Ibu. {{ $billper->nama }}<br>Perihal: Informasi Tagihan</p>
+            <p>Kepada Yth.<br>Bpk/Ibu. {{ $existing->nama }}<br>Perihal: Informasi Tagihan</p>
             <p>Dengan Hormat,</p>
             <p>Pertama-tama kami menyampaikan terima kasih atas kepercayaan perusahaan Bapak/Ibu tetap setia menggunakan
                 jasa layanan PT. Telkom Indonesia, Tbk. di perusahaan yang Bapak/Ibu pimpin.</p>
-            <p>Sebagaimana perihal tersebut di atas, kami sampaikan informasi tagihan atas {{ $billper->nama }} dengan
-                nomor telepon {{ $billper->no_tlf }} sebagai berikut:</p>
+            <p>Sebagaimana perihal tersebut di atas, kami sampaikan informasi tagihan atas {{ $existing->nama }} dengan
+                nomor telepon {{ $existing->no_tlf }} sebagai berikut:</p>
 
             <div class="table-contain">
                 <table class="table">
@@ -174,8 +174,8 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>{{ $billper->no_inet }}</td>
-                            <td>RP. {{ number_format($billper->saldo, 2, ',', '.') }}</td>
+                            <td>{{ $existing->no_inet }}</td>
+                            <td>RP. {{ number_format($existing->saldo, 2, ',', '.') }}</td>
                             <td>{{ $total_tagihan }}</td>
                         </tr>
                     </tbody>
@@ -207,7 +207,7 @@
                 <div class="contact-list">
                     <p>Contact person:<br>
                         Collection witel SBS: 085176897993<br>
-                        Cbillper center:</p>
+                        Cexisting center:</p>
                     <ul>
                         <li>1500250</li>
                         <li>08001835566</li>

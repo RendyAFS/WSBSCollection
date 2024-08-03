@@ -6,7 +6,7 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data Billper
+                Data Existing
                 <span id="info-filter-head">
 
                 </span>
@@ -31,7 +31,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('billper.index') }}" method="POST">
+                            <form id="filterForm" action="{{ route('existing.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="{{ route('billper.index') }}" class="btn btn-grey">
+                                    <a href="{{ route('existing.index') }}" class="btn btn-grey">
                                         <i class="bi bi-x-lg"></i> Reset
                                     </a>
                                     <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
@@ -75,7 +75,7 @@
                 </div>
 
                 {{-- Button Riwayat --}}
-                <a class="btn btn-white me-2" href="{{ route('billperriwayat.index') }}" role="button"><i
+                <a class="btn btn-white me-2" href="{{ route('existingriwayat.index') }}" role="button"><i
                         class="bi bi-clock-fill"></i> Riwayat</a>
 
                 <!-- Button trigger modal Pembayaran-->
@@ -94,7 +94,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('cek-pembayaranbillper') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('cek-pembayaranexisting') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
@@ -128,7 +128,7 @@
 
                 {{-- BTN Donwload --}}
                 <div class="btn-group">
-                    <a href="{{ route('download.excelbillpersuperadmin') }}" class="btn btn-green">
+                    <a href="{{ route('download.excelexistingsuperadmin') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -143,7 +143,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excelbillpersuperadmin') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excelexistingsuperadmin') }}" method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
@@ -215,7 +215,7 @@
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelbillpers') }}",
+                    url: "{{ route('gettabelexistings') }}",
                     type: 'GET',
                     data: function(d) {
                         d.nper = $('#nper_filter').val();
@@ -296,8 +296,8 @@
                         }
                     },
                     {
-                        data: 'opsi-tabel-databillper',
-                        name: 'opsi-tabel-databillper',
+                        data: 'opsi-tabel-dataexisting',
+                        name: 'opsi-tabel-dataexisting',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
@@ -394,7 +394,7 @@
     `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
-            fetch('{{ route('cek.filepembayaranbillper') }}', {
+            fetch('{{ route('cek.filepembayaranexisting') }}', {
                     method: 'POST',
                     body: formData,
                     headers: {

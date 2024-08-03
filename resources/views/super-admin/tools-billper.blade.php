@@ -6,7 +6,7 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Tools
+                Tools Billper
             </span>
         </div>
 
@@ -63,7 +63,7 @@
                     @if ($temp_billpers->isEmpty())
                         {{-- None --}}
                     @else
-                        <form action="{{ route('savealls') }}" method="POST">
+                        <form action="{{ route('savebillpers') }}" method="POST">
                             @csrf
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
                             <button type="submit" class="btn btn-green btn-save me-2" id="btn-save">
@@ -176,8 +176,8 @@
                         visible: false
                     },
                     {
-                        data: 'opsi-tabel-datatempall',
-                        name: 'opsi-tabel-datatempall',
+                        data: 'opsi-tabel-datatempbillper',
+                        name: 'opsi-tabel-datatempbillper',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false

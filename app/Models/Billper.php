@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class All extends Model
+class Billper extends Model
 {
     use HasFactory;
 
@@ -20,7 +20,7 @@ class All extends Model
 
     public function salesReports()
     {
-        return $this->hasMany(SalesReport::class, 'all_id');
+        return $this->hasMany(SalesReport::class, 'billper_id');
     }
 }
 

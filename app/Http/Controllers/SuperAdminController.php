@@ -8,15 +8,18 @@ use App\Exports\SalesReportBillperExisting;
 use App\Exports\SalesReportPranpc;
 use App\Imports\DataMasterImport;
 use App\Imports\PranpcImport;
-use App\Models\All;
+use App\Models\Billper;
 use App\Models\DataMaster;
+use App\Models\Existing;
 use App\Models\Pranpc;
 use App\Models\Riwayat;
-use App\Models\RiwayatAll;
+use App\Models\RiwayatBillper;
+use App\Models\RiwayatExisting;
 use App\Models\RiwayatPranpc;
 use App\Models\SalesReport;
-use App\Models\TempAll;
+use App\Models\TempBillper;
 use App\Models\TempDataMaster;
+use App\Models\TempExisting;
 use App\Models\TempPranpc;
 use App\Models\User;
 use App\Models\VocKendala;
@@ -29,6 +32,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Exists;
 use PDF;
 
 class SuperAdminController extends Controller
@@ -40,235 +44,6 @@ class SuperAdminController extends Controller
         return view('super-admin.index', compact('title'));
     }
 
-
-    // TOOL
-    public function indextoolbillper()
-    {
-        confirmDelete();
-        $title = 'Tool';
-        $temp_billpers = TempAll::all();
-        return view('super-admin.tools-billper', compact('title', 'temp_billpers'));
-    }
-
-    public function checkFile1billper(Request $request)
-    {
-        ini_set('memory_limit', '2048M');  // Increase memory limit
-        set_time_limit(300);  // Increase max execution time
-
-        // Validate the uploaded file
-        $validator = Validator::make($request->all(), [
-            'file1' => 'required|file|mimes:xlsx',
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
-        }
-
-        try {
-            // Load the spreadsheet
-            $file1 = $request->file('file1')->getRealPath();
-            $fileName1 = $request->file('file1')->getClientOriginalName();
-            $spreadsheet1 = IOFactory::load($file1);
-            $sheet1 = $spreadsheet1->getActiveSheet();
-            $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
-
-            // Check if 'SND' column is present
-            if (in_array('SND', $firstRow1)) {
-                return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
-            } else {
-                return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Error processing file: ' . $e->getMessage()]);
-        }
-    }
-
-
-    public function vlookupbillper(Request $request)
-    {
-        ini_set('memory_limit', '2048M');  // Increase memory limit
-        set_time_limit(300);  // max_execution_time=300
-
-        $request->validate([
-            'file1' => 'required|file|mimes:xlsx',
-        ]);
-
-        $file1 = $request->file('file1')->getRealPath();
-
-        $spreadsheet1 = IOFactory::load($file1);
-        $sheet1 = $spreadsheet1->getActiveSheet();
-        $data1 = $sheet1->toArray();
-
-        $result = [];
-        $notFound = [];
-
-        foreach ($data1 as $index1 => $row1) {
-            if ($index1 == 0) continue; // Skip header row
-
-            $lookupValue = $row1[array_search('SND', $data1[0])];
-
-            // New logic for checking the first 4 digits
-            if (substr($lookupValue, 0, 4) !== '1523') {
-                $lookupValue = $row1[array_search('SND_GROUP', $data1[0])];
-                if (!$lookupValue) {
-                    $lookupValue = $row1[array_search('SND', $data1[0])];
-                }
-            }
-
-            // Fetch from database
-            $dataMaster = DB::table('data_masters')->where('event_source', $lookupValue)->first();
-
-            if ($dataMaster) {
-                $nper = $row1[array_search('NPER', $data1[0])];
-                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
-
-                // Process UMUR_CUSTOMER
-                $umurCustomerRaw = $row1[array_search('DATMS', $data1[0])];
-                $umurCustomerFormatted = date('Y-m-d', strtotime(substr($umurCustomerRaw, 0, 4) . '-' . substr($umurCustomerRaw, 4, 2) . '-' . substr($umurCustomerRaw, 6, 2)));
-
-                // Calculate age in full months including days
-                $dateNow = \Carbon\Carbon::now();
-                $umurCustomerDate = \Carbon\Carbon::createFromFormat('Y-m-d', $umurCustomerFormatted);
-                $ageInYears = $dateNow->diffInYears($umurCustomerDate);
-                $ageInMonths = $dateNow->diffInMonths($umurCustomerDate) % 12;
-                $ageInDays = $dateNow->diffInDays($umurCustomerDate) % 30;
-                $totalMonths = ($ageInYears * 12) + $ageInMonths;
-
-                // Adjust total months for days
-                if ($ageInDays >= 30) {
-                    $totalMonths++;
-                }
-
-                // Determine age range
-                if ($totalMonths <= 3) {
-                    $ageRange = '00-03 Bln';
-                } elseif ($totalMonths <= 6) {
-                    $ageRange = '04-06 Bln';
-                } elseif ($totalMonths <= 9) {
-                    $ageRange = '07-09 Bln';
-                } elseif ($totalMonths <= 12) {
-                    $ageRange = '10-12 Bln';
-                } else {
-                    $ageRange = '>12 Bln';
-                }
-
-                // Remove non-numeric characters from saldo
-                $saldoRaw = $row1[array_search('SALDO', $data1[0])];
-                $saldoFormatted = preg_replace('/[^0-9]/', '', $saldoRaw);
-
-                $result[] = [
-                    'nama' => $dataMaster->pelanggan,
-                    'no_inet' => $dataMaster->event_source,
-                    'saldo' => $saldoFormatted,
-                    'no_tlf' => $dataMaster->mobile_contact_tel,
-                    'email' => $dataMaster->email_address,
-                    'sto' => $dataMaster->csto,
-                    'umur_customer' => $ageRange,
-                    'produk' => $row1[array_search('PRODUK', $data1[0])],
-                    'nper' => $nperFormatted,
-                ];
-            } else {
-                $nper = $row1[array_search('NPER', $data1[0])];
-                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
-                $notFound[] = [
-                    'nama' => 'N/A',
-                    'no_inet' => $lookupValue,
-                    'saldo' => '0',
-                    'no_tlf' => 'N/A',
-                    'email' => 'N/A',
-                    'sto' => 'N/A',
-                    'umur_customer' => 'N/A',
-                    'produk' => 'N/A',
-                    'nper' => $nperFormatted,
-                ];
-            }
-        }
-
-        // Insert the result into the database
-        foreach ($result as $row) {
-            DB::table('temp_alls')->insert([
-                'nama' => $row['nama'] ?: 'N/A',
-                'no_inet' => $row['no_inet'] ?: 'N/A',
-                'saldo' => $row['saldo'] ?: 'N/A',
-                'no_tlf' => $row['no_tlf'] ?: 'N/A',
-                'email' => $row['email'] ?: 'N/A',
-                'sto' => $row['sto'] ?: 'N/A',
-                'umur_customer' => $row['umur_customer'] ?: 'N/A',
-                'produk' => $row['produk'] ?: 'N/A',
-                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
-                'nper' => $row['nper'] ?: 'N/A',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-    }
-
-
-
-
-    public function getDataTempbillpers(Request $request)
-    {
-        if ($request->ajax()) {
-            $data_tempbillpers = TempAll::all();
-            return datatables()->of($data_tempbillpers)
-                ->addIndexColumn()
-                ->addColumn('opsi-tabel-datatempall', function ($tempbillper) {
-                    return view('components.opsi-tabel-tempbillper', compact('tempbillper'));
-                })
-                ->toJson();
-        }
-    }
-
-    public function savetempbillpers()
-    {
-        // Ambil data dari temp_alls
-        $tempAlls = TempAll::all();
-
-        // Insert data ke alls
-        foreach ($tempAlls as $row) {
-            DB::table('alls')->insert([
-                'nama' => $row->nama ?: 'N/A',
-                'no_inet' => $row->no_inet ?: 'N/A',
-                'saldo' => $row->saldo ?: '0',
-                'no_tlf' => $row->no_tlf ?: 'N/A',
-                'email' => $row->email ?: 'N/A',
-                'sto' => $row->sto ?: 'N/A',
-                'umur_customer' => $row->umur_customer ?: 'N/A',
-                'produk' => $row->produk ?: 'N/A',
-                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
-                'nper' => $row->nper ?: 'N/A',
-                'users_id' => $row->users_id ?: null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // Kosongkan table temp_alls
-        TempAll::truncate();
-
-
-        // Redirect ke halaman tools.index atau halaman lainnya
-        Alert::success('Data Berhasil Tersimpan');
-        return redirect()->route('toolsbillper.index')->with('success', 'Data Berhasil Tersimpan');
-    }
-
-    public function deleteAllTempbillpers()
-    {
-        // Kosongkan table temp_alls
-        TempAll::truncate();
-
-        Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('toolsbillper.index');
-    }
-
-    public function destroyTempbillpers($id)
-    {
-        $data = TempAll::findOrFail($id);
-        $data->delete();
-        Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('toolsbillper.index');
-    }
 
     // Data Master
     public function indexdatamaster()
@@ -431,11 +206,11 @@ class SuperAdminController extends Controller
 
     public function savetempdatamasters()
     {
-        // Ambil data dari temp_alls
+        // Ambil data dari temp_billpers
         $tempDataMaster = TempDataMaster::all();
 
 
-        // Insert data ke alls
+        // Insert data ke billpers
         foreach ($tempDataMaster as $row) {
             DB::table('data_masters')->insert([
                 'event_source' => $row->event_source ?: 'N/A',
@@ -449,7 +224,7 @@ class SuperAdminController extends Controller
             ]);
         }
 
-        // Kosongkan table temp_alls
+        // Kosongkan table temp_billpers
         TempDataMaster::truncate();
 
 
@@ -461,7 +236,7 @@ class SuperAdminController extends Controller
 
     public function deleteAllTempdatamasters()
     {
-        // Kosongkan table temp_alls
+        // Kosongkan table temp_billpers
         TempDataMaster::truncate();
 
         Alert::success('Data Berhasil Terhapus');
@@ -478,21 +253,248 @@ class SuperAdminController extends Controller
 
 
 
+    // TOOL Billper
+    public function indextoolbillper()
+    {
+        confirmDelete();
+        $title = 'Tool Billper';
+        $temp_billpers = TempBillper::all();
+        return view('super-admin.tools-billper', compact('title', 'temp_billpers'));
+    }
+
+    public function checkFile1billper(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
+
+        // Validate the uploaded file
+        $validator = Validator::make($request->all(), [
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
+        }
+
+        try {
+            // Load the spreadsheet
+            $file1 = $request->file('file1')->getRealPath();
+            $fileName1 = $request->file('file1')->getClientOriginalName();
+            $spreadsheet1 = IOFactory::load($file1);
+            $sheet1 = $spreadsheet1->getActiveSheet();
+            $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+            // Check if 'SND' column is present
+            if (in_array('SND', $firstRow1)) {
+                return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
+            } else {
+                return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error processing file: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function vlookupbillper(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // max_execution_time=300
+
+        $request->validate([
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
+
+        $file1 = $request->file('file1')->getRealPath();
+
+        $spreadsheet1 = IOFactory::load($file1);
+        $sheet1 = $spreadsheet1->getActiveSheet();
+        $data1 = $sheet1->toArray();
+
+        $result = [];
+        $notFound = [];
+
+        foreach ($data1 as $index1 => $row1) {
+            if ($index1 == 0) continue; // Skip header row
+
+            $lookupValue = $row1[array_search('SND', $data1[0])];
+
+            // New logic for checking the first 4 digits
+            if (substr($lookupValue, 0, 4) !== '1523') {
+                $lookupValue = $row1[array_search('SND_GROUP', $data1[0])];
+                if (!$lookupValue) {
+                    $lookupValue = $row1[array_search('SND', $data1[0])];
+                }
+            }
+
+            // Fetch from database
+            $dataMaster = DB::table('data_masters')->where('event_source', $lookupValue)->first();
+
+            if ($dataMaster) {
+                $nper = $row1[array_search('NPER', $data1[0])];
+                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
+
+                // Process UMUR_CUSTOMER
+                $umurCustomerRaw = $row1[array_search('DATMS', $data1[0])];
+                $umurCustomerFormatted = date('Y-m-d', strtotime(substr($umurCustomerRaw, 0, 4) . '-' . substr($umurCustomerRaw, 4, 2) . '-' . substr($umurCustomerRaw, 6, 2)));
+
+                // Calculate age in full months including days
+                $dateNow = \Carbon\Carbon::now();
+                $umurCustomerDate = \Carbon\Carbon::createFromFormat('Y-m-d', $umurCustomerFormatted);
+                $ageInYears = $dateNow->diffInYears($umurCustomerDate);
+                $ageInMonths = $dateNow->diffInMonths($umurCustomerDate) % 12;
+                $ageInDays = $dateNow->diffInDays($umurCustomerDate) % 30;
+                $totalMonths = ($ageInYears * 12) + $ageInMonths;
+
+                // Adjust total months for days
+                if ($ageInDays >= 30) {
+                    $totalMonths++;
+                }
+
+                // Determine age range
+                if ($totalMonths <= 3) {
+                    $ageRange = '00-03 Bln';
+                } elseif ($totalMonths <= 6) {
+                    $ageRange = '04-06 Bln';
+                } elseif ($totalMonths <= 9) {
+                    $ageRange = '07-09 Bln';
+                } elseif ($totalMonths <= 12) {
+                    $ageRange = '10-12 Bln';
+                } else {
+                    $ageRange = '>12 Bln';
+                }
+
+                // Remove non-numeric characters from saldo
+                $saldoRaw = $row1[array_search('SALDO', $data1[0])];
+                $saldoFormatted = preg_replace('/[^0-9]/', '', $saldoRaw);
+
+                $result[] = [
+                    'nama' => $dataMaster->pelanggan,
+                    'no_inet' => $dataMaster->event_source,
+                    'saldo' => $saldoFormatted,
+                    'no_tlf' => $dataMaster->mobile_contact_tel,
+                    'email' => $dataMaster->email_address,
+                    'sto' => $dataMaster->csto,
+                    'umur_customer' => $ageRange,
+                    'produk' => $row1[array_search('PRODUK', $data1[0])],
+                    'nper' => $nperFormatted,
+                ];
+            } else {
+                $nper = $row1[array_search('NPER', $data1[0])];
+                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
+                $notFound[] = [
+                    'nama' => 'N/A',
+                    'no_inet' => $lookupValue,
+                    'saldo' => '0',
+                    'no_tlf' => 'N/A',
+                    'email' => 'N/A',
+                    'sto' => 'N/A',
+                    'umur_customer' => 'N/A',
+                    'produk' => 'N/A',
+                    'nper' => $nperFormatted,
+                ];
+            }
+        }
+
+        // Insert the result into the database
+        foreach ($result as $row) {
+            DB::table('temp_billpers')->insert([
+                'nama' => $row['nama'] ?: 'N/A',
+                'no_inet' => $row['no_inet'] ?: 'N/A',
+                'saldo' => $row['saldo'] ?: 'N/A',
+                'no_tlf' => $row['no_tlf'] ?: 'N/A',
+                'email' => $row['email'] ?: 'N/A',
+                'sto' => $row['sto'] ?: 'N/A',
+                'umur_customer' => $row['umur_customer'] ?: 'N/A',
+                'produk' => $row['produk'] ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'nper' => $row['nper'] ?: 'N/A',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+
+
+
+    public function getDataTempbillpers(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_tempbillpers = TempBillper::all();
+            return datatables()->of($data_tempbillpers)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-datatempbillper', function ($tempbillper) {
+                    return view('components.opsi-tabel-tempbillper', compact('tempbillper'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function savetempbillpers()
+    {
+        // Ambil data dari temp_billpers
+        $tempBillpers = TempBillper::all();
+
+        // Insert data ke billpers
+        foreach ($tempBillpers as $row) {
+            DB::table('billpers')->insert([
+                'nama' => $row->nama ?: 'N/A',
+                'no_inet' => $row->no_inet ?: 'N/A',
+                'saldo' => $row->saldo ?: '0',
+                'no_tlf' => $row->no_tlf ?: 'N/A',
+                'email' => $row->email ?: 'N/A',
+                'sto' => $row->sto ?: 'N/A',
+                'umur_customer' => $row->umur_customer ?: 'N/A',
+                'produk' => $row->produk ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'nper' => $row->nper ?: 'N/A',
+                'users_id' => $row->users_id ?: null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Kosongkan table temp_billpers
+        TempBillper::truncate();
+
+
+        // Redirect ke halaman tools.index atau halaman lainnya
+        Alert::success('Data Berhasil Tersimpan');
+        return redirect()->route('toolsbillper.index')->with('success', 'Data Berhasil Tersimpan');
+    }
+
+    public function deleteAllTempbillpers()
+    {
+        // Kosongkan table temp_billpers
+        TempBillper::truncate();
+
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('toolsbillper.index');
+    }
+
+    public function destroyTempbillpers($id)
+    {
+        $data = TempBillper::findOrFail($id);
+        $data->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('toolsbillper.index');
+    }
+
     // Data Billper
     public function indexbillper()
     {
         confirmDelete();
         $title = 'Data Billper';
-        $alls = All::all();
-        return view('super-admin.data-billper', compact('title', 'alls'));
+        $billpers = Billper::all();
+        return view('super-admin.data-billper', compact('title', 'billpers'));
     }
 
     public function getDatabillpers(Request $request)
     {
         if ($request->ajax()) {
-            $query = All::query();
-            $currentMonth = Carbon::now()->format('Y-m');
-            $currentDay = Carbon::now()->day;
+            $query = Billper::query();
 
             if ($request->has('nper')) {
                 $nper = $request->input('nper');
@@ -517,7 +519,7 @@ class SuperAdminController extends Controller
             $data_billpers = $query->get();
             return datatables()->of($data_billpers)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-dataall', function ($billper) {
+                ->addColumn('opsi-tabel-databillper', function ($billper) {
                     return view('components.opsi-tabel-databillper', compact('billper'));
                 })
                 ->toJson();
@@ -528,10 +530,10 @@ class SuperAdminController extends Controller
 
     public function viewgeneratePDFbillper(Request $request, $id)
     {
-        $all = All::findOrFail($id);
-        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+        $billper = Billper::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($billper->saldo, 2, ',', '.');
 
-        $nper = \Carbon\Carbon::parse($all->nper);
+        $nper = \Carbon\Carbon::parse($billper->nper);
 
         // Mendapatkan path gambar dan mengubahnya menjadi format base64
         $imagePath = public_path('storage/file_assets/logo-telkom.png');
@@ -539,7 +541,7 @@ class SuperAdminController extends Controller
         $imageSrc = 'data:image/png;base64,' . $imageData;
 
         $data = [
-            'all' => $all,
+            'billper' => $billper,
             'total_tagihan' => $total_tagihan,
             'date' => now()->format('d/m/Y'),
             'nomor_surat' => $request->nomor_surat,
@@ -554,10 +556,10 @@ class SuperAdminController extends Controller
 
     public function generatePDFbillper(Request $request, $id)
     {
-        $all = All::findOrFail($id);
-        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
+        $billper = Billper::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($billper->saldo, 2, ',', '.');
 
-        $nper = \Carbon\Carbon::parse($all->nper);
+        $nper = \Carbon\Carbon::parse($billper->nper);
 
         // Mendapatkan path gambar dan mengubahnya menjadi format base64
         $imagePath = public_path('storage/file_assets/logo-telkom.png');
@@ -565,7 +567,7 @@ class SuperAdminController extends Controller
         $imageSrc = 'data:image/png;base64,' . $imageData;
 
         $data = [
-            'all' => $all,
+            'billper' => $billper,
             'total_tagihan' => $total_tagihan,
             'date' => now()->format('d/m/Y'),
             'nomor_surat' => $request->nomor_surat,
@@ -581,43 +583,43 @@ class SuperAdminController extends Controller
     public function editbillpers($id)
     {
         $title = 'Edit Data Billper';
-        $all = All::findOrFail($id);
-        $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $billper = Billper::findOrFail($id);
+        $user = $billper->user ? $billper->user : 'Tidak ada';
+        $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
-        return view('super-admin.edit-billper', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
+        return view('super-admin.edit-billper', compact('title', 'billper', 'user', 'sales_report', 'voc_kendala'));
     }
 
 
     public function updatebillpers(Request $request, $id)
     {
-        $all = All::findOrFail($id);
+        $billper = Billper::findOrFail($id);
 
         // Update data dengan data baru
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
-        $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->nper = $request->input('nper');
-        $all->save();
+        $billper->nama = $request->input('nama');
+        $billper->no_inet = $request->input('no_inet');
+        $billper->saldo = $request->input('saldo');
+        $billper->no_tlf = $request->input('no_tlf');
+        $billper->email = $request->input('email');
+        $billper->sto = $request->input('sto');
+        $billper->produk = $request->input('produk');
+        $billper->umur_customer = $request->input('umur_customer');
+        $billper->status_pembayaran = $request->input('status_pembayaran');
+        $billper->nper = $request->input('nper');
+        $billper->save();
 
         // Simpan data yang sudah diperbarui ke tabel riwayat
-        RiwayatAll::create([
-            'nama' => $all->nama,
-            'no_inet' => $all->no_inet,
-            'saldo' => $all->saldo,
-            'no_tlf' => $all->no_tlf,
-            'email' => $all->email,
-            'sto' => $all->sto,
-            'umur_customer' => $all->umur_customer,
-            'produk' => $all->produk,
-            'status_pembayaran' => $all->status_pembayaran,
-            'nper' => $all->nper,
+        RiwayatBillper::create([
+            'nama' => $billper->nama,
+            'no_inet' => $billper->no_inet,
+            'saldo' => $billper->saldo,
+            'no_tlf' => $billper->no_tlf,
+            'email' => $billper->email,
+            'sto' => $billper->sto,
+            'umur_customer' => $billper->umur_customer,
+            'produk' => $billper->produk,
+            'status_pembayaran' => $billper->status_pembayaran,
+            'nper' => $billper->nper,
         ]);
 
         Alert::success('Data Berhasil Diperbarui');
@@ -626,25 +628,25 @@ class SuperAdminController extends Controller
 
     public function viewPDFreportbillpersuperadmin($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $billper = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
-        return view('components.pdf-report-billper', compact('all', 'sales_report', 'voc_kendala'));
+        return view('components.pdf-report-billper', compact('billper', 'sales_report', 'voc_kendala'));
     }
 
     public function downloadPDFreportbillpersuperadmin($id)
     {
-        $all = All::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
+        $billper = Billper::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
-        $fileName = 'Report - ' . $all->nama . '-' . $all->no_inet . '/' . ($all->user ? $all->user->name : 'Unknown') . '-' . ($all->user ? $all->user->nik : 'Unknown') . '.pdf';
+        $fileName = 'Report - ' . $billper->nama . '-' . $billper->no_inet . '/' . ($billper->user ? $billper->user->name : 'Unknown') . '-' . ($billper->user ? $billper->user->nik : 'Unknown') . '.pdf';
 
         // Create an instance of PDF
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('components.pdf-report-billper', compact('all', 'sales_report', 'voc_kendala'));
+        $pdf->loadView('components.pdf-report-billper', compact('billper', 'sales_report', 'voc_kendala'));
 
         return $pdf->download($fileName);
     }
@@ -695,7 +697,7 @@ class SuperAdminController extends Controller
         Log::info('Content of $sndList:', $sndList);
 
         // Fetch records from the database
-        $records = All::where('nper', $nper)->get();
+        $records = Billper::where('nper', $nper)->get();
 
         // Save riwayat entry
         $riwayat = new Riwayat();
@@ -722,9 +724,9 @@ class SuperAdminController extends Controller
 
     public function exportbillpersuperadmin()
     {
-        $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+        $billperData = Billper::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
-        return Excel::download(new AllExport($allData), 'Data-Billper.xlsx');
+        return Excel::download(new AllExport($billperData), 'Data-Billper.xlsx');
     }
 
     public function downloadFilteredExcelbillpersuperadmin(Request $request)
@@ -738,7 +740,7 @@ class SuperAdminController extends Controller
         $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
 
         // Query untuk mengambil data berdasarkan rentang nper
-        $query = All::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+        $query = Billper::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
 
         // Filter berdasarkan status_pembayaran jika tidak "Semua"
         if ($statusPembayaran && $statusPembayaran !== 'Semua') {
@@ -762,8 +764,8 @@ class SuperAdminController extends Controller
 
     public function destroybillpers($id)
     {
-        $all = All::findOrFail($id);
-        $all->delete();
+        $billper = Billper::findOrFail($id);
+        $billper->delete();
         Alert::success('Data Berhasil Terhapus');
         return redirect()->route('billper.index');
     }
@@ -778,8 +780,8 @@ class SuperAdminController extends Controller
     public function getDatabillpersriwayat(Request $request)
     {
         if ($request->ajax()) {
-            $data_alls = RiwayatAll::query(); // atau gunakan paginate jika perlu
-            return datatables()->of($data_alls)->toJson();
+            $data_billpers = RiwayatBillper::query(); // atau gunakan paginate jika perlu
+            return datatables()->of($data_billpers)->toJson();
         }
     }
 
@@ -804,7 +806,7 @@ class SuperAdminController extends Controller
         $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
 
         // Query with optional filter
-        $query = All::select(
+        $query = Billper::select(
             $group_column,
             DB::raw('COUNT(*) as total_ssl'),
             DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_saldo'),
@@ -844,7 +846,7 @@ class SuperAdminController extends Controller
 
         if ($jenisGrafik === 'SSL') {
             // Query for SSL
-            $data = DB::table('alls')
+            $data = DB::table('billpers')
                 ->select(
                     DB::raw('COUNT(*) as total_ssl'),
                     DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN 1 ELSE 0 END) as total_paid'),
@@ -886,7 +888,7 @@ class SuperAdminController extends Controller
             }
         } else {
             // Query for Billing
-            $data = DB::table('alls')
+            $data = DB::table('billpers')
                 ->select(
                     DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
                     DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
@@ -934,136 +936,1020 @@ class SuperAdminController extends Controller
     }
 
 
-    // Report Data Pranpc
-    public function indexreportpranpc(Request $request)
+
+    // report sales BIllper
+    public function indexreportsalesbillper(Request $request)
     {
-        $title = 'Report Pranpc';
+        $title = 'Report Sales Billper';
+        confirmDelete();
 
-        // Fetch filter values
-        $year = $request->input('year');
-        $bulan = $request->input('bulan');
-        $show_all = $request->input('show_all', false);
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', '');
 
-        // Query with optional filter
-        $query = Pranpc::select(
-            'sto', // Selalu gunakan 'sto' untuk pengelompokan
-            DB::raw('COUNT(*) as total_ssl'),
-            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln'),
-            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln1'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln1'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln1'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln'),
-            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln1')
-        );
+        // Calculate the current date in 'Y-m' format
+        $currentMonth = Carbon::now()->format('Y-m');
 
-        // Exclude rows where sto is 'N/A'
-        $query->where('sto', '!=', 'N/A');
+        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('billper_id'); // Ensure only records with billper_id are included
 
-        // Apply filter by year and month range if show_all is not checked
-        if (!$show_all && $year && $bulan) {
-            $bulanRange = explode('-', $bulan);
-            $startMonth = $bulanRange[0];
-            $endMonth = $bulanRange[1];
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
+        }])->get();
 
-            $startMintgk = $year . '-' . $startMonth;
-            $endMaxtgk = $year . '-' . $endMonth;
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount([
+                'billpers as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->whereNotNull('billper_id');
+                }
+            ])
+            ->get();
 
-            $query->where('mintgk', '>=', $startMintgk)
-                ->where('maxtgk', '<=', $endMaxtgk);
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->whereNotNull('billper_id')
+                ->distinct('billper_id')
+                ->count('billper_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
         }
 
-        $reports = $query->groupBy('sto')->get();
+        return view('super-admin.report-salesbillper', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
+    }
 
-        $total_ssl = $reports->sum('total_ssl');
-        $total_bill_bln = $reports->sum('total_bill_bln');
-        $total_bill_bln1 = $reports->sum('total_bill_bln1');
-        $total_paid_bill_bln = $reports->sum('total_paid_bill_bln');
-        $total_paid_bill_bln1 = $reports->sum('total_paid_bill_bln1');
-        $total_unpaid_bill_bln = $reports->sum('total_unpaid_bill_bln');
-        $total_unpaid_bill_bln1 = $reports->sum('total_unpaid_bill_bln1');
-        $total_pending_bill_bln = $reports->sum('total_pending_bill_bln');
-        $total_pending_bill_bln1 = $reports->sum('total_pending_bill_bln1');
+    public function getDatareportbillpersuperadmin(Request $request)
+    {
+        if ($request->ajax()) {
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', '');
 
-        return view('super-admin.report-datapranpc', compact(
-            'title',
-            'reports',
-            'total_ssl',
-            'total_bill_bln',
-            'total_bill_bln1',
-            'total_paid_bill_bln',
-            'total_paid_bill_bln1',
-            'total_unpaid_bill_bln',
-            'total_unpaid_bill_bln1',
-            'total_pending_bill_bln',
-            'total_pending_bill_bln1',
-            'year',
-            'bulan',
-            'show_all'
-        ));
+
+            $data_report_billper = SalesReport::with('billpers', 'user', 'vockendals')
+                ->whereNotNull('billper_id') // Ensure only records with billper_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_billper->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            $data_report_billper = $data_report_billper->get();
+
+            return datatables()->of($data_report_billper)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-buttons-adminbillper', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function downloadAllExcelreportbillpersuperadmin()
+    {
+        $reports = SalesReport::with('billpers', 'user', 'vockendals')
+            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
+            ->get();
+
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportbillpersuperadmin(Request $request)
+    {
+        $reports = SalesReport::with('billpers', 'user', 'vockendals')
+            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
     }
 
 
-    public function indexgrafikpranpc()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TOOL Billper
+    public function indextoolexisting()
     {
-        $title = 'Grafik Billper';
+        confirmDelete();
+        $title = 'Tool Existing';
+        $temp_existings = TempExisting::all();
+        return view('super-admin.tools-existing', compact('title', 'temp_existings'));
+    }
 
-        // Fetch data from the database
-        $data = DB::table('alls')
-            ->select(
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
-                DB::raw("SUM(saldo) as total"),
-                DB::raw("SUBSTRING(nper, 6, 2) as month"),
-                DB::raw("SUBSTRING(nper, 1, 4) as year")
-            )
-            ->groupBy('year', 'month')
-            ->get();
+    public function checkFile1existing(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
 
-        // Log the raw data for debugging
-        // Log::info('Raw Data:', $data->toArray());
+        // Validate the uploaded file
+        $validator = Validator::make($request->all(), [
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
 
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => 'File validation failed.']);
+        }
 
-        // Process data to match the required format
-        $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+        try {
+            // Load the spreadsheet
+            $file1 = $request->file('file1')->getRealPath();
+            $fileName1 = $request->file('file1')->getClientOriginalName();
+            $spreadsheet1 = IOFactory::load($file1);
+            $sheet1 = $spreadsheet1->getActiveSheet();
+            $firstRow1 = $sheet1->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
 
-        $chartData = [
-            'categories' => [],
-            'paid' => [],
-            'unpaid' => [],
-            'pending' => [],
-            'total' => [],
-            'billing' => []
-        ];
-
-        foreach ($months as $key => $month) {
-            $chartData['categories'][] = $month;
-            $monthData = $data->firstWhere('month', $key);
-
-            if ($monthData) {
-                $chartData['paid'][] = $monthData->paid;
-                $chartData['unpaid'][] = $monthData->unpaid;
-                $chartData['pending'][] = $monthData->pending;
-                $chartData['total'][] = $monthData->total;
-                $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
+            // Check if 'SND' column is present
+            if (in_array('SND', $firstRow1)) {
+                return response()->json(['status' => 'success', 'message' => "*Kolom SND ditemukan dalam file $fileName1"]);
             } else {
-                $chartData['paid'][] = 0;
-                $chartData['unpaid'][] = 0;
-                $chartData['pending'][] = 0;
-                $chartData['total'][] = 0;
-                $chartData['billing'][] = 0;
+                return response()->json(['status' => 'error', 'message' => "*Kolom SND tidak ditemukan dalam file $fileName1"]);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error processing file: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function vlookupexisting(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // max_execution_time=300
+
+        $request->validate([
+            'file1' => 'required|file|mimes:xlsx',
+        ]);
+
+        $file1 = $request->file('file1')->getRealPath();
+
+        $spreadsheet1 = IOFactory::load($file1);
+        $sheet1 = $spreadsheet1->getActiveSheet();
+        $data1 = $sheet1->toArray();
+
+        $result = [];
+        $notFound = [];
+
+        foreach ($data1 as $index1 => $row1) {
+            if ($index1 == 0) continue; // Skip header row
+
+            $lookupValue = $row1[array_search('SND', $data1[0])];
+
+            // New logic for checking the first 4 digits
+            if (substr($lookupValue, 0, 4) !== '1523') {
+                $lookupValue = $row1[array_search('SND_GROUP', $data1[0])];
+                if (!$lookupValue) {
+                    $lookupValue = $row1[array_search('SND', $data1[0])];
+                }
+            }
+
+            // Fetch from database
+            $dataMaster = DB::table('data_masters')->where('event_source', $lookupValue)->first();
+
+            if ($dataMaster) {
+                $nper = $row1[array_search('NPER', $data1[0])];
+                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
+
+                // Process UMUR_CUSTOMER
+                $umurCustomerRaw = $row1[array_search('DATMS', $data1[0])];
+                $umurCustomerFormatted = date('Y-m-d', strtotime(substr($umurCustomerRaw, 0, 4) . '-' . substr($umurCustomerRaw, 4, 2) . '-' . substr($umurCustomerRaw, 6, 2)));
+
+                // Calculate age in full months including days
+                $dateNow = \Carbon\Carbon::now();
+                $umurCustomerDate = \Carbon\Carbon::createFromFormat('Y-m-d', $umurCustomerFormatted);
+                $ageInYears = $dateNow->diffInYears($umurCustomerDate);
+                $ageInMonths = $dateNow->diffInMonths($umurCustomerDate) % 12;
+                $ageInDays = $dateNow->diffInDays($umurCustomerDate) % 30;
+                $totalMonths = ($ageInYears * 12) + $ageInMonths;
+
+                // Adjust total months for days
+                if ($ageInDays >= 30) {
+                    $totalMonths++;
+                }
+
+                // Determine age range
+                if ($totalMonths <= 3) {
+                    $ageRange = '00-03 Bln';
+                } elseif ($totalMonths <= 6) {
+                    $ageRange = '04-06 Bln';
+                } elseif ($totalMonths <= 9) {
+                    $ageRange = '07-09 Bln';
+                } elseif ($totalMonths <= 12) {
+                    $ageRange = '10-12 Bln';
+                } else {
+                    $ageRange = '>12 Bln';
+                }
+
+                // Remove non-numeric characters from saldo
+                $saldoRaw = $row1[array_search('SALDO', $data1[0])];
+                $saldoFormatted = preg_replace('/[^0-9]/', '', $saldoRaw);
+
+                $result[] = [
+                    'nama' => $dataMaster->pelanggan,
+                    'no_inet' => $dataMaster->event_source,
+                    'saldo' => $saldoFormatted,
+                    'no_tlf' => $dataMaster->mobile_contact_tel,
+                    'email' => $dataMaster->email_address,
+                    'sto' => $dataMaster->csto,
+                    'umur_customer' => $ageRange,
+                    'produk' => $row1[array_search('PRODUK', $data1[0])],
+                    'nper' => $nperFormatted,
+                ];
+            } else {
+                $nper = $row1[array_search('NPER', $data1[0])];
+                $nperFormatted = date('Y-m', strtotime(substr($nper, 0, 4) . '-' . substr($nper, 4, 2) . '-01'));
+                $notFound[] = [
+                    'nama' => 'N/A',
+                    'no_inet' => $lookupValue,
+                    'saldo' => '0',
+                    'no_tlf' => 'N/A',
+                    'email' => 'N/A',
+                    'sto' => 'N/A',
+                    'umur_customer' => 'N/A',
+                    'produk' => 'N/A',
+                    'nper' => $nperFormatted,
+                ];
             }
         }
 
-        // Log the processed chart data for debugging
-        // Log::info('Chart Data:', $chartData);
-
-        // dd($data, $chartData);
-
-        return view('super-admin.grafik-datapranpc', compact('title', 'chartData'));
+        // Insert the result into the database
+        foreach ($result as $row) {
+            DB::table('temp_existings')->insert([
+                'nama' => $row['nama'] ?: 'N/A',
+                'no_inet' => $row['no_inet'] ?: 'N/A',
+                'saldo' => $row['saldo'] ?: 'N/A',
+                'no_tlf' => $row['no_tlf'] ?: 'N/A',
+                'email' => $row['email'] ?: 'N/A',
+                'sto' => $row['sto'] ?: 'N/A',
+                'umur_customer' => $row['umur_customer'] ?: 'N/A',
+                'produk' => $row['produk'] ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'nper' => $row['nper'] ?: 'N/A',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
+
+
+
+
+    public function getDataTempexistings(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_tempexistings = TempExisting::all();
+            return datatables()->of($data_tempexistings)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-datatempexisting', function ($tempexisting) {
+                    return view('components.opsi-tabel-tempexisting', compact('tempexisting'));
+                })
+                ->toJson();
+        }
+    }
+
+
+    public function savetempexistings()
+    {
+        // Ambil data dari temp_existings
+        $tempExistings = TempExisting::all();
+
+        // Insert data ke existings
+        foreach ($tempExistings as $row) {
+            DB::table('existings')->insert([
+                'nama' => $row->nama ?: 'N/A',
+                'no_inet' => $row->no_inet ?: 'N/A',
+                'saldo' => $row->saldo ?: '0',
+                'no_tlf' => $row->no_tlf ?: 'N/A',
+                'email' => $row->email ?: 'N/A',
+                'sto' => $row->sto ?: 'N/A',
+                'umur_customer' => $row->umur_customer ?: 'N/A',
+                'produk' => $row->produk ?: 'N/A',
+                'status_pembayaran' => 'Unpaid', // Set all to 'Unpaid'
+                'nper' => $row->nper ?: 'N/A',
+                'users_id' => $row->users_id ?: null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Kosongkan table temp_existings
+        TempExisting::truncate();
+
+
+        // Redirect ke halaman tools.index atau halaman lainnya
+        Alert::success('Data Berhasil Tersimpan');
+        return redirect()->route('toolsexisting.index')->with('success', 'Data Berhasil Tersimpan');
+    }
+
+    public function deleteAllTempexistings()
+    {
+        // Kosongkan table temp_existings
+        TempExisting::truncate();
+
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('toolsexisting.index');
+    }
+
+    public function destroyTempexistings($id)
+    {
+        $data = TempExisting::findOrFail($id);
+        $data->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('toolsexisting.index');
+    }
+
+    // Data Existing
+    public function indexexisting()
+    {
+        confirmDelete();
+        $title = 'Data Existing';
+        $existings = Existing::all();
+        return view('super-admin.data-existing', compact('title', 'existings'));
+    }
+
+    public function getDataexistings(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = Existing::query();
+
+            if ($request->has('nper')) {
+                $nper = $request->input('nper');
+                $query->where('nper', 'LIKE', "%$nper%");
+            }
+
+            if ($request->has('status_pembayaran')) {
+                $statusPembayaran = $request->input('status_pembayaran');
+                if ($statusPembayaran != 'Semua') {
+                    $query->where('status_pembayaran', '=', $statusPembayaran);
+                }
+            }
+
+            // Filter berdasarkan jenis_produk
+            if ($request->has('jenis_produk')) {
+                $jenisProduk = $request->input('jenis_produk');
+                if ($jenisProduk !== 'Semua') {
+                    $query->where('produk', '=', $jenisProduk);
+                }
+            }
+
+            $data_existings = $query->get();
+            return datatables()->of($data_existings)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-dataexisting', function ($existing) {
+                    return view('components.opsi-tabel-dataexisting', compact('existing'));
+                })
+                ->toJson();
+        }
+    }
+
+
+
+    public function viewgeneratePDFexisting(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($existing->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($existing->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'existing' => $existing,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-existing', $data);
+    }
+
+
+
+    public function generatePDFexisting(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($existing->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($existing->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'existing' => $existing,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-existing', $data);
+        return $pdf->download('invoice-existing.pdf');
+    }
+
+    public function editexistings($id)
+    {
+        $title = 'Edit Data Existing';
+        $existing = Existing::findOrFail($id);
+        $user = $existing->user ? $existing->user : 'Tidak ada';
+        $sales_report = SalesReport::where('existing_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $voc_kendala = VocKendala::all();
+        return view('super-admin.edit-existing', compact('title', 'existing', 'user', 'sales_report', 'voc_kendala'));
+    }
+
+
+    public function updateexistings(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+
+        // Update data dengan data baru
+        $existing->nama = $request->input('nama');
+        $existing->no_inet = $request->input('no_inet');
+        $existing->saldo = $request->input('saldo');
+        $existing->no_tlf = $request->input('no_tlf');
+        $existing->email = $request->input('email');
+        $existing->sto = $request->input('sto');
+        $existing->produk = $request->input('produk');
+        $existing->umur_customer = $request->input('umur_customer');
+        $existing->status_pembayaran = $request->input('status_pembayaran');
+        $existing->nper = $request->input('nper');
+        $existing->save();
+
+        // Simpan data yang sudah diperbarui ke tabel riwayat
+        RiwayatExisting::create([
+            'nama' => $existing->nama,
+            'no_inet' => $existing->no_inet,
+            'saldo' => $existing->saldo,
+            'no_tlf' => $existing->no_tlf,
+            'email' => $existing->email,
+            'sto' => $existing->sto,
+            'umur_customer' => $existing->umur_customer,
+            'produk' => $existing->produk,
+            'status_pembayaran' => $existing->status_pembayaran,
+            'nper' => $existing->nper,
+        ]);
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('existing.index');
+    }
+
+    public function viewPDFreportexistingsuperadmin($id)
+    {
+        $existing = Existing::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('existing_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-report-existing', compact('existing', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportexistingsuperadmin($id)
+    {
+        $existing = Existing::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('existing_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report - ' . $existing->nama . '-' . $existing->no_inet . '/' . ($existing->user ? $existing->user->name : 'Unknown') . '-' . ($existing->user ? $existing->user->nik : 'Unknown') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-report-existing', compact('existing', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
+    public function checkFilePembayaranexisting(Request $request)
+    {
+        $request->validate(['file' => 'required|file|mimes:xlsx']);
+        $file = $request->file('file')->getRealPath();
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $firstRow = $sheet->rangeToArray('A1:Z1', null, true, false, true)[1]; // Get only the first row
+
+        if (in_array('SND', $firstRow)) {
+            return response()->json(['status' => 'success', 'message' => '*Kolom SND ditemukan dalam file.']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => '*Kolom SND tidak ditemukan dalam file.']);
+        }
+    }
+
+    public function cekPembayaranexisting(Request $request)
+    {
+        ini_set('memory_limit', '2048M');  // Increase memory limit
+        set_time_limit(300);  // Increase max execution time
+
+        // Validate the request
+        $request->validate([
+            'nper' => 'required|date_format:Y-m',
+            'file' => 'required|file|mimes:xlsx'
+        ]);
+
+        $nper = $request->input('nper');
+        $file = $request->file('file')->getRealPath();
+
+        // Load the Excel file
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray();
+
+        $sndList = [];
+
+
+        foreach ($data as $index => $row) {
+            if ($index == 0) continue; // Skip header row
+            $sndList[] = $row[array_search('SND', $data[0])];
+        }
+
+        Log::info('Total items in $sndList: ' . count($sndList));
+        Log::info('Content of $sndList:', $sndList);
+
+        // Fetch records from the database
+        $records = Existing::where('nper', $nper)->get();
+
+        // Save riwayat entry
+        $riwayat = new Riwayat();
+        $riwayat->deskripsi_riwayat = $request->file('file')->getClientOriginalName();
+        $riwayat->tanggal_riwayat = $nper;
+        $riwayat->save();
+
+        // Process each record
+        foreach ($records as $record) {
+            if (in_array($record->no_inet, $sndList)) {
+                $record->status_pembayaran = 'Unpaid';
+            } else {
+                $record->status_pembayaran = 'Paid';
+            }
+            $record->save();
+        }
+
+        Alert::success('Data Berhasil Terupdate');
+        return redirect()->route('existing.index');
+    }
+
+
+
+
+    public function exportexistingsuperadmin()
+    {
+        $existingData = Existing::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+
+        return Excel::download(new AllExport($existingData), 'Data-Existing.xlsx');
+    }
+
+    public function downloadFilteredExcelexistingsuperadmin(Request $request)
+    {
+        $bulanTahun = $request->input('nper');
+        $statusPembayaran = $request->input('status_pembayaran');
+        $jenisProduk = $request->input('jenis_produk');
+
+
+        // Format input nper ke format yang sesuai dengan kebutuhan database
+        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+
+        // Query untuk mengambil data berdasarkan rentang nper
+        $query = Existing::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        } else {
+        }
+
+        // Filter berdasarkan jenis_produk jika tidak "Semua"
+        if ($jenisProduk && $jenisProduk !== 'Semua') {
+            $query->where('produk', $jenisProduk);
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+
+        // Export data menggunakan AllExport dengan data yang sudah difilter
+        return Excel::download(new AllExport($filteredData), 'Data-Existing-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
+    }
+
+
+
+    public function destroyexistings($id)
+    {
+        $existing = Existing::findOrFail($id);
+        $existing->delete();
+        Alert::success('Data Berhasil Terhapus');
+        return redirect()->route('existing.index');
+    }
+
+
+    public function indexexistingriwayat()
+    {
+        $title = 'Data Riwayat Existing';
+        return view('super-admin.riwayat-data-existing', compact('title'));
+    }
+
+    public function getDataexistingsriwayat(Request $request)
+    {
+        if ($request->ajax()) {
+            $data_existings = RiwayatExisting::query(); // atau gunakan paginate jika perlu
+            return datatables()->of($data_existings)->toJson();
+        }
+    }
+
+
+
+    // Report Data Existing
+    public function indexreportexisting(Request $request)
+    {
+        $title = 'Report Existing';
+
+        // History
+        $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Fetch filter values
+        $filter_type = $request->input('filter_type', 'sto');
+        $nper = $request->input('nper');
+        $show_all = $request->input('show_all');
+
+        // Determine the column to group by based on the filter type
+        $group_column = $filter_type === 'umur_customer' ? 'umur_customer' : 'sto';
+
+        // Query with optional filter
+        $query = Existing::select(
+            $group_column,
+            DB::raw('COUNT(*) as total_ssl'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_saldo'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(saldo, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending')
+        );
+
+        // Exclude rows where sto or umur_customer is 'N/A'
+        if ($group_column === 'sto') {
+            $query->where('sto', '!=', 'N/A');
+        } elseif ($group_column === 'umur_customer') {
+            $query->where('umur_customer', '!=', 'N/A');
+        }
+
+        // Apply filter by nper if show_all is not checked
+        if (!$show_all && $nper) {
+            $query->where('nper', $nper);
+        }
+
+        $reports = $query->groupBy($group_column)->get();
+
+        $total_ssl = $reports->sum('total_ssl');
+        $total_saldo = $reports->sum('total_saldo');
+        $total_paid = $reports->sum('total_paid');
+        $total_unpaid = $reports->sum('total_unpaid');
+        $total_pending = $reports->sum('total_pending');
+
+        return view('super-admin.report-dataexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
+    }
+
+    public function indexgrafikexisting(Request $request)
+    {
+        $title = 'Grafik Existing';
+        $selectedYear = $request->input('year', date('Y')); // Default to current year if no year is selected
+        $jenisGrafik = $request->input('jenis_grafik', 'Billing'); // Default to Billing if no type is selected
+
+        if ($jenisGrafik === 'SSL') {
+            // Query for SSL
+            $data = DB::table('existings')
+                ->select(
+                    DB::raw('COUNT(*) as total_ssl'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN 1 ELSE 0 END) as total_paid'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN 1 ELSE 0 END) as total_unpaid'),
+                    DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN 1 ELSE 0 END) as total_pending'),
+                    DB::raw('SUBSTRING(nper, 6, 2) as month'),
+                    DB::raw('SUBSTRING(nper, 1, 4) as year')
+                )
+                ->whereRaw("SUBSTRING(nper, 1, 4) = ?", [$selectedYear])
+                ->groupBy('year', 'month')
+                ->get();
+            $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+            $chartData = [
+                'categories' => [],
+                'total_ssl' => [],
+                'total_paid' => [],
+                'total_unpaid' => [],
+                'total_pending' => []
+            ];
+
+            foreach ($months as $key => $month) {
+                $chartData['categories'][] = $month;
+                $monthData = $data->firstWhere('month', $key);
+
+                if ($monthData) {
+                    $chartData['total_ssl'][] = $monthData->total_ssl;
+                    $chartData['total_paid'][] = $monthData->total_paid;
+                    $chartData['total_unpaid'][] = $monthData->total_unpaid;
+                    $chartData['total_pending'][] = $monthData->total_pending;
+                    $chartData['billing'][] = $monthData->total_ssl ? number_format(($monthData->total_paid / $monthData->total_ssl) * 100, 2) : 0;
+                } else {
+                    $chartData['total_ssl'][] = 0;
+                    $chartData['total_paid'][] = 0;
+                    $chartData['total_unpaid'][] = 0;
+                    $chartData['total_pending'][] = 0;
+                    $chartData['billing'][] = 0;
+                }
+            }
+        } else {
+            // Query for Billing
+            $data = DB::table('existings')
+                ->select(
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
+                    DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
+                    DB::raw("SUM(saldo) as total"),
+                    DB::raw("SUBSTRING(nper, 6, 2) as month"),
+                    DB::raw("SUBSTRING(nper, 1, 4) as year")
+                )
+                ->whereRaw("SUBSTRING(nper, 1, 4) = ?", [$selectedYear])
+                ->groupBy('year', 'month')
+                ->get();
+
+            $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+            $chartData = [
+                'categories' => [],
+                'paid' => [],
+                'unpaid' => [],
+                'pending' => [],
+                'total' => [],
+                'billing' => []
+            ];
+
+            foreach ($months as $key => $month) {
+                $chartData['categories'][] = $month;
+                $monthData = $data->firstWhere('month', $key);
+
+                if ($monthData) {
+                    $chartData['paid'][] = $monthData->paid;
+                    $chartData['unpaid'][] = $monthData->unpaid;
+                    $chartData['pending'][] = $monthData->pending;
+                    $chartData['total'][] = $monthData->total;
+                    $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
+                } else {
+                    $chartData['paid'][] = 0;
+                    $chartData['unpaid'][] = 0;
+                    $chartData['pending'][] = 0;
+                    $chartData['total'][] = 0;
+                    $chartData['billing'][] = 0;
+                }
+            }
+        }
+
+        return view('super-admin.grafik-dataexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
+    }
+
+    // report sales Existing
+    public function indexreportsalesexisting(Request $request)
+    {
+        $title = 'Report Sales Existing';
+        confirmDelete();
+
+        // Get filter values from request
+        $filterMonth = $request->input('month', now()->format('m'));
+        $filterYear = $request->input('year', now()->format('Y'));
+        $filterSales = $request->input('filter_sales', '');
+
+        // Calculate the current date in 'Y-m' format
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
+            $query->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->whereNotNull('existing_id'); // Ensure only records with existing_id are included
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $query->whereHas('user', function ($q) use ($filterSales) {
+                    $q->where('name', $filterSales);
+                });
+            }
+        }])->get();
+
+        // Retrieve all sales with total assignments and total visits
+        $sales = User::where('level', 'user')
+            ->withCount([
+                'existings as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
+                    $query->whereYear('created_at', $filterYear)
+                        ->whereMonth('created_at', $filterMonth)
+                        ->whereNotNull('existing_id');
+                }
+            ])
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($sales as $sale) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth)
+                ->where('users_id', $sale->id)
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
+
+            $sale->wo_sudah_visit = $wo_sudah_visit;
+            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
+        }
+
+        return view('super-admin.report-salesexisting', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
+    }
+
+    public function getDatareportexistingsuperadmin(Request $request)
+    {
+        if ($request->ajax()) {
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', '');
+
+            $data_report_existing = SalesReport::with('existings', 'user', 'vockendals')
+                ->whereNotNull('existing_id') // Ensure only records with existing_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
+
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_existing->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+
+            $data_report_existing = $data_report_existing->get();
+
+            return datatables()->of($data_report_existing)
+                ->addIndexColumn()
+                ->addColumn('evidence', function ($row) {
+                    return view('components.evidence-buttons-adminexisting', compact('row'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function downloadAllExcelreportexistingsuperadmin()
+    {
+        $reports = SalesReport::with('existings', 'user', 'vockendals')
+            ->whereNotNull('existing_id') // Ensure only records with existing_id are included
+            ->get();
+
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Existing_Semua.xlsx');
+    }
+
+    public function downloadFilteredExcelreportexistingsuperadmin(Request $request)
+    {
+        $reports = SalesReport::with('existings', 'user', 'vockendals')
+            ->whereNotNull('existing_id') // Ensure only records with existing_id are included
+            ->when($request->tahun_bulan, function ($query) use ($request) {
+                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
+                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
+            })
+            ->when($request->nama_sales, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', $request->nama_sales);
+                });
+            })
+            ->when($request->voc_kendala, function ($query) use ($request) {
+                $query->whereHas('vockendals', function ($q) use ($request) {
+                    $q->where('voc_kendala', $request->voc_kendala);
+                });
+            })
+            ->get();
+
+        // Buat nama file dinamis berdasarkan filter yang dipilih
+        $fileName = 'filtered_reports';
+
+        if ($request->tahun_bulan) {
+            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
+        }
+
+        if ($request->nama_sales) {
+            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
+        }
+
+        if ($request->voc_kendala) {
+            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
+        }
+
+        $fileName .= '.xlsx';
+
+        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1454,6 +2340,140 @@ class SuperAdminController extends Controller
     }
 
 
+    // Report Data Pranpc
+    public function indexreportpranpc(Request $request)
+    {
+        $title = 'Report Pranpc';
+
+        // Fetch filter values
+        $year = $request->input('year');
+        $bulan = $request->input('bulan');
+        $show_all = $request->input('show_all', false);
+
+        // Query with optional filter
+        $query = Pranpc::select(
+            'sto', // Selalu gunakan 'sto' untuk pengelompokan
+            DB::raw('COUNT(*) as total_ssl'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln'),
+            DB::raw('SUM(CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED)) as total_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Paid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_paid_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Unpaid" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_unpaid_bill_bln1'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln'),
+            DB::raw('SUM(CASE WHEN status_pembayaran = "Pending" THEN CAST(REPLACE(REPLACE(REPLACE(bill_bln1, "Rp", ""), ".", ""), ",", "") AS UNSIGNED) ELSE 0 END) as total_pending_bill_bln1')
+        );
+
+        // Exclude rows where sto is 'N/A'
+        $query->where('sto', '!=', 'N/A');
+
+        // Apply filter by year and month range if show_all is not checked
+        if (!$show_all && $year && $bulan) {
+            $bulanRange = explode('-', $bulan);
+            $startMonth = $bulanRange[0];
+            $endMonth = $bulanRange[1];
+
+            $startMintgk = $year . '-' . $startMonth;
+            $endMaxtgk = $year . '-' . $endMonth;
+
+            $query->where('mintgk', '>=', $startMintgk)
+                ->where('maxtgk', '<=', $endMaxtgk);
+        }
+
+        $reports = $query->groupBy('sto')->get();
+
+        $total_ssl = $reports->sum('total_ssl');
+        $total_bill_bln = $reports->sum('total_bill_bln');
+        $total_bill_bln1 = $reports->sum('total_bill_bln1');
+        $total_paid_bill_bln = $reports->sum('total_paid_bill_bln');
+        $total_paid_bill_bln1 = $reports->sum('total_paid_bill_bln1');
+        $total_unpaid_bill_bln = $reports->sum('total_unpaid_bill_bln');
+        $total_unpaid_bill_bln1 = $reports->sum('total_unpaid_bill_bln1');
+        $total_pending_bill_bln = $reports->sum('total_pending_bill_bln');
+        $total_pending_bill_bln1 = $reports->sum('total_pending_bill_bln1');
+
+        return view('super-admin.report-datapranpc', compact(
+            'title',
+            'reports',
+            'total_ssl',
+            'total_bill_bln',
+            'total_bill_bln1',
+            'total_paid_bill_bln',
+            'total_paid_bill_bln1',
+            'total_unpaid_bill_bln',
+            'total_unpaid_bill_bln1',
+            'total_pending_bill_bln',
+            'total_pending_bill_bln1',
+            'year',
+            'bulan',
+            'show_all'
+        ));
+    }
+
+
+    public function indexgrafikpranpc()
+    {
+        $title = 'Grafik Billper';
+
+        // Fetch data from the database
+        $data = DB::table('billpers')
+            ->select(
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
+                DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
+                DB::raw("SUM(saldo) as total"),
+                DB::raw("SUBSTRING(nper, 6, 2) as month"),
+                DB::raw("SUBSTRING(nper, 1, 4) as year")
+            )
+            ->groupBy('year', 'month')
+            ->get();
+
+        // Log the raw data for debugging
+        // Log::info('Raw Data:', $data->toArray());
+
+
+        // Process data to match the required format
+        $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+
+        $chartData = [
+            'categories' => [],
+            'paid' => [],
+            'unpaid' => [],
+            'pending' => [],
+            'total' => [],
+            'billing' => []
+        ];
+
+        foreach ($months as $key => $month) {
+            $chartData['categories'][] = $month;
+            $monthData = $data->firstWhere('month', $key);
+
+            if ($monthData) {
+                $chartData['paid'][] = $monthData->paid;
+                $chartData['unpaid'][] = $monthData->unpaid;
+                $chartData['pending'][] = $monthData->pending;
+                $chartData['total'][] = $monthData->total;
+                $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
+            } else {
+                $chartData['paid'][] = 0;
+                $chartData['unpaid'][] = 0;
+                $chartData['pending'][] = 0;
+                $chartData['total'][] = 0;
+                $chartData['billing'][] = 0;
+            }
+        }
+
+        // Log the processed chart data for debugging
+        // Log::info('Chart Data:', $chartData);
+
+        // dd($data, $chartData);
+
+        return view('super-admin.grafik-datapranpc', compact('title', 'chartData'));
+    }
+
+
+
+
     // AKUN
     public function indexdataakun()
     {
@@ -1502,162 +2522,6 @@ class SuperAdminController extends Controller
     }
 
 
-    // report sales BIllper
-    public function indexreportsalesbillper(Request $request)
-    {
-        $title = 'Report Sales Billper';
-        confirmDelete();
-
-        // Get filter values from request
-        $filterMonth = $request->input('month', now()->format('m'));
-        $filterYear = $request->input('year', now()->format('Y'));
-        $filterSales = $request->input('filter_sales', '');
-
-        // Calculate the current date in 'Y-m' format
-        $currentMonth = Carbon::now()->format('Y-m');
-
-        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
-            $query->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth)
-                ->whereNotNull('all_id'); // Ensure only records with all_id are included
-
-            // Apply sales filter if provided
-            if ($filterSales) {
-                $query->whereHas('user', function ($q) use ($filterSales) {
-                    $q->where('name', $filterSales);
-                });
-            }
-
-
-        }])->get();
-
-        // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
-            ->withCount([
-                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
-                    $query->whereYear('created_at', $filterYear)
-                        ->whereMonth('created_at', $filterMonth);
-
-                },
-                'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
-                    $query->whereYear('created_at', $filterYear)
-                        ->whereMonth('created_at', $filterMonth)
-                        ->whereNotNull('all_id');
-                }
-            ])
-            ->get();
-
-        // Calculate wo_sudah_visit and wo_belum_visit manually
-        foreach ($sales as $sale) {
-            $wo_sudah_visit = DB::table('sales_reports')
-                ->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth)
-                ->where('users_id', $sale->id)
-                ->whereNotNull('all_id')
-                ->distinct('all_id')
-                ->count('all_id');
-
-            $sale->wo_sudah_visit = $wo_sudah_visit;
-            $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
-        }
-
-        return view('super-admin.report-salesbillperexisting', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
-    }
-
-    public function getDatareportbillpersuperadmin(Request $request)
-    {
-        if ($request->ajax()) {
-            $filterMonth = $request->input('month', now()->format('m'));
-            $filterYear = $request->input('year', now()->format('Y'));
-            $filterSales = $request->input('filter_sales', '');
-            $jenisBiling = $request->input('jenis_biling', ''); // New filter
-
-            // Calculate the current date in 'Y-m' format
-            $currentMonth = Carbon::now()->format('Y-m');
-
-            $data_report_billper = SalesReport::with('alls', 'user', 'vockendals')
-                ->whereNotNull('all_id') // Ensure only records with all_id are included
-                ->whereYear('created_at', $filterYear)
-                ->whereMonth('created_at', $filterMonth);
-
-            // Apply sales filter if provided
-            if ($filterSales) {
-                $data_report_billper->whereHas('user', function ($query) use ($filterSales) {
-                    $query->where('name', $filterSales);
-                });
-            }
-
-            // Apply jenis_biling filter if provided
-            if ($jenisBiling === 'Billper') {
-                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
-                    $query->where('nper', $currentMonth);
-                });
-            } elseif ($jenisBiling === 'Existing') {
-                $data_report_billper->whereHas('alls', function ($query) use ($currentMonth) {
-                    $query->where('nper', '<', $currentMonth);
-                });
-            }
-
-            $data_report_billper = $data_report_billper->get();
-
-            return datatables()->of($data_report_billper)
-                ->addIndexColumn()
-                ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-buttons-adminbillper', compact('row'));
-                })
-                ->toJson();
-        }
-    }
-
-    public function downloadAllExcelreportbillpersuperadmin()
-    {
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id') // Ensure only records with all_id are included
-            ->get();
-
-        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper-Existing_Semua.xlsx');
-    }
-
-    public function downloadFilteredExcelreportbillpersuperadmin(Request $request)
-    {
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('all_id') // Ensure only records with all_id are included
-            ->when($request->tahun_bulan, function ($query) use ($request) {
-                $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
-                    ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);
-            })
-            ->when($request->nama_sales, function ($query) use ($request) {
-                $query->whereHas('user', function ($q) use ($request) {
-                    $q->where('name', $request->nama_sales);
-                });
-            })
-            ->when($request->voc_kendala, function ($query) use ($request) {
-                $query->whereHas('vockendals', function ($q) use ($request) {
-                    $q->where('voc_kendala', $request->voc_kendala);
-                });
-            })
-            ->get();
-
-        // Buat nama file dinamis berdasarkan filter yang dipilih
-        $fileName = 'filtered_reports';
-
-        if ($request->tahun_bulan) {
-            $fileName .= '_' . str_replace('-', '', $request->tahun_bulan);
-        }
-
-        if ($request->nama_sales) {
-            $fileName .= '_' . str_replace(' ', '_', $request->nama_sales);
-        }
-
-        if ($request->voc_kendala) {
-            $fileName .= '_' . str_replace(' ', '_', $request->voc_kendala);
-        }
-
-        $fileName .= '.xlsx';
-
-        return Excel::download(new SalesReportBillperExisting($reports), $fileName);
-    }
 
 
 

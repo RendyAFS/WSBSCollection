@@ -1,4 +1,5 @@
 @extends('layouts.app-admin')
+
 @extends('layouts.loading')
 
 @section('content')

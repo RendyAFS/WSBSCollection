@@ -20,16 +20,16 @@
                 </a>
             </li>
 
-            <!-- Manajer Data Collapse Group -->
+            <!-- Manajer Data bilper Collapse Group -->
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapse" role="button"
-                aria-expanded="false" aria-controls="dataManagerCollapse">
-                Manajer Billper Existing
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapsebillper" role="button"
+                aria-expanded="false" aria-controls="dataManagerCollapsebillper">
+                Manajer Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="dataManagerCollapse">
+            <div class="collapse show" id="dataManagerCollapsebillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
                         <a href="{{ route('tools.index') }}">
@@ -40,15 +40,60 @@
                     <li class="{{ Route::is('all.index') ? 'active' : '' }}">
                         <a href="{{ route('all.index') }}">
                             <i class="bi bi-clipboard2-data{{ Route::is('all.index') ? '-fill' : '' }}"></i>
-                            Data All
+                            Data
                         </a>
                     </li>
-                    <li class="{{ Route::is('reportdatabillperexisting.index') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('reportdatabillperexisting.index') || Route::is('grafikdatabillperexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('reportdatabillperexisting.index') }}">
-                            <i class="bi bi-flag{{ Route::is('reportdatabillperexisting.index') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-flag{{ Route::is('reportdatabillperexisting.index') || Route::is('grafikdatabillperexisting.index') ? '-fill' : '' }}"></i>
                             Report Pelanggan
                         </a>
                     </li>
+
+                    <li class="{{ Route::is('reportsalesbillperexisting.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportsalesbillperexisting.index') }}">
+                            <i
+                                class="bi bi-flag{{ Route::is('reportsalesbillperexisting.index') ? '-fill' : '' }}"></i>
+                            Report Sales
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Manajer Data Existing Collapse Group -->
+            <div class="my-4">
+                {{-- diver --}}
+            </div>
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapseexisting" role="button"
+                aria-expanded="false" aria-controls="dataManagerCollapseexisting">
+                Manajer Existing
+                <i class="bi bi-chevron-down float-end"></i>
+            </span>
+            <div class="collapse show" id="dataManagerCollapseexisting">
+                <ul class="list-unstyled">
+                    <li class="{{ Route::is('tools.index') ? 'active' : '' }}">
+                        <a href="{{ route('tools.index') }}">
+                            <i class="bi bi-wrench-adjustable-circle{{ Route::is('tools.index') ? '-fill' : '' }}"></i>
+                            Tool
+                        </a>
+                    </li>
+                    <li class="{{ Route::is('all.index') ? 'active' : '' }}">
+                        <a href="{{ route('all.index') }}">
+                            <i class="bi bi-clipboard2-data{{ Route::is('all.index') ? '-fill' : '' }}"></i>
+                            Data
+                        </a>
+                    </li>
+                    <li
+                        class="{{ Route::is('reportdatabillperexisting.index') || Route::is('grafikdatabillperexisting.index') ? 'active' : '' }}">
+                        <a href="{{ route('reportdatabillperexisting.index') }}">
+                            <i
+                                class="bi bi-flag{{ Route::is('reportdatabillperexisting.index') || Route::is('grafikdatabillperexisting.index') ? '-fill' : '' }}"></i>
+                            Report Pelanggan
+                        </a>
+                    </li>
+
                     <li class="{{ Route::is('reportsalesbillperexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('reportsalesbillperexisting.index') }}">
                             <i

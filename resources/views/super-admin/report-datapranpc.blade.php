@@ -84,6 +84,9 @@
                         </div>
                     </div>
                 </div>
+                <a href="{{ route('grafikdatabillperexisting.index') }}" class="btn btn-green ">
+                    <i class="bi bi-clipboard-data"></i> Grafik
+                </a>
             </div>
         </div>
     </div>
@@ -92,38 +95,44 @@
             <tr>
                 <th id="th" class="align-middle">STO</th>
                 <th id="th" class="align-middle text-center">Total SSL</th>
-                <th id="th" class="align-middle text-center">Total Bill Bulan</th>
-                <th id="th" class="align-middle text-center">Total Bill Bulan1</th>
-                <th id="th" class="align-middle text-center">Total Paid Bill Bulan</th>
-                <th id="th" class="align-middle text-center">Total Paid Bill Bulan1</th>
-                <th id="th" class="align-middle text-center">Total Unpaid Bill Bulan</th>
-                <th id="th" class="align-middle text-center">Total Unpaid Bill Bulan1</th>
+                <th id="th" class="align-middle text-center">Bill Bulan</th>
+                <th id="th" class="align-middle text-center">Bill Bulan1</th>
+                <th id="th" class="align-middle text-center">Paid Bill Bulan</th>
+                <th id="th" class="align-middle text-center">Paid Bill Bulan1</th>
+                <th id="th" class="align-middle text-center">Unpaid Bill Bulan</th>
+                <th id="th" class="align-middle text-center">Unpaid Bill Bulan1</th>
+                <th id="th" class="align-middle text-center">Pending Bill Bulan</th>
+                <th id="th" class="align-middle text-center">Pending Bill Bulan1</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($reports as $report)
                 <tr>
                     <td>{{ $report->sto }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_ssl) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_bill_bln) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_bill_bln1) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_paid_bill_bln) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_paid_bill_bln1) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_unpaid_bill_bln) }}</td>
-                    <td class="text-center align-middle">{{ number_format($report->total_unpaid_bill_bln1) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_ssl) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_bill_bln) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_bill_bln1) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_paid_bill_bln) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_paid_bill_bln1) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_unpaid_bill_bln) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_unpaid_bill_bln1) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_pending_bill_bln) }}</td>
+                    <td class="text-center align-middle">Rp.{{ number_format($report->total_pending_bill_bln1) }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot class="table-secondary">
             <tr>
                 <td class="text-center align-middle fw-bold">Total</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_ssl) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_bill_bln) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_bill_bln1) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_paid_bill_bln) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_paid_bill_bln1) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_unpaid_bill_bln) }}</td>
-                <td class="text-center align-middle fw-bold">{{ number_format($total_unpaid_bill_bln1) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_ssl) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_bill_bln) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_bill_bln1) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_paid_bill_bln) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_paid_bill_bln1) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_unpaid_bill_bln) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_unpaid_bill_bln1) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_pending_bill_bln) }}</td>
+                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_pending_bill_bln1) }}</td>
             </tr>
         </tfoot>
     </table>

@@ -82,15 +82,9 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/data-all-riwayat', [SuperAdminController::class, 'indexallriwayat'])->name('allriwayat.index');
         Route::get('gettabelallsriwayat', [SuperAdminController::class, 'getDataallsriwayat'])->name('gettabelallsriwayat');
 
-
-
-        // Report Data Billper Existing
+        // Report Data Billper existing
         Route::get('/report-databillperexisting', [SuperAdminController::class, 'indexreportbillperexisting'])->name('reportdatabillperexisting.index');
-
-
-        // Report Data Billper Existing
-        Route::get('/report-datapranpc', [SuperAdminController::class, 'indexreportpranpc'])->name('reportdatapranpc.index');
-
+        Route::get('/grafik-databillperexisting', [SuperAdminController::class, 'indexgrafikbillperexisting'])->name('grafikdatabillperexisting.index');
 
         // Report Sales Billper existing
         Route::get('/report-salesbillperexisting', [SuperAdminController::class, 'indexreportsalesbillperexisting'])->name('reportsalesbillperexisting.index');
@@ -98,12 +92,6 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('/download/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadAllExcelreportbillpersuperadmin'])->name('download.excelreportbillpersuperadmin');
         Route::post('/download/filtered/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportbillpersuperadmin'])->name('download.filtered.excelreportbillpersuperadmin');
 
-
-        // Report Sales pranpc
-        Route::get('/report-salespranpc', [SuperAdminController::class, 'indexreportsalespranpc'])->name('reportsalespranpc.index');
-        Route::get('/get-data-reportpranpcsuperadmin', [SuperAdminController::class, 'getDatareportpranpcsuperadmin'])->name('getDatareportpranpcsuperadmin');
-        Route::get('/download/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadAllExcelreportpranpcsuperadmin'])->name('download.excelreportpranpcsuperadmin');
-        Route::post('/download/filtered/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportpranpcsuperadmin'])->name('download.filtered.excelreportpranpcsuperadmin');
 
 
 
@@ -132,6 +120,17 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
         Route::get('/data-pranp-criwayat', [SuperAdminController::class, 'indexpranpcriwayat'])->name('pranpcriwayat.index');
         Route::get('gettabelpranpcsriwayat', [SuperAdminController::class, 'getDatapranpcsriwayat'])->name('gettabelpranpcsriwayat');
+
+        // Report Data Pranpc
+        Route::get('/report-datapranpc', [SuperAdminController::class, 'indexreportpranpc'])->name('reportdatapranpc.index');
+        
+        // Report Sales pranpc
+        Route::get('/report-salespranpc', [SuperAdminController::class, 'indexreportsalespranpc'])->name('reportsalespranpc.index');
+        Route::get('/get-data-reportpranpcsuperadmin', [SuperAdminController::class, 'getDatareportpranpcsuperadmin'])->name('getDatareportpranpcsuperadmin');
+        Route::get('/download/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadAllExcelreportpranpcsuperadmin'])->name('download.excelreportpranpcsuperadmin');
+        Route::post('/download/filtered/excelreportpranpcsuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportpranpcsuperadmin'])->name('download.filtered.excelreportpranpcsuperadmin');
+
+
 
 
         // Data Akun

@@ -1,6 +1,6 @@
 
 <div class="d-flex justify-content-left align-items-center gap-2">
-    <a href="{{ route('edit-allsadminbillper', ['id' => $all->id]) }}" class="btn border border-0 d-flex align-items-center">
+    <a href="{{ route('edit-billpersadminbillper', ['id' => $all->id]) }}" class="btn border border-0 d-flex align-items-center">
         <div class="text-blue">
             <i class="bi bi-pencil-square fs-5"></i>
         </div>

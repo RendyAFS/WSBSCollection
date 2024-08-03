@@ -72,7 +72,7 @@
                 </div>
                 {{-- BTN Donwload --}}
                 <div class="btn-group">
-                    <a href="{{ route('download.exceladminbillper') }}" class="btn btn-green">
+                    <a href="{{ route('download.excelbillperadminbillper') }}" class="btn btn-green">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                     </a>
                     <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split"
@@ -87,7 +87,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.exceladminbillper') }}"
+                                <form id="downloadForm" action="{{ route('download.filtered.excelbillperadminbillper') }}"
                                     method="POST">
                                     @csrf
                                     <div class="modal-body">
@@ -188,7 +188,7 @@
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelallsadminbillper') }}",
+                    url: "{{ route('gettabelbillpersadminbillper') }}",
                     type: 'GET',
                     data: function(d) {
                         d.nper = $('#nper_filter').val();

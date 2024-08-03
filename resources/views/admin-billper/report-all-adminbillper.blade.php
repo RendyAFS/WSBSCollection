@@ -13,7 +13,7 @@
             {{-- Filter Form --}}
             <form id="filterForm" action="{{ route('report-all-adminbillper.index') }}" method="GET">
                 <div class="row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="month" class="form-label fw-bold">Bulan</label>
                         @php
                             $months = [
@@ -40,7 +40,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
                         <select id="year" name="year" class="form-control">
                             @for ($y = now()->year; $y >= 2000; $y--)
@@ -50,7 +50,7 @@
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
                         <select id="filter_sales" name="filter_sales" class="form-control">
                             <option value="">Semua</option>
@@ -59,15 +59,6 @@
                                     {{ $sale->name }}
                                 </option>
                             @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="jenis_biling" class="form-label fw-bold mt-3 mt-md-0">Jenis Billing</label>
-                        <select id="jenis_biling" name="jenis_biling" class="form-control">
-                            <option value="">Semua</option>
-                            <option value="Billper" {{ $jenisBiling == 'Billper' ? 'selected' : '' }}>Billper</option>
-                            <option value="Existing" {{ $jenisBiling == 'Existing' ? 'selected' : '' }}>Existing
-                            </option>
                         </select>
                     </div>
                     <div class="col-md-12 mt-3 d-flex justify-content-end align-items-end">
@@ -231,7 +222,6 @@
                         d.month = document.getElementById('month').value;
                         d.year = document.getElementById('year').value;
                         d.filter_sales = document.getElementById('filter_sales').value;
-                        d.jenis_biling = document.getElementById('jenis_biling').value; // New filter
                     },
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');

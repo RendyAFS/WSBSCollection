@@ -66,32 +66,31 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
         // Data All
-        Route::get('/data-all', [SuperAdminController::class, 'indexall'])->name('all.index');
-        Route::get('gettabelalls', [SuperAdminController::class, 'getDataalls'])->name('gettabelalls');
-        Route::get('edit-alls/{id}', [SuperAdminController::class, 'editalls'])->name('edit-alls');
-        Route::post('update-alls/{id}', [SuperAdminController::class, 'updatealls'])->name('update-alls');
+        Route::get('/data-billper', [SuperAdminController::class, 'indexbillper'])->name('billper.index');
+        Route::get('gettabelbillpers', [SuperAdminController::class, 'getDatabillpers'])->name('gettabelbillpers');
+        Route::get('edit-billpers/{id}', [SuperAdminController::class, 'editbillpers'])->name('edit-billpers');
+        Route::post('update-billpers/{id}', [SuperAdminController::class, 'updatebillpers'])->name('update-billpers');
         Route::get('/superadmin/billper/{id}/view', [SuperAdminController::class, 'viewPDFreportbillpersuperadmin'])->name('view-pdf-report-billpersuperadmin');
         Route::get('/superadmin/billper/{id}/download', [SuperAdminController::class, 'downloadPDFreportbillpersuperadmin'])->name('download-pdf-report-billpersuperadmin');
-        Route::get('/download/excel', [SuperAdminController::class, 'export'])->name('download.excel');
-        Route::post('/download/filtered/excel', [SuperAdminController::class, 'downloadFilteredExcel'])->name('download.filtered.excel');
-        Route::get('viewbillperexisting/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFbillperexisting'])->name('viewbillperexisting.pdf');
-        Route::get('billperexisting/pdf/{id}', [SuperAdminController::class, 'generatePDFbillperexisting'])->name('billperexisting.pdf');
-        Route::post('/cek-filepembayaran', [SuperAdminController::class, 'checkFilePembayaran'])->name('cek.filepembayaran');
-        Route::post('/cek-pembayaran', [SuperAdminController::class, 'cekPembayaran'])->name('cek-pembayaran');
-        Route::delete('/destroy-alls/{id}', [SuperAdminController::class, 'destroyalls'])->name('destroy-alls');
-        Route::get('/data-all-riwayat', [SuperAdminController::class, 'indexallriwayat'])->name('allriwayat.index');
-        Route::get('gettabelallsriwayat', [SuperAdminController::class, 'getDataallsriwayat'])->name('gettabelallsriwayat');
+        Route::get('/download/excelbilpersuperadmin', [SuperAdminController::class, 'exportbillpersuperadmin'])->name('download.excelbillpersuperadmin');
+        Route::post('/download/filtered/excelbilpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelbillpersuperadmin'])->name('download.filtered.excelbillpersuperadmin');
+        Route::get('viewbillper/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFbillper'])->name('viewbillper.pdf');
+        Route::get('billper/pdf/{id}', [SuperAdminController::class, 'generatePDFbillper'])->name('billper.pdf');
+        Route::post('/cek-filepembayaranbillper', [SuperAdminController::class, 'checkFilePembayaranbillper'])->name('cek.filepembayaranbillper');
+        Route::post('/cek-pembayaranbillper', [SuperAdminController::class, 'cekPembayaranbillper'])->name('cek-pembayaranbillper');
+        Route::delete('/destroy-billpers/{id}', [SuperAdminController::class, 'destroybillpers'])->name('destroy-billpers');
+        Route::get('/data-billper-riwayat', [SuperAdminController::class, 'indexbillperriwayat'])->name('billperriwayat.index');
+        Route::get('gettabelbillpersriwayat', [SuperAdminController::class, 'getDatabillpersriwayat'])->name('gettabelbillpersriwayat');
 
         // Report Data Billper existing
-        Route::get('/report-databillperexisting', [SuperAdminController::class, 'indexreportbillperexisting'])->name('reportdatabillperexisting.index');
-        Route::get('/grafik-databillperexisting', [SuperAdminController::class, 'indexgrafikbillperexisting'])->name('grafikdatabillperexisting.index');
+        Route::get('/report-databillper', [SuperAdminController::class, 'indexreportbillper'])->name('reportdatabillper.index');
+        Route::get('/grafik-databillper', [SuperAdminController::class, 'indexgrafikbillper'])->name('grafikdatabillper.index');
 
         // Report Sales Billper existing
-        Route::get('/report-salesbillperexisting', [SuperAdminController::class, 'indexreportsalesbillperexisting'])->name('reportsalesbillperexisting.index');
+        Route::get('/report-salesbillper', [SuperAdminController::class, 'indexreportsalesbillper'])->name('reportsalesbillper.index');
         Route::get('/get-data-reportbillpersuperadmin', [SuperAdminController::class, 'getDatareportbillpersuperadmin'])->name('getDatareportbillpersuperadmin');
         Route::get('/download/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadAllExcelreportbillpersuperadmin'])->name('download.excelreportbillpersuperadmin');
         Route::post('/download/filtered/excelreportbillpersuperadmin', [SuperAdminController::class, 'downloadFilteredExcelreportbillpersuperadmin'])->name('download.filtered.excelreportbillpersuperadmin');
-
 
 
 
@@ -123,7 +122,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
         // Report Data Pranpc
         Route::get('/report-datapranpc', [SuperAdminController::class, 'indexreportpranpc'])->name('reportdatapranpc.index');
-        
+
         // Report Sales pranpc
         Route::get('/report-salespranpc', [SuperAdminController::class, 'indexreportsalespranpc'])->name('reportsalespranpc.index');
         Route::get('/get-data-reportpranpcsuperadmin', [SuperAdminController::class, 'getDatareportpranpcsuperadmin'])->name('getDatareportpranpcsuperadmin');
@@ -146,13 +145,13 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         // Data All Admin billper
         Route::get('/report-all-adminbillper', [AdminBillperController::class, 'indexreportalladminbillper'])->name('report-all-adminbillper.index');
         Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
-        Route::get('gettabelallsadminbillper', [AdminBillperController::class, 'getDataallsadminbillper'])->name('gettabelallsadminbillper');
-        Route::get('/download/exceladminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.exceladminbillper');
-        Route::post('/download/filtered/exceladminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.exceladminbillper');
-        Route::get('edit-allsadminbillper/{id}', [AdminBillperController::class, 'editallsadminbillper'])->name('edit-allsadminbillper');
+        Route::get('gettabelbillpersadminbillper', [AdminBillperController::class, 'getDatabillpersadminbillper'])->name('gettabelbillpersadminbillper');
+        Route::get('/download/excelbillperadminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.excelbillperadminbillper');
+        Route::post('/download/filtered/excelbillperadminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.excelbillperadminbillper');
+        Route::get('edit-billpersadminbillper/{id}', [AdminBillperController::class, 'editbillpersadminbillper'])->name('edit-billpersadminbillper');
         Route::get('viewbillperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'viewgeneratePDFbillperexistingadminbillper'])->name('viewbillperexistingadminbillper.pdf');
         Route::get('billperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'generatePDFbillperexistingadminbillper'])->name('billperexistingadminbillper.pdf');
-        Route::post('update-allsadminbillper/{id}', [AdminBillperController::class, 'updateallsadminbillper'])->name('update-allsadminbillper');
+        Route::post('update-billpersadminbillper/{id}', [AdminBillperController::class, 'updatebillpersadminbillper'])->name('update-billpersadminbillper');
         Route::get('/admin/billper/{id}/view', [AdminBillperController::class, 'viewPDFreportbillper'])->name('view-pdf-report-billper');
         Route::get('/admin/billper/{id}/download', [AdminBillperController::class, 'downloadPDFreportbillper'])->name('download-pdf-report-billper');
         Route::get('/get-data-reportbillper', [AdminBillperController::class, 'getDatareportbillper'])->name('getDatareportbillper');

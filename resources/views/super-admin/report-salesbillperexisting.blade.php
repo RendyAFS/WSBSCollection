@@ -11,7 +11,7 @@
                 </span>
             </div>
             {{-- Filter Form --}}
-            <form id="filterForm" action="{{ route('reportsalesbillperexisting.index') }}" method="GET">
+            <form id="filterForm" action="{{ route('reportsalesbillper.index') }}" method="GET">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="month" class="form-label fw-bold">Bulan</label>

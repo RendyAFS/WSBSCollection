@@ -478,16 +478,16 @@ class SuperAdminController extends Controller
 
 
 
-    // Data All
-    public function indexall()
+    // Data Billper
+    public function indexbillper()
     {
         confirmDelete();
-        $title = 'Data All';
+        $title = 'Data Billper';
         $alls = All::all();
-        return view('super-admin.data-all', compact('title', 'alls'));
+        return view('super-admin.data-billper', compact('title', 'alls'));
     }
 
-    public function getDataalls(Request $request)
+    public function getDatabillpers(Request $request)
     {
         if ($request->ajax()) {
             $query = All::query();
@@ -526,7 +526,7 @@ class SuperAdminController extends Controller
 
 
 
-    public function viewgeneratePDFbillperexisting(Request $request, $id)
+    public function viewgeneratePDFbillper(Request $request, $id)
     {
         $all = All::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
@@ -547,12 +547,12 @@ class SuperAdminController extends Controller
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
         ];
 
-        return view('components.generate-pdf-billperexisting', $data);
+        return view('components.generate-pdf-billper', $data);
     }
 
 
 
-    public function generatePDFbillperexisting(Request $request, $id)
+    public function generatePDFbillper(Request $request, $id)
     {
         $all = All::findOrFail($id);
         $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
@@ -574,22 +574,22 @@ class SuperAdminController extends Controller
         ];
 
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('components.generate-pdf-billperexisting', $data);
-        return $pdf->download('invoice.pdf');
+        $pdf->loadView('components.generate-pdf-billper', $data);
+        return $pdf->download('invoice-billper.pdf');
     }
 
-    public function editalls($id)
+    public function editbillpers($id)
     {
-        $title = 'Edit Data All';
+        $title = 'Edit Data Billper';
         $all = All::findOrFail($id);
         $user = $all->user ? $all->user : 'Tidak ada';
         $sales_report = SalesReport::where('all_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
         $voc_kendala = VocKendala::all();
-        return view('super-admin.edit-all', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
+        return view('super-admin.edit-billper', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
     }
 
 
-    public function updatealls(Request $request, $id)
+    public function updatebillpers(Request $request, $id)
     {
         $all = All::findOrFail($id);
 
@@ -621,7 +621,7 @@ class SuperAdminController extends Controller
         ]);
 
         Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('all.index');
+        return redirect()->route('billper.index');
     }
 
     public function viewPDFreportbillpersuperadmin($id)
@@ -630,7 +630,7 @@ class SuperAdminController extends Controller
         $sales_report = SalesReport::where('all_id', $id)->first() ?: new SalesReport();
         $voc_kendala = VocKendala::all();
 
-        return view('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+        return view('components.pdf-report-billper', compact('all', 'sales_report', 'voc_kendala'));
     }
 
     public function downloadPDFreportbillpersuperadmin($id)
@@ -644,12 +644,12 @@ class SuperAdminController extends Controller
 
         // Create an instance of PDF
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('components.pdf-report-adminbillper', compact('all', 'sales_report', 'voc_kendala'));
+        $pdf->loadView('components.pdf-report-billper', compact('all', 'sales_report', 'voc_kendala'));
 
         return $pdf->download($fileName);
     }
 
-    public function checkFilePembayaran(Request $request)
+    public function checkFilePembayaranbillper(Request $request)
     {
         $request->validate(['file' => 'required|file|mimes:xlsx']);
         $file = $request->file('file')->getRealPath();
@@ -664,7 +664,7 @@ class SuperAdminController extends Controller
         }
     }
 
-    public function cekPembayaran(Request $request)
+    public function cekPembayaranbillper(Request $request)
     {
         ini_set('memory_limit', '2048M');  // Increase memory limit
         set_time_limit(300);  // Increase max execution time
@@ -714,20 +714,20 @@ class SuperAdminController extends Controller
         }
 
         Alert::success('Data Berhasil Terupdate');
-        return redirect()->route('all.index');
+        return redirect()->route('billper.index');
     }
 
 
 
 
-    public function export()
+    public function exportbillpersuperadmin()
     {
         $allData = All::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
-        return Excel::download(new AllExport($allData), 'Data-Billper-Existing.xlsx');
+        return Excel::download(new AllExport($allData), 'Data-Billper.xlsx');
     }
 
-    public function downloadFilteredExcel(Request $request)
+    public function downloadFilteredExcelbillpersuperadmin(Request $request)
     {
         $bulanTahun = $request->input('nper');
         $statusPembayaran = $request->input('status_pembayaran');
@@ -755,27 +755,27 @@ class SuperAdminController extends Controller
         $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
 
         // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Semua-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
+        return Excel::download(new AllExport($filteredData), 'Data-Billper-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
     }
 
 
 
-    public function destroyalls($id)
+    public function destroybillpers($id)
     {
         $all = All::findOrFail($id);
         $all->delete();
         Alert::success('Data Berhasil Terhapus');
-        return redirect()->route('all.index');
+        return redirect()->route('billper.index');
     }
 
 
-    public function indexallriwayat()
+    public function indexbillperriwayat()
     {
-        $title = 'Data Riwayat All';
-        return view('super-admin.riwayat-data-all', compact('title'));
+        $title = 'Data Riwayat Billper';
+        return view('super-admin.riwayat-data-billper', compact('title'));
     }
 
-    public function getDataallsriwayat(Request $request)
+    public function getDatabillpersriwayat(Request $request)
     {
         if ($request->ajax()) {
             $data_alls = RiwayatAll::query(); // atau gunakan paginate jika perlu
@@ -785,10 +785,10 @@ class SuperAdminController extends Controller
 
 
 
-    // Report Data Billper Existing
-    public function indexreportbillperexisting(Request $request)
+    // Report Data Billper
+    public function indexreportbillper(Request $request)
     {
-        $title = 'Report Billper Existing';
+        $title = 'Report Billper';
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
@@ -833,12 +833,12 @@ class SuperAdminController extends Controller
         $total_unpaid = $reports->sum('total_unpaid');
         $total_pending = $reports->sum('total_pending');
 
-        return view('super-admin.report-databillperexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
+        return view('super-admin.report-databillper', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
     }
 
-    public function indexgrafikbillperexisting(Request $request)
+    public function indexgrafikbillper(Request $request)
     {
-        $title = 'Grafik Billper Existing';
+        $title = 'Grafik Billper';
         $selectedYear = $request->input('year', date('Y')); // Default to current year if no year is selected
         $jenisGrafik = $request->input('jenis_grafik', 'Billing'); // Default to Billing if no type is selected
 
@@ -930,7 +930,7 @@ class SuperAdminController extends Controller
             }
         }
 
-        return view('super-admin.grafik-databillperexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
+        return view('super-admin.grafik-databillper', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
     }
 
 
@@ -1007,7 +1007,7 @@ class SuperAdminController extends Controller
 
     public function indexgrafikpranpc()
     {
-        $title = 'Grafik Billper Existing';
+        $title = 'Grafik Billper';
 
         // Fetch data from the database
         $data = DB::table('alls')
@@ -1502,10 +1502,10 @@ class SuperAdminController extends Controller
     }
 
 
-    // report sales BIllper Existing
-    public function indexreportsalesbillperexisting(Request $request)
+    // report sales BIllper
+    public function indexreportsalesbillper(Request $request)
     {
-        $title = 'Report Sales Billper Existing';
+        $title = 'Report Sales Billper';
         confirmDelete();
 
         // Get filter values from request

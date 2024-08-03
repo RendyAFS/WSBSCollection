@@ -27,7 +27,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('reportdatabillperexisting.index') }}" method="GET">
+                            <form id="filterForm" action="{{ route('reportdatabillper.index') }}" method="GET">
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="filter_type">Jenis Filter</label>
@@ -96,7 +96,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('grafikdatabillperexisting.index') }}" class="btn btn-green ">
+                <a href="{{ route('grafikdatabillper.index') }}" class="btn btn-green ">
                     <i class="bi bi-clipboard-data"></i> Grafik
                 </a>
             </div>

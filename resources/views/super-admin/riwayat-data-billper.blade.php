@@ -10,7 +10,7 @@
             </span>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelallsriwayat" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelbillpersriwayat" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nama</th>
@@ -33,13 +33,13 @@
     <script type="module">
         // Table initialization
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelallsriwayat', {
+            var dataTable = new DataTable('#tabelbillpersriwayat', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelallsriwayat') }}",
+                    url: "{{ route('gettabelbillpersriwayat') }}",
                     type: 'GET',
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');

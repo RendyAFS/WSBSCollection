@@ -12,14 +12,14 @@
                     <i class="bi bi-funnel-fill"></i> Filter
                 </button>
 
-                <a href="{{ route('reportdatabillperexisting.index') }}" class="btn btn-green ">
+                <a href="{{ route('reportdatabillper.index') }}" class="btn btn-green ">
                     <i class="bi bi-table"></i> Table
                 </a>
 
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
-                    <form action="{{ route('grafikdatabillperexisting.index') }}" method="GET">
+                    <form action="{{ route('grafikdatabillper.index') }}" method="GET">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">

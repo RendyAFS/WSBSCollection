@@ -1,12 +1,12 @@
 @extends('layouts.app-admin')
 
-@include('layouts.loading')
+@extends('layouts.loading')
 
 @section('content')
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data Plotting Existing
+                Data Plotting
                 <span id="info-filter" class="fs-6 fw-normal">
 
                 </span>
@@ -28,7 +28,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('existing-adminpranpc.index') }}" method="POST">
+                            <form id="filterForm" action="{{ route('adminpranpc.index') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
@@ -67,11 +67,9 @@
                                     </button>
                                 </div>
                             </form>
-
                         </div>
                     </div>
                 </div>
-
                 {{-- BTN Donwload --}}
                 <div class="btn-group">
                     <a href="{{ route('download.excelexistingadminpranpc') }}" class="btn btn-green">
@@ -100,8 +98,8 @@
                                         </div>
                                         <div class="form-group mb-3">
                                             <label for="status_pembayaran">Status Pembayaran</label>
-                                            <select id="status_pembayaran" name="status_pembayaran" class="form-select"
-                                                aria-label="Default select example" required>
+                                            <select id="status_pembayaran_download" name="status_pembayaran"
+                                                class="form-select" aria-label="Default select example" required>
                                                 <option selected value="Semua">Semua</option>
                                                 <option value="Paid">Paid</option>
                                                 <option value="Pending">Pending</option>
@@ -154,6 +152,7 @@
             </button>
         </div>
 
+        <!-- DataTable -->
         <table class="table table-hover table-bordered datatable shadow" id="tabelexistingsadminpranpc"
             style="width: 100%">
             <thead class="fw-bold">
@@ -198,7 +197,7 @@
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
                         d.jenis_produk = $('#jenis_produk_filter').val();
                     },
-                    beforeSend: function() {
+                    reSend: function() {
                         $('#loadingScreen').removeClass('d-none');
                     },
                     complete: function() {
@@ -213,7 +212,7 @@
                         orderable: false,
                         searchable: false,
                         className: 'text-center align-middle',
-                        visible: false,
+                        visible: false, // Initially hidden
                         render: function(data, type, row) {
                             return '<input type="checkbox" class="row-checkbox" value="' + row.id +
                                 '">';
@@ -338,7 +337,7 @@
                 var selectedSales = $('#select-sales').val();
                 if (selectedIds.length > 0 && selectedSales) {
                     $.ajax({
-                        url: "{{ route('savePlottingexisting') }}",
+                        url: "{{ route('savePlottingexistingadminpranpc') }}",
                         type: 'POST',
                         data: {
                             ids: selectedIds,
@@ -386,22 +385,21 @@
         });
 
         function formatRupiah(angka, prefix) {
-            var numberString = angka.replace(/[^,\d]/g, '').toString(),
-                split = numberString.split(','),
+            var number_string = angka.toString(),
+                split = number_string.split(','),
                 sisa = split[0].length % 3,
                 rupiah = split[0].substr(0, sisa),
                 ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
+            // Tambahkan titik jika ada ribuan
             if (ribuan) {
-                var separator = sisa ? '.' : '';
+                separator = sisa ? '.' : '';
                 rupiah += separator + ribuan.join('.');
             }
 
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp.' + rupiah : '');
         }
-
-
 
         // Validate filter download
         document.addEventListener('DOMContentLoaded', function() {

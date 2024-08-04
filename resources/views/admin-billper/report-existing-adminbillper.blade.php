@@ -132,7 +132,7 @@
             Detail Existing
         </span>
         <div class="btn-group">
-            <a href="{{ route('download.excelreportbillper') }}" class="btn btn-green">
+            <a href="{{ route('download.excelreportexisting') }}" class="btn btn-green">
                 <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
             </a>
             <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
@@ -146,7 +146,7 @@
                             <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="downloadForm" action="{{ route('download.filtered.excelreportbillper') }}"
+                        <form id="downloadForm" action="{{ route('download.filtered.excelreportexisting') }}"
                             method="POST">
                             @csrf
                             <div class="modal-body">

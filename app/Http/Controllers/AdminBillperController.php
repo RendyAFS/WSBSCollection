@@ -348,16 +348,16 @@ class AdminBillperController extends Controller
 
     public function downloadAllExcelreportbillper()
     {
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
+        $reports = SalesReport::with('billpers', 'user', 'vockendals')
             ->whereNotNull('billper_id') // Ensure only records with billper_id are included
             ->get();
 
-        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper-Existing_Semua.xlsx');
+        return Excel::download(new SalesReportBillperExisting($reports), 'Report_Billper_Semua.xlsx');
     }
 
     public function downloadFilteredExcelreportbillper(Request $request)
     {
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
+        $reports = SalesReport::with('billpers', 'user', 'vockendals')
             ->whereNotNull('billper_id') // Ensure only records with billper_id are included
             ->when($request->tahun_bulan, function ($query) use ($request) {
                 $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
@@ -759,7 +759,7 @@ class AdminBillperController extends Controller
 
     public function downloadFilteredExcelreportexisting(Request $request)
     {
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
+        $reports = SalesReport::with('existings', 'user', 'vockendals')
             ->whereNotNull('existing_id') // Ensure only records with existing_id are included
             ->when($request->tahun_bulan, function ($query) use ($request) {
                 $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)

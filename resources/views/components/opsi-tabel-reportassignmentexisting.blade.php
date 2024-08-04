@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-left">
-    <a href="{{ route('info-reportassignmentbillper', ['id' => $sales_report->id]) }}" class="btn border border-0">
+    <a href="{{ route('info-reportassignmentexisting', ['id' => $sales_report->id]) }}" class="btn border border-0">
         <div class="d-flex align-items-center text-blue">
             <i class="bi bi-info-circle-fill fs-5"></i>
         </div>
@@ -12,7 +12,7 @@
         </button>
     @endif
     <form id="reset-form-{{ $sales_report->id }}"
-        action="{{ route('reset-reportassignmentbillper', ['id' => $sales_report->id]) }}" method="POST"
+        action="{{ route('reset-reportassignmentexisting', ['id' => $sales_report->id]) }}" method="POST"
         style="display: none;">
         @csrf
     </form>

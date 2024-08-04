@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="{{ route('all-adminbillper.index') }}" class="btn btn-grey">
+                                    <a href="{{ route('billper-adminbillper.index') }}" class="btn btn-grey">
                                         <i class="bi bi-x-lg"></i> Reset
                                     </a>
                                     <button type="button" id="btn-filter" class="btn btn-secondary btn-filter"
@@ -152,7 +152,7 @@
             </button>
         </div>
 
-        <table class="table table-hover table-bordered datatable shadow" id="tabelallsadminbillper" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelbillpersadminbillper" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle text-center">
@@ -182,7 +182,7 @@
                 }
             });
 
-            var dataTable = new DataTable('#tabelallsadminbillper', {
+            var dataTable = new DataTable('#tabelbillpersadminbillper', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
@@ -270,8 +270,8 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'opsi-tabel-dataalladminbillper',
-                        name: 'opsi-tabel-dataalladminbillper',
+                        data: 'opsi-tabel-databillperadminbillper',
+                        name: 'opsi-tabel-databillperadminbillper',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false
@@ -301,7 +301,7 @@
             });
 
             // Event handler untuk select all
-            $('#tabelallsadminbillper').on('change', '#select-all', function() {
+            $('#tabelbillpersadminbillper').on('change', '#select-all', function() {
                 var isChecked = $(this).is(':checked');
                 $('.row-checkbox').prop('checked', isChecked);
             });

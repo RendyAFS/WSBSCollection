@@ -577,7 +577,10 @@ class SuperAdminController extends Controller
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('components.generate-pdf-billper', $data);
-        return $pdf->download('invoice-billper.pdf');
+        // Buat nama file menggunakan no_inet dan nama
+        $fileName = 'Invoice-' . $billper->no_inet . '-' . $billper->nama . '-' . $billper->nper . '.pdf';
+
+        return $pdf->download($fileName);
     }
 
     public function editbillpers($id)
@@ -642,7 +645,7 @@ class SuperAdminController extends Controller
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
-        $fileName = 'Report - ' . $billper->nama . '-' . $billper->no_inet . '/' . ($billper->user ? $billper->user->name : 'Unknown') . '-' . ($billper->user ? $billper->user->nik : 'Unknown') . '.pdf';
+        $fileName = 'Report - ' . $billper->nama . '-' . $billper->no_inet . '/' . ($billper->user ? $billper->user->name : 'Sales Tidak Ada') . '-' . ($billper->user ? $billper->user->nik : 'Nik Sales Tidak Ada') . '.pdf';
 
         // Create an instance of PDF
         $pdf = App::make('dompdf.wrapper');
@@ -1022,7 +1025,7 @@ class SuperAdminController extends Controller
             return datatables()->of($data_report_billper)
                 ->addIndexColumn()
                 ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-buttons-adminbillper', compact('row'));
+                    return view('components.evidences-buttons', compact('row'));
                 })
                 ->toJson();
         }
@@ -1429,7 +1432,10 @@ class SuperAdminController extends Controller
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('components.generate-pdf-existing', $data);
-        return $pdf->download('invoice-existing.pdf');
+        // Buat nama file menggunakan no_inet dan nama
+        $fileName = 'Invoice-' . $existing->no_inet . '-' . $existing->nama . '-' . $existing->nper . '.pdf';
+
+        return $pdf->download($fileName);
     }
 
     public function editexistings($id)
@@ -1494,7 +1500,7 @@ class SuperAdminController extends Controller
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
-        $fileName = 'Report - ' . $existing->nama . '-' . $existing->no_inet . '/' . ($existing->user ? $existing->user->name : 'Unknown') . '-' . ($existing->user ? $existing->user->nik : 'Unknown') . '.pdf';
+        $fileName = 'Report - ' . $existing->nama . '-' . $existing->no_inet . '/' . ($existing->user ? $existing->user->name : 'Sales Tidak Ada') . '-' . ($existing->user ? $existing->user->nik : 'Nik Sales Tidak Ada') . '.pdf';
 
         // Create an instance of PDF
         $pdf = App::make('dompdf.wrapper');
@@ -1872,7 +1878,7 @@ class SuperAdminController extends Controller
             return datatables()->of($data_report_existing)
                 ->addIndexColumn()
                 ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-buttons-adminexisting', compact('row'));
+                    return view('components.evidences-buttons', compact('row'));
                 })
                 ->toJson();
         }
@@ -2174,8 +2180,6 @@ class SuperAdminController extends Controller
     }
 
 
-
-
     public function generatePDFpranpc(Request $request, $id)
     {
         $pranpc = Pranpc::findOrFail($id);
@@ -2200,8 +2204,17 @@ class SuperAdminController extends Controller
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('components.generate-pdf-pranpc', $data);
-        return $pdf->download('invoice.pdf');
+
+        // Format tanggal untuk nama file
+        $mintgkFormatted = $mintgkDate->translatedFormat('F-Y');
+        $maxtgkFormatted = $maxtgkDate->translatedFormat('F-Y');
+
+        // Buat nama file menggunakan snd, nama, dan tanggal yang diformat
+        $fileName = 'Invoice-' . $pranpc->snd . '-' . $pranpc->nama . '-' . $mintgkFormatted . '-' . $maxtgkFormatted . '.pdf';
+
+        return $pdf->download($fileName);
     }
+
 
 
 
@@ -2267,7 +2280,7 @@ class SuperAdminController extends Controller
         $voc_kendala = VocKendala::all();
 
         // Generate the file name
-        $fileName = 'Report-' . $pranpc->nama . '-' . $pranpc->snd . '/' . ($pranpc->user ? $pranpc->user->name : 'Unknown') . '-' . ($pranpc->user ? $pranpc->user->nik : 'Unknown') . '.pdf';
+        $fileName = 'Report-' . $pranpc->nama . '-' . $pranpc->snd . '/' . ($pranpc->user ? $pranpc->user->name : 'Sales Tidak Ada') . '-' . ($pranpc->user ? $pranpc->user->nik : 'Nik Sales Tidak Ada') . '.pdf';
 
         // Create an instance of PDF
         $pdf = App::make('dompdf.wrapper');
@@ -2603,7 +2616,7 @@ class SuperAdminController extends Controller
             return datatables()->of($data_report_pranpc)
                 ->addIndexColumn()
                 ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-pranpc-buttons-adminpranpc', compact('row'));
+                    return view('components.evidences-buttons', compact('row'));
                 })
                 ->toJson();
         }

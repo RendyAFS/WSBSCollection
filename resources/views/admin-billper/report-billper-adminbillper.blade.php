@@ -11,7 +11,7 @@
                 </span>
             </div>
             {{-- Filter Form --}}
-            <form id="filterForm" action="{{ route('report-all-adminbillper.index') }}" method="GET">
+            <form id="filterForm" action="{{ route('report-billper-adminbillper.index') }}" method="GET">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="month" class="form-label fw-bold">Bulan</label>
@@ -104,7 +104,7 @@
 
     <div class="mb-4">
         <span class="fw-bold fs-2">
-            Report Billper - Existing
+            Report Billper
         </span>
     </div>
 
@@ -129,7 +129,7 @@
     </table>
     <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
         <span class="fw-bold fs-2">
-            Detail Billper - Existing
+            Detail Billper
         </span>
         <div class="btn-group">
             <a href="{{ route('download.excelreportbillper') }}" class="btn btn-green">
@@ -260,8 +260,8 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'alls.nama',
-                        name: 'alls.nama',
+                        data: 'billpers.nama',
+                        name: 'billpers.nama',
                         className: 'align-middle text-center'
                     },
                     {

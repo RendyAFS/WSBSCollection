@@ -131,8 +131,6 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
-
-
         // Tool Pra NPC
         Route::get('/tool-pranpc', [SuperAdminController::class, 'indextoolpranpc'])->name('toolspranpc.index');
         Route::get('gettabeltemppranpcs', [SuperAdminController::class, 'getDataTemppranpcs'])->name('gettabeltemppranpcs');
@@ -170,41 +168,66 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
+
+
         // Data Akun
         Route::get('/data-akun', [SuperAdminController::class, 'indexdataakun'])->name('data-akun.index');
         Route::post('/update-status', [SuperAdminController::class, 'updatestatus'])->name('updatestatus');
         Route::delete('/akun/{id}', [SuperAdminController::class, 'destroyakun'])->name('destroy-akun');
     });
 
+
+
+
     // Route Admin Billper
     Route::middleware(['AD-B'])->group(function () {
         Route::get('/admin-billper', [AdminBillperController::class, 'index'])->name('adminbillper.index');
 
-        // Data All Admin billper
-        Route::get('/report-all-adminbillper', [AdminBillperController::class, 'indexreportalladminbillper'])->name('report-all-adminbillper.index');
-        Route::get('/data-all-adminbillper', [AdminBillperController::class, 'indexalladminbillper'])->name('all-adminbillper.index');
+        // Data Billper Admin billper
+        Route::get('/data-billper-adminbillper', [AdminBillperController::class, 'indexbillperadminbillper'])->name('billper-adminbillper.index');
+        Route::get('/report-billper-adminbillper', [AdminBillperController::class, 'indexreportbillperadminbillper'])->name('report-billper-adminbillper.index');
         Route::get('gettabelbillpersadminbillper', [AdminBillperController::class, 'getDatabillpersadminbillper'])->name('gettabelbillpersadminbillper');
         Route::get('/download/excelbillperadminbillper', [AdminBillperController::class, 'exportbillper'])->name('download.excelbillperadminbillper');
         Route::post('/download/filtered/excelbillperadminbillper', [AdminBillperController::class, 'downloadFilteredExcelbillper'])->name('download.filtered.excelbillperadminbillper');
         Route::get('edit-billpersadminbillper/{id}', [AdminBillperController::class, 'editbillpersadminbillper'])->name('edit-billpersadminbillper');
-        Route::get('viewbillperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'viewgeneratePDFbillperexistingadminbillper'])->name('viewbillperexistingadminbillper.pdf');
-        Route::get('billperexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'generatePDFbillperexistingadminbillper'])->name('billperexistingadminbillper.pdf');
+        Route::get('viewbillperadminbillper/pdf/{id}', [AdminBillperController::class, 'viewgeneratePDFbillperadminbillper'])->name('viewbillperadminbillper.pdf');
+        Route::get('billperadminbillper/pdf/{id}', [AdminBillperController::class, 'generatePDFbillperadminbillper'])->name('billperadminbillper.pdf');
         Route::post('update-billpersadminbillper/{id}', [AdminBillperController::class, 'updatebillpersadminbillper'])->name('update-billpersadminbillper');
-        Route::get('/admin/billper/{id}/view', [AdminBillperController::class, 'viewPDFreportbillper'])->name('view-pdf-report-billper');
-        Route::get('/admin/billper/{id}/download', [AdminBillperController::class, 'downloadPDFreportbillper'])->name('download-pdf-report-billper');
+        Route::get('/adminbillper/billper/{id}/view', [AdminBillperController::class, 'viewPDFreportbillper'])->name('view-pdf-report-billper');
+        Route::get('/adminbillper/billper/{id}/download', [AdminBillperController::class, 'downloadPDFreportbillper'])->name('download-pdf-report-billper');
         Route::get('/get-data-reportbillper', [AdminBillperController::class, 'getDatareportbillper'])->name('getDatareportbillper');
         Route::get('/download/excelreportbillper', [AdminBillperController::class, 'downloadAllExcelreportbillper'])->name('download.excelreportbillper');
         Route::post('/download/filtered/excelreportbillper', [AdminBillperController::class, 'downloadFilteredExcelreportbillper'])->name('download.filtered.excelreportbillper');
-        Route::post('/savePlottingbillper', [AdminBillperController::class, 'savePlotting'])->name('savePlottingbillper');
+        Route::post('/savePlottingbillper', [AdminBillperController::class, 'savePlottingbillper'])->name('savePlottingbillper');
+
+        // Data Existing Admin billper
+        Route::get('/data-existing-adminbillper', [AdminBillperController::class, 'indexexistingadminbillper'])->name('existing-adminbillper.index');
+        Route::get('/report-existing-adminbillper', [AdminBillperController::class, 'indexreportexistingadminbillper'])->name('report-existing-adminbillper.index');
+        Route::get('gettabelexistingsadminbillper', [AdminBillperController::class, 'getDataexistingsadminbillper'])->name('gettabelexistingsadminbillper');
+        Route::get('/download/excelexistingadminbillper', [AdminBillperController::class, 'exportexisting'])->name('download.excelexistingadminbillper');
+        Route::post('/download/filtered/excelexitingadminbillper', [AdminBillperController::class, 'downloadFilteredExcelexisting'])->name('download.filtered.excelexistingadminbillper');
+        Route::get('edit-existingsadminbillper/{id}', [AdminBillperController::class, 'editexistingsadminbillper'])->name('edit-existingsadminbillper');
+        Route::get('viewexistingadminbillper/pdf/{id}', [AdminBillperController::class, 'viewgeneratePDFexistingadminbillper'])->name('viewbillperadminbillper.pdf');
+        Route::get('existingadminbillper/pdf/{id}', [AdminBillperController::class, 'generatePDFexistingadminbillper'])->name('existingadminbillper.pdf');
+        Route::post('update-existingsadminbillper/{id}', [AdminBillperController::class, 'updateexistingsadminbillper'])->name('update-existingsadminbillper');
+        Route::get('/adminbillper/existing/{id}/view', [AdminBillperController::class, 'viewPDFreportexisting'])->name('view-pdf-report-existing');
+        Route::get('/adminbillper/existing/{id}/download', [AdminBillperController::class, 'downloadPDFreportexisting'])->name('download-pdf-report-existing');
+        Route::get('/get-data-reportexisting', [AdminBillperController::class, 'getDatareportexisting'])->name('getDatareportexisting');
+        Route::get('/download/excelreportexisting', [AdminBillperController::class, 'downloadAllExcelreportexisting'])->name('download.excelreportexisting');
+        Route::post('/download/filtered/excelreportexisting', [AdminBillperController::class, 'downloadFilteredExcelreportexisting'])->name('download.filtered.excelreportexisting');
+        Route::post('/savePlottingexisting', [AdminBillperController::class, 'savePlottingexisting'])->name('savePlottingexisting');
     });
+
+
+
 
     // Route Admin PraNPC
     Route::middleware(['AD-P'])->group(function () {
         Route::get('/admin-pranpc', [AdminPranpcController::class, 'index'])->name('adminpranpc.index');
 
         // Data Pranpc admin
-        Route::get('/report-pranpc-adminpranpc', [AdminPranpcController::class, 'indexreportpranpcadminpranpc'])->name('report-pranpc-adminpranpc.index');
         Route::get('/get-data-reportpranpc', [AdminPranpcController::class, 'getDatareportpranpc'])->name('getDatareportpranpc');
+        Route::get('/report-pranpc-adminpranpc', [AdminPranpcController::class, 'indexreportpranpcadminpranpc'])->name('report-pranpc-adminpranpc.index');
         Route::get('/data-pranpc-adminpranpc', [AdminPranpcController::class, 'indexpranpcadminpranpc'])->name('pranpc-adminpranpc.index');
         Route::get('gettabelpranpcadminpranpc', [AdminPranpcController::class, 'getDatapranpcsadminpranpc'])->name('gettabelpranpcadminpranpc');
         Route::get('/download/exceladminpranpc', [AdminPranpcController::class, 'exportpranpc'])->name('download.exceladminpranpc');
@@ -220,24 +243,29 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::post('/savePlottingpranpc', [AdminPranpcController::class, 'savePlotting'])->name('savePlottingpranpc');
 
 
-        // Data Existing Admin
-        Route::get('/report-existing-adminpranpc', [AdminPranpcController::class, 'indexreportexistingadminpranpc'])->name('report-existing-adminpranpc.index');
-        Route::get('/get-data-reportexisting', [AdminPranpcController::class, 'getDatareportexisting'])->name('getDatareportexisting');
-        Route::get('/data-existing-adminpranpc', [AdminPranpcController::class, 'indexexistingadminpranpc'])->name('existing-adminpranpc.index');
-        Route::get('gettabelexistingsadminpranpc', [AdminPranpcController::class, 'getDataexistingsadminpranpc'])->name('gettabelexistingsadminpranpc');
-        Route::get('/download/excelexistingadminpranpc', [AdminPranpcController::class, 'exportexisting'])->name('download.excelexistingadminpranpc');
-        Route::post('/download/filtered/excelexistingadminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelexisting'])->name('download.filtered.excelexistingadminpranpc');
-        Route::get('edit-existingsadminpranpc/{id}', [AdminPranpcController::class, 'editexistingsadminpranpc'])->name('edit-existingsadminpranpc');
-        Route::post('update-existingsadminpranpc/{id}', [AdminPranpcController::class, 'updateexistingsadminpranpc'])->name('update-existingsadminpranpc');
-        Route::get('viewexistingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'viewgeneratePDFexistingadminpranpc'])->name('viewexistingadminpranpc.pdf');
-        Route::get('existingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'generatePDFexistingadminpranpc'])->name('existingadminpranpc.pdf');
-        Route::get('/admin/pranpc/{id}/view', [AdminPranpcController::class, 'viewPDFreportpranpc'])->name('view-pdf-report-pranpc');
-        Route::get('/admin/existing/{id}/view', [AdminPranpcController::class, 'viewPDFreportexisting'])->name('view-pdf-report-existing');
-        Route::get('/admin/existing/{id}/download', [AdminPranpcController::class, 'downloadPDFreportexisting'])->name('download-pdf-report-existing');
-        Route::get('/download/excelreportexisting', [AdminPranpcController::class, 'downloadAllExcelreportexisting'])->name('download.excelreportexisting');
-        Route::post('/download/filtered/excelreportexisting', [AdminPranpcController::class, 'downloadFilteredExcelreportexisting'])->name('download.filtered.excelreportexisting');
-        Route::post('/savePlottingexisting', [AdminPranpcController::class, 'savePlottingexisting'])->name('savePlottingexisting');
+
+
+        // // Data Existing Admin
+        // Route::get('/report-existing-adminpranpc', [AdminPranpcController::class, 'indexreportexistingadminpranpc'])->name('report-existing-adminpranpc.index');
+        // Route::get('/get-data-reportexisting', [AdminPranpcController::class, 'getDatareportexisting'])->name('getDatareportexisting');
+        // Route::get('/data-existing-adminpranpc', [AdminPranpcController::class, 'indexexistingadminpranpc'])->name('existing-adminpranpc.index');
+        // Route::get('gettabelexistingsadminpranpc', [AdminPranpcController::class, 'getDataexistingsadminpranpc'])->name('gettabelexistingsadminpranpc');
+        // Route::get('/download/excelexistingadminpranpc', [AdminPranpcController::class, 'exportexisting'])->name('download.excelexistingadminpranpc');
+        // Route::post('/download/filtered/excelexistingadminpranpc', [AdminPranpcController::class, 'downloadFilteredExcelexisting'])->name('download.filtered.excelexistingadminpranpc');
+        // Route::get('edit-existingsadminpranpc/{id}', [AdminPranpcController::class, 'editexistingsadminpranpc'])->name('edit-existingsadminpranpc');
+        // Route::post('update-existingsadminpranpc/{id}', [AdminPranpcController::class, 'updateexistingsadminpranpc'])->name('update-existingsadminpranpc');
+        // Route::get('viewexistingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'viewgeneratePDFexistingadminpranpc'])->name('viewexistingadminpranpc.pdf');
+        // Route::get('existingadminpranpc/pdf/{id}', [AdminPranpcController::class, 'generatePDFexistingadminpranpc'])->name('existingadminpranpc.pdf');
+        // Route::get('/admin/pranpc/{id}/view', [AdminPranpcController::class, 'viewPDFreportpranpc'])->name('view-pdf-report-pranpc');
+        // Route::get('/admin/existing/{id}/view', [AdminPranpcController::class, 'viewPDFreportexisting'])->name('view-pdf-report-existing');
+        // Route::get('/admin/existing/{id}/download', [AdminPranpcController::class, 'downloadPDFreportexisting'])->name('download-pdf-report-existing');
+        // Route::get('/download/excelreportexisting', [AdminPranpcController::class, 'downloadAllExcelreportexisting'])->name('download.excelreportexisting');
+        // Route::post('/download/filtered/excelreportexisting', [AdminPranpcController::class, 'downloadFilteredExcelreportexisting'])->name('download.filtered.excelreportexisting');
+        // Route::post('/savePlottingexisting', [AdminPranpcController::class, 'savePlottingexisting'])->name('savePlottingexisting');
     });
+
+
+
 
 
     // Route User
@@ -259,6 +287,30 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('info-reportassignmentbillper/{id}', [UserController::class, 'inforeportassignmentbillper'])->name('info-reportassignmentbillper');
         Route::post('update-reportassignmentbillper/{id}', [UserController::class, 'updatereportassignmentbillper'])->name('update-reportassignmentbillper');
         Route::post('/reset-reportassignmentbillper/{id}', [UserController::class, 'resetReportAssignmentbillper'])->name('reset-reportassignmentbillper');
+
+
+
+
+        
+        // Assignment Existing
+        Route::get('/assignment-existing', [UserController::class, 'indexassignmentexisting'])->name('assignmentexisting.index');
+        Route::get('gettabelassignmentexisting', [UserController::class, 'getDataassignmentexisting'])->name('gettabelassignmentexisting');
+        Route::get('info-assignmentexisting/{id}', [UserController::class, 'infoassignmentexisting'])->name('info-assignmentexisting');
+        Route::post('update-assignmentexisting/{id}', [UserController::class, 'updateassignmentexisting'])->name('update-assignmentexisting');
+
+
+        // Report Assignment Existing
+        Route::get('/report-assignment-existing', [UserController::class, 'indexreportassignmentexisting'])->name('reportassignmentexisting.index');
+        Route::get('gettabelreportassignmentexisting', [UserController::class, 'getDatareportassignmentexisting'])->name('gettabelreportassignmentexisting');
+        Route::get('info-reportassignmentexisting/{id}', [UserController::class, 'inforeportassignmentexisting'])->name('info-reportassignmentexisting');
+        Route::post('update-reportassignmentexisting/{id}', [UserController::class, 'updatereportassignmentexisting'])->name('update-reportassignmentexisting');
+        Route::post('/reset-reportassignmentexisting/{id}', [UserController::class, 'resetReportAssignmentexisting'])->name('reset-reportassignmentexisting');
+
+
+
+
+
+
 
 
         // Assignment Pranpc

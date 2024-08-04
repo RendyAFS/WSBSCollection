@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Billper;
+use App\Models\Existing;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\VocKendala;
@@ -34,11 +35,11 @@ class UserController extends Controller
             $query = Billper::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
                 ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
 
-            $data_alls = $query->get();
-            return datatables()->of($data_alls)
+            $data_billpers = $query->get();
+            return datatables()->of($data_billpers)
                 ->addIndexColumn()
-                ->addColumn('opsi-tabel-assignmentbillper', function ($all) {
-                    return view('components.opsi-tabel-assignmentbillper', compact('all'));
+                ->addColumn('opsi-tabel-assignmentbillper', function ($billper) {
+                    return view('components.opsi-tabel-assignmentbillper', compact('billper'));
                 })
                 ->toJson();
         }
@@ -46,38 +47,36 @@ class UserController extends Controller
 
     public function infoassignmentbillper($id)
     {
-        $title = 'Info Assignment';
-        $all = Billper::with('user')->findOrFail($id);
+        $title = 'Info Assignment Billper';
+        $billper = Billper::with('user')->findOrFail($id);
         $voc_kendala = VocKendala::all(); // Mengambil semua data VocKendala
 
-        // Mengambil SalesReport terbaru yang terkait dengan All tertentu
+        // Mengambil SalesReport terbaru yang terkait dengan Billper tertentu
         $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first();
 
         // Mengecek apakah ada data di sales_report dan mengecek jumlah visit
         $isSalesReportEmpty = $sales_report ? false : true;
         $jmlh_visit = $sales_report ? $sales_report->jmlh_visit : null;
 
-        return view('user.info-assignmentbillper', compact('title', 'all', 'voc_kendala', 'sales_report', 'isSalesReportEmpty', 'jmlh_visit'));
+        return view('user.info-assignmentbillper', compact('title', 'billper', 'voc_kendala', 'sales_report', 'isSalesReportEmpty', 'jmlh_visit'));
     }
-
-
 
 
     public function updateassignmentbillper(Request $request, $id)
     {
-        // Update the All model
-        $all = Billper::findOrFail($id);
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
+        // Update the Billper model
+        $billper = Billper::findOrFail($id);
+        $billper->nama = $request->input('nama');
+        $billper->no_inet = $request->input('no_inet');
+        $billper->saldo = $request->input('saldo');
+        $billper->no_tlf = $request->input('no_tlf');
+        $billper->email = $request->input('email');
+        $billper->sto = $request->input('sto');
+        $billper->produk = $request->input('produk');
+        $billper->umur_customer = $request->input('umur_customer');
 
         // Initially set the status_pembayaran from the request
-        $all->status_pembayaran = $request->input('status_pembayaran');
+        $billper->status_pembayaran = $request->input('status_pembayaran');
 
         // Update the SalesReport model
         $report = new SalesReport; // Make sure to use findOrFail() to update existing records
@@ -93,7 +92,7 @@ class UserController extends Controller
         // Handle evidence_sales file upload
         if ($request->hasFile('evidence_sales')) {
             $file = $request->file('evidence_sales');
-            $filename = $all->nama . '_' . $all->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $filename = $billper->nama . '_' . $billper->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_sales = $filename;
         }
@@ -101,21 +100,21 @@ class UserController extends Controller
         // Handle evidence_pembayaran file upload
         if ($request->hasFile('evidence_pembayaran')) {
             $file = $request->file('evidence_pembayaran');
-            $filename = $all->nama . '_' . $all->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $filename = $billper->nama . '_' . $billper->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
             $report->evidence_pembayaran = $filename;
         }
 
         // If voc_kendalas_id is "Tidak Ada" (id = 1), set status_pembayaran to "Pending"
         if ($request->input('voc_kendalas_id') == 1) {
-            $all->status_pembayaran = 'Pending';
+            $billper->status_pembayaran = 'Pending';
         } else {
-            $all->status_pembayaran = 'Unpaid';
+            $billper->status_pembayaran = 'Unpaid';
         }
 
 
-        // Save the updated All model
-        $all->save();
+        // Save the updated Billper model
+        $billper->save();
 
         // Save the updated SalesReport model
         $report->save();
@@ -123,10 +122,6 @@ class UserController extends Controller
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('assignmentbillper.index');
     }
-
-
-
-
 
 
     // Report Assignment Billper
@@ -142,8 +137,8 @@ class UserController extends Controller
         if ($request->ajax()) {
             $userId = Auth::id(); // Get the ID of the currently authenticated user
 
-            $query = SalesReport::with('alls') // Ensure 'alls' relationship is eager loaded
-                ->whereHas('alls', function ($query) use ($userId) {
+            $query = SalesReport::with('billpers') // Ensure 'billpers' relationship is eager loaded
+                ->whereHas('billpers', function ($query) use ($userId) {
                     $query->where('users_id', $userId)
                         ->whereIn('status_pembayaran', ['Pending', 'Paid']);
                 });
@@ -162,8 +157,8 @@ class UserController extends Controller
 
     public function inforeportassignmentbillper($id)
     {
-        $title = 'Info Report Assignment';
-        $sales_report = SalesReport::with('user', 'alls')->findOrFail($id);
+        $title = 'Info Report Assignment Billper';
+        $sales_report = SalesReport::with('user', 'billpers')->findOrFail($id);
 
         // Retrieve all VocKendala records
         $voc_kendala = VocKendala::all();
@@ -177,8 +172,8 @@ class UserController extends Controller
         // Find the SalesReport model by ID
         $report = SalesReport::findOrFail($id);
 
-        // Retrieve related All model
-        $all = $report->alls; // Ensure this matches your model relationship
+        // Retrieve related Billper model
+        $billper = $report->billpers; // Ensure this matches your model relationship
 
         // Update fields from request
         $report->users_id = $request->input('users_id');
@@ -189,11 +184,11 @@ class UserController extends Controller
         $report->follow_up = $request->input('follow_up');
         $report->jmlh_visit = $request->input('jmlh_visit');
 
-        // Update the status_pembayaran in the related All model
-        if ($all) {
+        // Update the status_pembayaran in the related Billper model
+        if ($billper) {
             $statusPembayaran = $request->input('status_pembayaran');
-            $all->status_pembayaran = $statusPembayaran;
-            $all->save();
+            $billper->status_pembayaran = $statusPembayaran;
+            $billper->save();
         }
 
         // Handle evidence_sales file upload
@@ -205,7 +200,7 @@ class UserController extends Controller
 
             // Store the new file
             $file = $request->file('evidence_sales');
-            $filename = $all->nama . '_' . $all->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $filename = $billper->nama . '_' . $billper->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/file_evidence', $filename);
             $report->evidence_sales = $filename;
         }
@@ -219,7 +214,7 @@ class UserController extends Controller
 
             // Store the new file
             $file = $request->file('evidence_pembayaran');
-            $filename = $all->nama . '_' . $all->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $filename = $billper->nama . '_' . $billper->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/file_evidence', $filename);
             $report->evidence_pembayaran = $filename;
         }
@@ -239,13 +234,13 @@ class UserController extends Controller
         // Find the SalesReport model by ID
         $report = SalesReport::findOrFail($id);
 
-        // Retrieve related All model
-        $all = $report->alls;
+        // Retrieve related Billper model
+        $billper = $report->billpers;
 
-        if ($all) {
+        if ($billper) {
             // Update status_pembayaran to 'Unpaid'
-            $all->status_pembayaran = 'Unpaid';
-            $all->save();
+            $billper->status_pembayaran = 'Unpaid';
+            $billper->save();
         }
 
         // Delete evidence files if they exist
@@ -263,6 +258,321 @@ class UserController extends Controller
         Alert::success('Data Berhasil Direset');
         return redirect()->route('reportassignmentbillper.index');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Assignment Existing
+    public function indexassignmentexisting()
+    {
+        $title = 'Assignment Existing';
+        return view('user.assignmentexisting', compact('title'));
+    }
+
+    public function getDataassignmentexisting(Request $request)
+    {
+        if ($request->ajax()) {
+            $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
+            $query = Existing::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
+                ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
+
+            $data_existings = $query->get();
+            return datatables()->of($data_existings)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-assignmentexisting', function ($existing) {
+                    return view('components.opsi-tabel-assignmentexisting', compact('existing'));
+                })
+                ->toJson();
+        }
+    }
+
+    public function infoassignmentexisting($id)
+    {
+        $title = 'Info Assignment Existing';
+        $existing = Existing::with('user')->findOrFail($id);
+        $voc_kendala = VocKendala::all(); // Mengambil semua data VocKendala
+
+        // Mengambil SalesReport terbaru yang terkait dengan existing tertentu
+        $sales_report = SalesReport::where('existing_id', $id)->orderBy('created_at', 'desc')->first();
+
+        // Mengecek apakah ada data di sales_report dan mengecek jumlah visit
+        $isSalesReportEmpty = $sales_report ? false : true;
+        $jmlh_visit = $sales_report ? $sales_report->jmlh_visit : null;
+
+        return view('user.info-assignmentexisting', compact('title', 'existing', 'voc_kendala', 'sales_report', 'isSalesReportEmpty', 'jmlh_visit'));
+    }
+
+
+    public function updateassignmentexisting(Request $request, $id)
+    {
+        // Update the Existing model
+        $existing = Existing::findOrFail($id);
+        $existing->nama = $request->input('nama');
+        $existing->no_inet = $request->input('no_inet');
+        $existing->saldo = $request->input('saldo');
+        $existing->no_tlf = $request->input('no_tlf');
+        $existing->email = $request->input('email');
+        $existing->sto = $request->input('sto');
+        $existing->produk = $request->input('produk');
+        $existing->umur_customer = $request->input('umur_customer');
+
+        // Initially set the status_pembayaran from the request
+        $existing->status_pembayaran = $request->input('status_pembayaran');
+
+        // Update the SalesReport model
+        $report = new SalesReport; // Make sure to use findOrFail() to update existing records
+        $report->users_id = $request->input('users_id');
+        $report->existing_id = $request->input('existing_id');
+        $report->snd = $request->input('snd');
+        $report->witel = $request->input('witel');
+        $report->waktu_visit = $request->input('waktu_visit');
+        $report->voc_kendalas_id = $request->input('voc_kendalas_id');
+        $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
+
+        // Handle evidence_sales file upload
+        if ($request->hasFile('evidence_sales')) {
+            $file = $request->file('evidence_sales');
+            $filename = $existing->nama . '_' . $existing->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
+            $report->evidence_sales = $filename;
+        }
+
+        // Handle evidence_pembayaran file upload
+        if ($request->hasFile('evidence_pembayaran')) {
+            $file = $request->file('evidence_pembayaran');
+            $filename = $existing->nama . '_' . $existing->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/file_evidence', $filename); // Save to storage/app/public/file_evidence
+            $report->evidence_pembayaran = $filename;
+        }
+
+        // If voc_kendalas_id is "Tidak Ada" (id = 1), set status_pembayaran to "Pending"
+        if ($request->input('voc_kendalas_id') == 1) {
+            $existing->status_pembayaran = 'Pending';
+        } else {
+            $existing->status_pembayaran = 'Unpaid';
+        }
+
+
+        // Save the updated existing model
+        $existing->save();
+
+        // Save the updated SalesReport model
+        $report->save();
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('assignmentexisting.index');
+    }
+
+
+    // Report Assignment Existing
+    public function indexreportassignmentexisting()
+    {
+        $title = 'Report Assignment Existing';
+        return view('user.reportassignmentexisting', compact('title'));
+    }
+
+
+    public function getDatareportassignmentexisting(Request $request)
+    {
+        if ($request->ajax()) {
+            $userId = Auth::id(); // Get the ID of the currently authenticated user
+
+            $query = SalesReport::with('existings') // Ensure 'existings' relationship is eager loaded
+                ->whereHas('existings', function ($query) use ($userId) {
+                    $query->where('users_id', $userId)
+                        ->whereIn('status_pembayaran', ['Pending', 'Paid']);
+                });
+
+            $data_sales_reports = $query->get(); // Get the data
+
+            return datatables()->of($data_sales_reports)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-reportassignmentexisting', function ($sales_report) {
+                    return view('components.opsi-tabel-reportassignmentexisting', compact('sales_report'));
+                })
+                ->toJson();
+        }
+    }
+
+
+    public function inforeportassignmentexisting($id)
+    {
+        $title = 'Info Report Assignment Existing';
+        $sales_report = SalesReport::with('user', 'existings')->findOrFail($id);
+
+        // Retrieve all VocKendala records
+        $voc_kendala = VocKendala::all();
+
+        return view('user.info-reportassignmentexisting', compact('title', 'sales_report', 'voc_kendala'));
+    }
+
+
+    public function updatereportassignmentexisting(Request $request, $id)
+    {
+        // Find the SalesReport model by ID
+        $report = SalesReport::findOrFail($id);
+
+        // Retrieve related existing model
+        $existing = $report->existings; // Ensure this matches your model relationship
+
+        // Update fields from request
+        $report->users_id = $request->input('users_id');
+        $report->snd = $request->input('snd');
+        $report->witel = $request->input('witel');
+        $report->waktu_visit = $request->input('waktu_visit');
+        $report->voc_kendalas_id = $request->input('voc_kendalas_id');
+        $report->follow_up = $request->input('follow_up');
+        $report->jmlh_visit = $request->input('jmlh_visit');
+
+        // Update the status_pembayaran in the related existing model
+        if ($existing) {
+            $statusPembayaran = $request->input('status_pembayaran');
+            $existing->status_pembayaran = $statusPembayaran;
+            $existing->save();
+        }
+
+        // Handle evidence_sales file upload
+        if ($request->hasFile('evidence_sales')) {
+            // Delete the old file if it exists
+            if ($report->evidence_sales) {
+                Storage::delete('public/file_evidence/' . $report->evidence_sales);
+            }
+
+            // Store the new file
+            $file = $request->file('evidence_sales');
+            $filename = $existing->nama . '_' . $existing->no_inet . '_evidence_sales_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/file_evidence', $filename);
+            $report->evidence_sales = $filename;
+        }
+
+        // Handle evidence_pembayaran file upload
+        if ($request->hasFile('evidence_pembayaran')) {
+            // Delete the old file if it exists
+            if ($report->evidence_pembayaran) {
+                Storage::delete('public/file_evidence/' . $report->evidence_pembayaran);
+            }
+
+            // Store the new file
+            $file = $request->file('evidence_pembayaran');
+            $filename = $existing->nama . '_' . $existing->no_inet . '_evidence_pembayaran_' . now()->format('Ymd_His') . '_' . $report->users_id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/file_evidence', $filename);
+            $report->evidence_pembayaran = $filename;
+        }
+
+        // Save the updated report
+        $report->save();
+
+        // Set a success message and redirect
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('reportassignmentexisting.index');
+    }
+
+
+
+    public function resetReportAssignmentexisting($id)
+    {
+        // Find the SalesReport model by ID
+        $report = SalesReport::findOrFail($id);
+
+        // Retrieve related existing model
+        $existing = $report->existings;
+
+        if ($existing) {
+            // Update status_pembayaran to 'Unpaid'
+            $existing->status_pembayaran = 'Unpaid';
+            $existing->save();
+        }
+
+        // Delete evidence files if they exist
+        if ($report->evidence_sales) {
+            Storage::delete('public/file_evidence/' . $report->evidence_sales);
+        }
+        if ($report->evidence_pembayaran) {
+            Storage::delete('public/file_evidence/' . $report->evidence_pembayaran);
+        }
+
+        // Delete the SalesReport record
+        $report->delete();
+
+        // Set a success message and redirect
+        Alert::success('Data Berhasil Direset');
+        return redirect()->route('reportassignmentexisting.index');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -6,10 +6,10 @@
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Edit Data Existing
             </span>
-            <a href="{{ route('view-pdf-report-existing', ['id' => $existing->id]) }}" class="btn btn-green fw-bold d-none">
+            <a href="{{ route('view-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}" class="btn btn-green fw-bold d-none">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> View
             </a>
-            <a href="{{ route('download-pdf-report-existing', ['id' => $existing->id]) }}" class="btn btn-yellow fw-bold">
+            <a href="{{ route('download-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}" class="btn btn-yellow fw-bold">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> Download
             </a>
         </div>

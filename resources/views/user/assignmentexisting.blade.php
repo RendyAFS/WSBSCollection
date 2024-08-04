@@ -1,13 +1,15 @@
 @extends('layouts.app-user')
 
+@include('layouts.loading')
+
 @section('content')
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Assignment Billper
+                Assignment Existing
             </span>
         </div>
-        <table class="table table-hover table-bordered datatable shadow" id="tabelreportassignmentbillper" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelassignmentexisting" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nama</th>
@@ -20,8 +22,6 @@
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
-                    <th id="th" class="align-middle text-center">Visit</th>
-                    <th id="th" class="align-middle text-center">Waktu Visit</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
@@ -31,13 +31,13 @@
 @push('scripts')
     <script type="module">
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelreportassignmentbillper', {
+            var dataTable = new DataTable('#tabelassignmentexisting', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelreportassignmentbillper') }}",
+                    url: "{{ route('gettabelassignmentexisting') }}",
                     type: 'GET',
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -50,57 +50,57 @@
                     }
                 },
                 columns: [{
-                        data: 'billpers.nama',
-                        name: 'billpers.nama',
+                        data: 'nama',
+                        name: 'nama',
                         className: 'align-middle'
                     },
                     {
-                        data: 'billpers.no_inet',
-                        name: 'billpers.no_inet',
+                        data: 'no_inet',
+                        name: 'no_inet',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.saldo',
-                        name: 'billpers.saldo',
+                        data: 'saldo',
+                        name: 'saldo',
                         className: 'align-middle text-center',
                         render: function(data) {
                             return formatRupiah(data, 'Rp. ');
                         }
                     },
                     {
-                        data: 'billpers.no_tlf',
-                        name: 'billpers.no_tlf',
+                        data: 'no_tlf',
+                        name: 'no_tlf',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.email',
-                        name: 'billpers.email',
+                        data: 'email',
+                        name: 'email',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.sto',
-                        name: 'billpers.sto',
+                        data: 'sto',
+                        name: 'sto',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.nper',
-                        name: 'billpers.nper',
+                        data: 'nper',
+                        name: 'nper',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.umur_customer',
-                        name: 'billpers.umur_customer',
+                        data: 'umur_customer',
+                        name: 'umur_customer',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.produk',
-                        name: 'billpers.produk',
+                        data: 'produk',
+                        name: 'produk',
                         className: 'align-middle text-center',
                         visible: false
                     },
                     {
-                        data: 'billpers.status_pembayaran',
-                        name: 'billpers.status_pembayaran',
+                        data: 'status_pembayaran',
+                        name: 'status_pembayaran',
                         className: 'align-middle text-center',
                         render: function(data) {
                             if (data === 'Unpaid') {
@@ -114,18 +114,8 @@
                         }
                     },
                     {
-                        data: 'jmlh_visit',
-                        name: 'jmlh_visit',
-                        className: 'align-middle text-center',
-                    },
-                    {
-                        data: 'waktu_visit',
-                        name: 'waktu_visit',
-                        className: 'align-middle text-center',
-                    },
-                    {
-                        data: 'opsi-tabel-reportassignmentbillper',
-                        name: 'opsi-tabel-reportassignmentbillper',
+                        data: 'opsi-tabel-assignmentexisting',
+                        name: 'opsi-tabel-assignmentexisting',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false

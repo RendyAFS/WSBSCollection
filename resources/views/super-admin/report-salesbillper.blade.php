@@ -262,8 +262,8 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'alls.nama',
-                        name: 'alls.nama',
+                        data: 'billpers.nama',
+                        name: 'billpers.nama',
                         className: 'align-middle text-center'
                     },
                     {

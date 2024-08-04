@@ -4,10 +4,10 @@
     <div class="px-3 py-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Assignment Billper
+                Report Assignment Existing
             </span>
         </div>
-        <table class="table table-hover table-bordered datatable shadow" id="tabelreportassignmentbillper" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="tabelreportassignmentexisting" style="width: 100%">
             <thead class="fw-bold">
                 <tr>
                     <th id="th" class="align-middle">Nama</th>
@@ -31,13 +31,13 @@
 @push('scripts')
     <script type="module">
         $(document).ready(function() {
-            var dataTable = new DataTable('#tabelreportassignmentbillper', {
+            var dataTable = new DataTable('#tabelreportassignmentexisting', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('gettabelreportassignmentbillper') }}",
+                    url: "{{ route('gettabelreportassignmentexisting') }}",
                     type: 'GET',
                     beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
@@ -50,57 +50,57 @@
                     }
                 },
                 columns: [{
-                        data: 'billpers.nama',
-                        name: 'billpers.nama',
+                        data: 'existings.nama',
+                        name: 'existings.nama',
                         className: 'align-middle'
                     },
                     {
-                        data: 'billpers.no_inet',
-                        name: 'billpers.no_inet',
+                        data: 'existings.no_inet',
+                        name: 'existings.no_inet',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.saldo',
-                        name: 'billpers.saldo',
+                        data: 'existings.saldo',
+                        name: 'existings.saldo',
                         className: 'align-middle text-center',
                         render: function(data) {
                             return formatRupiah(data, 'Rp. ');
                         }
                     },
                     {
-                        data: 'billpers.no_tlf',
-                        name: 'billpers.no_tlf',
+                        data: 'existings.no_tlf',
+                        name: 'existings.no_tlf',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.email',
-                        name: 'billpers.email',
+                        data: 'existings.email',
+                        name: 'existings.email',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.sto',
-                        name: 'billpers.sto',
+                        data: 'existings.sto',
+                        name: 'existings.sto',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.nper',
-                        name: 'billpers.nper',
+                        data: 'existings.nper',
+                        name: 'existings.nper',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.umur_customer',
-                        name: 'billpers.umur_customer',
+                        data: 'existings.umur_customer',
+                        name: 'existings.umur_customer',
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'billpers.produk',
-                        name: 'billpers.produk',
+                        data: 'existings.produk',
+                        name: 'existings.produk',
                         className: 'align-middle text-center',
                         visible: false
                     },
                     {
-                        data: 'billpers.status_pembayaran',
-                        name: 'billpers.status_pembayaran',
+                        data: 'existings.status_pembayaran',
+                        name: 'existings.status_pembayaran',
                         className: 'align-middle text-center',
                         render: function(data) {
                             if (data === 'Unpaid') {
@@ -124,8 +124,8 @@
                         className: 'align-middle text-center',
                     },
                     {
-                        data: 'opsi-tabel-reportassignmentbillper',
-                        name: 'opsi-tabel-reportassignmentbillper',
+                        data: 'opsi-tabel-reportassignmentexisting',
+                        name: 'opsi-tabel-reportassignmentexisting',
                         className: 'align-middle',
                         orderable: false,
                         searchable: false

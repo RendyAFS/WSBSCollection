@@ -10,13 +10,13 @@
 
         <div class="px-0 px-md-5">
             <div class="row">
-                <form action="{{ route('update-reportassignmentbillper', ['id' => $sales_report->id]) }}" method="POST"
+                <form action="{{ route('update-reportassignmentexisting', ['id' => $sales_report->id]) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="card px-3 py-4 shadow">
                         <div class="card-body">
                             <div class="contain-header mb-3">
-                                <h5 class="card-title">{{$sales_report->billpers->nama }}</h5>
+                                <h5 class="card-title">{{$sales_report->existings->nama }}</h5>
                                 <h6 class="card-subtitle mb-2 text-body-secondary">{{ $sales_report->snd }}</h6>
                             </div>
                             <hr class="border border-dark border-3 opacity-75 my-4">
@@ -38,7 +38,7 @@
                                         <div class="mb-3">
                                             <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
                                             <input type="text" class="form-control bg-body-secondary" id="status_pembayaran" name="status_pembayaran"
-                                                value="{{$sales_report->billpers->status_pembayaran}}" readonly>
+                                                value="{{$sales_report->existings->status_pembayaran}}" readonly>
                                         </div>
                                         <div class="mb-3 d-none">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                        <a href="{{ route('reportassignmentbillper.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
+                        <a href="{{ route('reportassignmentexisting.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
                         <button type="submit" class="btn btn-secondary w-25">Update</button>
                     </div>
                 </form>

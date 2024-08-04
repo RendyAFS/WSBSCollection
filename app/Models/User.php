@@ -52,7 +52,7 @@ class User extends Authenticatable
     }
     public function existings()
     {
-        return $this->hasMany(Billper::class, 'users_id');
+        return $this->hasMany(Existing::class, 'users_id');
     }
     public function pranpcs()
     {

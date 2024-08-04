@@ -7,6 +7,7 @@ use App\Exports\PranpcExport;
 use App\Exports\SalesReportBillperExisting;
 use App\Exports\SalesReportPranpc;
 use App\Models\Billper;
+use App\Models\Existing;
 use App\Models\Pranpc;
 use App\Models\SalesReport;
 use App\Models\User;
@@ -239,233 +240,6 @@ class AdminPranpcController extends Controller
     }
 
 
-
-
-    // Data Existing Pranpc
-    public function indexexistingadminpranpc()
-    {
-        confirmDelete();
-        $title = 'Data Existing';
-        $existings = Billper::all();
-        $users = User::where('level', 'User')->get();
-        return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
-    }
-
-    public function getDataexistingsadminpranpc(Request $request)
-    {
-        if ($request->ajax()) {
-            $query = Billper::query()->with('user');
-
-            $currentMonth = Carbon::now()->format('Y-m');
-
-            // Filter untuk hanya menampilkan data existing saja
-            $query->where('nper', '<', $currentMonth);
-
-            if ($request->has('nper')) {
-                $nper = $request->input('nper');
-                $query->where('nper', 'LIKE', "%$nper%");
-            }
-
-            if ($request->has('status_pembayaran')) {
-                $statusPembayaran = $request->input('status_pembayaran');
-                if ($statusPembayaran != 'Semua') {
-                    $query->where('status_pembayaran', '=', $statusPembayaran);
-                }
-            }
-
-            // Filter berdasarkan jenis_produk
-            if ($request->has('jenis_produk')) {
-                $jenisProduk = $request->input('jenis_produk');
-                if ($jenisProduk !== 'Semua') {
-                    $query->where('produk', '=', $jenisProduk);
-                }
-            }
-
-
-            $data_alls = $query->get();
-
-            return datatables()->of($data_alls)
-                ->addIndexColumn()
-                ->addColumn('opsi-tabel-dataexistingadminpranpc', function ($all) {
-                    return view('components.opsi-tabel-dataexistingadminpranpc', compact('all'));
-                })
-                ->addColumn('nama_user', function ($all) {
-                    return $all->user ? $all->user->name : 'Tidak Ada';
-                })
-                ->rawColumns(['opsi-tabel-dataexistingadminpranpc'])
-                ->toJson();
-        }
-    }
-
-
-
-    public function exportexisting()
-    {
-        $currentMonth = Carbon::now()->format('Y-m');
-        $allData = Billper::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')
-            ->where('nper', '<', $currentMonth)
-            ->get();
-
-        return Excel::download(new AllExport($allData), 'Data-Existing.xlsx');
-    }
-
-
-    public function downloadFilteredExcelexisting(Request $request)
-    {
-        $bulanTahun = $request->input('nper');
-        $statusPembayaran = $request->input('status_pembayaran');
-        $jenisProduk = $request->input('jenis_produk');
-
-
-        // Format input nper ke format yang sesuai dengan kebutuhan database
-        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
-
-        // Get current month
-        $currentMonth = Carbon::now()->format('Y-m');
-
-        // Query untuk mengambil data berdasarkan rentang nper
-        $query = Billper::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%')
-            ->where('nper', '<', $currentMonth); // Filter data with nper < current month
-
-        // Filter berdasarkan status_pembayaran jika tidak "Semua"
-        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
-            $query->where('status_pembayaran', $statusPembayaran);
-        }
-
-        // Filter berdasarkan jenis_produk jika tidak "Semua"
-        if ($jenisProduk && $jenisProduk !== 'Semua') {
-            $query->where('produk', $jenisProduk);
-        }
-
-        // Ambil data yang sudah difilter
-        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
-
-        // Export data menggunakan AllExport dengan data yang sudah difilter
-        return Excel::download(new AllExport($filteredData), 'Data-Existing-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
-    }
-
-
-    public function editexistingsadminpranpc($id)
-    {
-        $title = 'Edit Data Plotting Existing';
-        $all = Billper::with('user')->findOrFail($id);
-        $user = $all->user ? $all->user : 'Tidak ada';
-        $sales_report = SalesReport::where('billper_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
-        $voc_kendala = VocKendala::all();
-        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'all', 'user', 'sales_report', 'voc_kendala'));
-    }
-
-
-
-    public function updateexistingsadminpranpc(Request $request, $id)
-    {
-        $all = Billper::findOrFail($id);
-        $all->nama = $request->input('nama');
-        $all->no_inet = $request->input('no_inet');
-        $all->saldo = $request->input('saldo');
-        $all->no_tlf = $request->input('no_tlf');
-        $all->email = $request->input('email');
-        $all->sto = $request->input('sto');
-        $all->produk = $request->input('produk');
-        $all->umur_customer = $request->input('umur_customer');
-        $all->status_pembayaran = $request->input('status_pembayaran');
-        $all->save();
-
-
-        Alert::success('Data Berhasil Diperbarui');
-        return redirect()->route('existing-adminpranpc.index');
-    }
-
-    public function viewgeneratePDFexistingadminpranpc(Request $request, $id)
-    {
-        $all = Billper::findOrFail($id);
-        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
-
-        $nper = \Carbon\Carbon::parse($all->nper);
-
-        // Mendapatkan path gambar dan mengubahnya menjadi format base64
-        $imagePath = public_path('storage/file_assets/logo-telkom.png');
-        $imageData = base64_encode(file_get_contents($imagePath));
-        $imageSrc = 'data:image/png;base64,' . $imageData;
-
-        $data = [
-            'all' => $all,
-            'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
-            'nomor_surat' => $request->nomor_surat,
-            'nper' => $nper->translatedFormat('F Y'),
-            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
-        ];
-
-        return view('components.generate-pdf-billperexisting', $data);
-    }
-
-
-
-    public function generatePDFexistingadminpranpc(Request $request, $id)
-    {
-        $all = Billper::findOrFail($id);
-        $total_tagihan = 'RP. ' . number_format($all->saldo, 2, ',', '.');
-
-        $nper = \Carbon\Carbon::parse($all->nper);
-
-        // Mendapatkan path gambar dan mengubahnya menjadi format base64
-        $imagePath = public_path('storage/file_assets/logo-telkom.png');
-        $imageData = base64_encode(file_get_contents($imagePath));
-        $imageSrc = 'data:image/png;base64,' . $imageData;
-
-        $data = [
-            'all' => $all,
-            'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
-            'nomor_surat' => $request->nomor_surat,
-            'nper' => $nper->translatedFormat('F Y'),
-            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
-        ];
-
-        $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('components.generate-pdf-billperexisting', $data);
-        return $pdf->download('invoice.pdf');
-    }
-
-    public function viewPDFreportexisting($id)
-    {
-        $all = Billper::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
-        $voc_kendala = VocKendala::all();
-
-        return view('components.pdf-reportexisting-adminpranpc', compact('all', 'sales_report', 'voc_kendala'));
-    }
-
-    public function downloadPDFreportexisting($id)
-    {
-        $all = Billper::with('user')->findOrFail($id);
-        $sales_report = SalesReport::where('billper_id', $id)->first() ?: new SalesReport();
-        $voc_kendala = VocKendala::all();
-
-        // Generate the file name
-        $fileName = 'Report - ' . $all->nama . '-' . $all->no_inet . '/' . ($all->user ? $all->user->name : 'Unknown') . '-' . ($all->user ? $all->user->nik : 'Unknown') . '.pdf';
-
-        // Create an instance of PDF
-        $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('components.pdf-reportexisting-adminpranpc', compact('all', 'sales_report', 'voc_kendala'));
-
-        return $pdf->download($fileName);
-    }
-
-    public function savePlottingexisting(Request $request)
-    {
-        $ids = $request->input('ids');
-        $userId = $request->input('user_id');
-
-        // Update data dengan user_id yang dipilih
-        Billper::whereIn('id', $ids)->update(['users_id' => $userId]);
-
-        return response()->json(['success' => true]);
-    }
-
-
-
     public function indexreportpranpcadminpranpc(Request $request)
     {
         confirmDelete();
@@ -546,7 +320,7 @@ class AdminPranpcController extends Controller
             return datatables()->of($data_report_pranpc)
                 ->addIndexColumn()
                 ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-pranpc-buttons-adminpranpc', compact('row'));
+                    return view('components.evidences-buttons', compact('row'));
                 })
                 ->toJson();
         }
@@ -603,10 +377,268 @@ class AdminPranpcController extends Controller
         return Excel::download(new SalesReportPranpc($reports), $fileName);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Data Existing Admin Pranpc
+    public function indexexistingadminpranpc()
+    {
+        confirmDelete();
+        $title = 'Data Existing';
+        $existings = Existing::all();
+        $users = User::where('level', 'User')->get();
+        return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
+    }
+
+    public function getDataexistingsadminpranpc(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = Existing::query()->with('user'); // Menambahkan eager loading untuk relasi 'user'
+
+            // Filter berdasarkan nper
+            if ($request->has('nper')) {
+                $nper = $request->input('nper');
+                $query->where('nper', 'LIKE', "%$nper%");
+            }
+
+            // Filter berdasarkan status_pembayaran
+            if ($request->has('status_pembayaran')) {
+                $statusPembayaran = $request->input('status_pembayaran');
+                if ($statusPembayaran != 'Semua') {
+                    $query->where('status_pembayaran', '=', $statusPembayaran);
+                }
+            }
+
+            // Filter berdasarkan jenis_produk
+            if ($request->has('jenis_produk')) {
+                $jenisProduk = $request->input('jenis_produk');
+                if ($jenisProduk !== 'Semua') {
+                    $query->where('produk', '=', $jenisProduk);
+                }
+            }
+
+
+            // Ambil data dan kembalikan sebagai JSON dengan Datatables
+            $data_existings = $query->get();
+
+            return datatables()->of($data_existings)
+                ->addIndexColumn()
+                ->addColumn('opsi-tabel-dataexistingadminpranpc', function ($existing) {
+                    return view('components.opsi-tabel-dataexistingadminpranpc', compact('existing'));
+                })
+                ->addColumn('nama_user', function ($existing) {
+                    return $existing->user ? $existing->user->name : 'Tidak Ada'; // Mengakses nama pengguna atau teks "Tidak Ada" jika relasi user null
+                })
+                ->rawColumns(['opsi-tabel-dataexistingadminpranpc']) // Menandai kolom sebagai raw HTML
+                ->toJson();
+        }
+    }
+
+
+    public function exportexisting()
+    {
+        $existingData = Existing::select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+
+        return Excel::download(new AllExport($existingData), 'Data-Existing.xlsx');
+    }
+
+    public function downloadFilteredExcelexisting(Request $request)
+    {
+        $bulanTahun = $request->input('nper');
+        $statusPembayaran = $request->input('status_pembayaran');
+        $jenisProduk = $request->input('jenis_produk');
+
+        // Format input nper ke format yang sesuai dengan kebutuhan database
+        $formattedBulanTahun = Carbon::createFromFormat('Y-m', $bulanTahun)->format('Y-m-d');
+
+        // Query untuk mengambil data berdasarkan rentang nper
+        $query = Existing::where('nper', 'like', substr($formattedBulanTahun, 0, 7) . '%');
+
+        // Filter berdasarkan status_pembayaran jika tidak "Semua"
+        if ($statusPembayaran && $statusPembayaran !== 'Semua') {
+            $query->where('status_pembayaran', $statusPembayaran);
+        }
+
+        // Filter berdasarkan jenis_produk jika tidak "Semua"
+        if ($jenisProduk && $jenisProduk !== 'Semua') {
+            $query->where('produk', $jenisProduk);
+        }
+
+        // Ambil data yang sudah difilter
+        $filteredData = $query->select('nama', 'no_inet', 'saldo', 'no_tlf', 'email', 'sto', 'umur_customer', 'produk', 'status_pembayaran', 'nper')->get();
+
+        // Export data menggunakan AllExport dengan data yang sudah difilter
+        return Excel::download(new AllExport($filteredData), 'Data-Existing-' . $bulanTahun . '-' . $statusPembayaran . '-' . $jenisProduk . '.xlsx');
+    }
+
+
+    public function editexistingsadminpranpc($id)
+    {
+        $title = 'Edit Data Plotting';
+        $existing = Existing::with('user')->findOrFail($id);
+        $user = $existing->user ? $existing->user : 'Tidak ada';
+        $sales_report = SalesReport::where('existing_id', $id)->orderBy('created_at', 'desc')->first() ?: new SalesReport(); // Initialize as an empty object if null
+        $voc_kendala = VocKendala::all();
+        return view('admin-pranpc.edit-existingadminpranpc', compact('title', 'existing', 'user', 'sales_report', 'voc_kendala'));
+    }
+
+
+    public function viewgeneratePDFexistingadminpranpc(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($existing->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($existing->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'existing' => $existing,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        return view('components.generate-pdf-existing', $data);
+    }
+
+
+
+    public function generatePDFexistingadminpranpc(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+        $total_tagihan = 'RP. ' . number_format($existing->saldo, 2, ',', '.');
+
+        $nper = \Carbon\Carbon::parse($existing->nper);
+
+        // Mendapatkan path gambar dan mengubahnya menjadi format base64
+        $imagePath = public_path('storage/file_assets/logo-telkom.png');
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageSrc = 'data:image/png;base64,' . $imageData;
+
+        $data = [
+            'existing' => $existing,
+            'total_tagihan' => $total_tagihan,
+            'date' => now()->format('d/m/Y'),
+            'nomor_surat' => $request->nomor_surat,
+            'nper' => $nper->translatedFormat('F Y'),
+            'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.generate-pdf-existing', $data);
+
+        // Buat nama file menggunakan no_inet dan nama
+        $fileName = 'Invoice-' . $existing->no_inet . '-' . $existing->nama . '-' . $existing->nper . '.pdf';
+
+        return $pdf->download($fileName);
+    }
+
+
+
+
+    public function updateexistingsadminpranpc(Request $request, $id)
+    {
+        $existing = Existing::findOrFail($id);
+        $existing->nama = $request->input('nama');
+        $existing->no_inet = $request->input('no_inet');
+        $existing->saldo = $request->input('saldo');
+        $existing->no_tlf = $request->input('no_tlf');
+        $existing->email = $request->input('email');
+        $existing->sto = $request->input('sto');
+        $existing->produk = $request->input('produk');
+        $existing->umur_customer = $request->input('umur_customer');
+        $existing->status_pembayaran = $request->input('status_pembayaran');
+        $existing->save();
+
+
+        Alert::success('Data Berhasil Diperbarui');
+        return redirect()->route('existing-adminpranpc.index');
+    }
+
+
+    public function viewPDFreportexistingadminpranpc($id)
+    {
+        $existing = Existing::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('existing_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        return view('components.pdf-report-existing', compact('existing', 'sales_report', 'voc_kendala'));
+    }
+
+    public function downloadPDFreportexistingadminpranpc($id)
+    {
+        $existing = Existing::with('user')->findOrFail($id);
+        $sales_report = SalesReport::where('existing_id', $id)->first() ?: new SalesReport();
+        $voc_kendala = VocKendala::all();
+
+        // Generate the file name
+        $fileName = 'Report - ' . $existing->nama . '-' . $existing->no_inet . '/' . ($existing->user ? $existing->user->name : 'Sales Tidak Ada') . '-' . ($existing->user ? $existing->user->nik : 'Nik Sales Tidak Ada') . '.pdf';
+
+        // Create an instance of PDF
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('components.pdf-report-existing', compact('existing', 'sales_report', 'voc_kendala'));
+
+        return $pdf->download($fileName);
+    }
+
+
+    public function savePlottingexistingadminpranpc(Request $request)
+    {
+        $ids = $request->input('ids');
+        $userId = $request->input('user_id');
+
+        // Update data dengan user_id yang dipilih
+        Existing::whereIn('id', $ids)->update(['users_id' => $userId]);
+
+        return response()->json(['success' => true]);
+    }
+
+
+    // Report Data Existing
     public function indexreportexistingadminpranpc(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data Existing';
+        $title = 'Report Data Existng';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
@@ -616,11 +648,11 @@ class AdminPranpcController extends Controller
         // Calculate the current date in 'Y-m' format
         $currentMonth = Carbon::now()->format('Y-m');
 
-        // Retrieve all voc_kendalas and their related report counts for the specified month, year, and sales
-        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales, $currentMonth) {
+        // Retrieve Existing voc_kendalas and their related report counts for the specified month, year, and sales
+        $voc_kendalas = VocKendala::withCount(['salesReports' => function ($query) use ($filterMonth, $filterYear, $filterSales) {
             $query->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
-                ->whereNotNull('billper_id'); // Ensure only records with billper_id are included
+                ->whereNotNull('existing_id'); // Ensure only records with existing_id are included
 
             // Apply sales filter if provided
             if ($filterSales) {
@@ -628,25 +660,19 @@ class AdminPranpcController extends Controller
                     $q->where('name', $filterSales);
                 });
             }
-
-            // Apply nper filter to be less than currentMonth
-            $query->whereHas('alls', function ($q) use ($currentMonth) {
-                $q->where('nper', '<', $currentMonth);
-            });
         }])->get();
 
-        // Retrieve all sales with total assignments and total visits
+        // Retrieve Existing sales with total assignments and total visits
         $sales = User::where('level', 'user')
             ->withCount([
-                'alls as total_assignment' => function ($query) use ($filterMonth, $filterYear, $currentMonth) {
+                'existings as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
-                        ->whereMonth('created_at', $filterMonth)
-                        ->where('nper', '<', $currentMonth); // Always apply the nper filter
+                        ->whereMonth('created_at', $filterMonth);
                 },
                 'salesReports as total_visit' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
                         ->whereMonth('created_at', $filterMonth)
-                        ->whereNotNull('billper_id');
+                        ->whereNotNull('existing_id');
                 }
             ])
             ->get();
@@ -657,52 +683,46 @@ class AdminPranpcController extends Controller
                 ->whereYear('created_at', $filterYear)
                 ->whereMonth('created_at', $filterMonth)
                 ->where('users_id', $sale->id)
-                ->whereNotNull('billper_id')
-                ->distinct('billper_id')
-                ->count('billper_id');
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
 
             $sale->wo_sudah_visit = $wo_sudah_visit;
             $sale->wo_belum_visit = $sale->total_assignment - $wo_sudah_visit;
         }
 
-        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'filterSales', 'sales'));
+
+        return view('admin-pranpc.report-existing-adminpranpc', compact('title', 'voc_kendalas', 'filterMonth', 'filterYear', 'sales', 'filterSales'));
     }
 
 
 
 
-
-    public function getDatareportexisting(Request $request)
+    public function getDatareportexistingadminpranpc(Request $request)
     {
         if ($request->ajax()) {
-            $currentMonth = Carbon::now()->format('Y-m');
-            $month = $request->input('month');
-            $year = $request->input('year');
-            $filterSales = $request->input('filter_sales');
+            $filterMonth = $request->input('month', now()->format('m'));
+            $filterYear = $request->input('year', now()->format('Y'));
+            $filterSales = $request->input('filter_sales', '');
 
-            // Build the start and end date based on the provided month and year
-            $startDate = ($year && $month) ? "$year-$month-01" : null;
-            $endDate = ($year && $month) ? Carbon::parse($startDate)->endOfMonth()->format('Y-m-d') : null;
+            $data_report_existing = SalesReport::with('existings', 'user', 'vockendals')
+                ->whereNotNull('existing_id') // Ensure only records with existing_id are included
+                ->whereYear('created_at', $filterYear)
+                ->whereMonth('created_at', $filterMonth);
 
-            $data_report_existing = SalesReport::with('alls', 'user', 'vockendals')
-                ->whereNotNull('billper_id') // Ensure only records with billper_id are included
-                ->whereHas('alls', function ($query) use ($currentMonth) {
-                    $query->where('nper', '<', $currentMonth);
-                })
-                ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                })
-                ->when($filterSales, function ($query) use ($filterSales) {
-                    $query->whereHas('user', function ($query) use ($filterSales) {
-                        $query->where('name', $filterSales);
-                    });
-                })
-                ->get();
+            // Apply sales filter if provided
+            if ($filterSales) {
+                $data_report_existing->whereHas('user', function ($query) use ($filterSales) {
+                    $query->where('name', $filterSales);
+                });
+            }
+
+            $data_report_existing = $data_report_existing->get();
 
             return datatables()->of($data_report_existing)
                 ->addIndexColumn()
                 ->addColumn('evidence', function ($row) {
-                    return view('components.evidence-existing-buttons-adminpranpc', compact('row'));
+                    return view('components.evidences-buttons', compact('row'));
                 })
                 ->toJson();
         }
@@ -711,29 +731,19 @@ class AdminPranpcController extends Controller
 
 
 
-    public function downloadAllExcelreportexisting()
+    public function downloadAllExcelreportexistingadminpranpc()
     {
-        $currentMonth = Carbon::now()->format('Y-m');
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('billper_id')
-            ->whereHas('alls', function ($query) use ($currentMonth) {
-                $query->where('nper', '<', $currentMonth);
-            })
+        $reports = SalesReport::with('existings', 'user', 'vockendals')
+            ->whereNotNull('existing_id') // Ensure only records with existing_id are included
             ->get();
 
         return Excel::download(new SalesReportBillperExisting($reports), 'Report_Existing_Semua.xlsx');
     }
 
-
-    public function downloadFilteredExcelreportexisting(Request $request)
+    public function downloadFilteredExcelreportexistingadminpranpc(Request $request)
     {
-        $currentMonth = Carbon::now()->format('Y-m');
-
-        $reports = SalesReport::with('alls', 'user', 'vockendals')
-            ->whereNotNull('billper_id') // Ensure only records with billper_id are included
-            ->whereHas('alls', function ($query) use ($currentMonth) {
-                $query->where('nper', '<', $currentMonth);
-            })
+        $reports = SalesReport::with('existings', 'user', 'vockendals')
+            ->whereNotNull('existing_id') // Ensure only records with existing_id are included
             ->when($request->tahun_bulan, function ($query) use ($request) {
                 $query->whereMonth('created_at', Carbon::parse($request->tahun_bulan)->month)
                     ->whereYear('created_at', Carbon::parse($request->tahun_bulan)->year);

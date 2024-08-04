@@ -133,7 +133,7 @@
                 Detail Pranpc
             </span>
             <div class="btn-group">
-                <a href="{{ route('download.excelreportexisting') }}" class="btn btn-green">
+                <a href="{{ route('download.excelreportexistingadminpranpc') }}" class="btn btn-green">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
                 </a>
                 <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
@@ -148,7 +148,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="downloadForm" action="{{ route('download.filtered.excelreportexisting') }}"
+                            <form id="downloadForm" action="{{ route('download.filtered.excelreportexistingadminpranpc') }}"
                                 method="POST">
                                 @csrf
                                 <div class="modal-body">
@@ -190,7 +190,7 @@
             </div>
         </div>
         {{-- DataTable --}}
-        <table class="table table-hover table-bordered datatable shadow" id="datareportexisting" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="datareportexistingadminpranpc" style="width: 100%">
             <thead>
                 <tr>
                     <th id="th" class="align-middle text-center">SND</th>
@@ -213,13 +213,13 @@
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize DataTable
-            var dataTable = new DataTable('#datareportexisting', {
+            var dataTable = new DataTable('#datareportexistingadminpranpc', {
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
                 responsive: true,
                 ajax: {
-                    url: "{{ route('getDatareportexisting') }}",
+                    url: "{{ route('getDatareportexistingadminpranpc') }}",
                     type: 'GET',
                     data: function(d) {
                         // Add filter data to request
@@ -264,8 +264,8 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'alls.nama',
-                        name: 'alls.nama',
+                        data: 'existings.nama',
+                        name: 'existings.nama',
                         className: 'align-middle text-center'
                     },
                     {

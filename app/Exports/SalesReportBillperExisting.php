@@ -19,7 +19,7 @@ class SalesReportBillperExisting implements FromCollection, WithHeadings
         return $this->reports->map(function ($item) {
             return [
                 'SND' => $item->snd,
-                'Nama Customer' => $item->alls->nama,
+                'Nama Customer' => $this->getNamaCustomer($item),
                 'Waktu Visit' => $item->waktu_visit,
                 'Nama Sales' => $item->user->name,
                 'VOC & Kendala' => $item->vockendals->voc_kendala,
@@ -44,5 +44,17 @@ class SalesReportBillperExisting implements FromCollection, WithHeadings
             'Evidence Sales',
             'Evidence Pembayaran'
         ];
+    }
+
+    private function getNamaCustomer($item)
+    {
+        if ($item->alls) {
+            return $item->alls->nama;
+        } elseif ($item->billpers) {
+            return $item->billpers->nama;
+        } elseif ($item->existings) {
+            return $item->existings->nama;
+        }
+        return 'Unknown';
     }
 }

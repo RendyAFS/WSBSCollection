@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="px-3 py-4">
-        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3 d-block d-md-none">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 <div class="spinner-grow text-warning shadow" role="status">
                     <span class="visually-hidden">Loading...</span>

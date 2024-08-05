@@ -3,8 +3,11 @@
 @section('content')
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
-            <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Edit Data Plotting PraNPC
+            <span class="fw-bold fs-2 mb-3 mb-md-0 d-block d-md-none">
+                Edit Data Pranpc
+            </span>
+            <span class="d-none d-md-block">
+                {{-- Diver --}}
             </span>
             <a href="{{ route('view-pdf-report-pranpcsuperadmin', ['id' => $pranpc->id]) }}" class="btn btn-green fw-bold d-none">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> View

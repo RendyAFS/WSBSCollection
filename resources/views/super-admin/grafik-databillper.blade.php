@@ -3,8 +3,11 @@
 @section('content')
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
-            <span class="fw-bold fs-2">
+            <span class="fw-bold fs-2 d-block d-md-none">
                 Grafik Data Billper
+            </span>
+            <span class="d-none d-md-block">
+                {{-- Diver --}}
             </span>
             <div class="d-flex">
                 <!-- Button Filter modal -->

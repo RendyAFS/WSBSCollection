@@ -30,7 +30,7 @@ class AdminBillperController extends Controller
     public function indexbillperadminbillper()
     {
         confirmDelete();
-        $title = 'Data Billper';
+        $title = 'Data Plotting Billper';
         $billpers = Billper::all();
         $users = User::where('level', 'User')->get();
         return view('admin-billper.data-billper-adminbillper', compact('title', 'billpers', 'users'));
@@ -250,7 +250,7 @@ class AdminBillperController extends Controller
     public function indexreportbillperadminbillper(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data Billper';
+        $title = 'Report Sales Billper';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
@@ -434,7 +434,7 @@ class AdminBillperController extends Controller
     public function indexexistingadminbillper()
     {
         confirmDelete();
-        $title = 'Data Existing';
+        $title = 'Data Plotting Existing';
         $existings = Existing::all();
         $users = User::where('level', 'User')->get();
         return view('admin-billper.data-existing-adminbillper', compact('title', 'existings', 'users'));
@@ -650,11 +650,11 @@ class AdminBillperController extends Controller
     }
 
 
-    // Report Data Existing
+    // Report Sales Existing
     public function indexreportexistingadminbillper(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data Existng';
+        $title = 'Report Sales Existng';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));

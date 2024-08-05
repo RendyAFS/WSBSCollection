@@ -4,10 +4,12 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Report Data Existing
+                <span class="d-block d-md-none">
+                    Report Data Existing
+                </span>
                 <span id="info-filter">
                     @if (isset($nper) && !$show_all)
-                        - {{ strftime('%B %Y', strtotime($nper)) }}
+                        {{ strftime('%B %Y', strtotime($nper)) }}
                     @endif
                 </span>
             </span>

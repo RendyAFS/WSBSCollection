@@ -17,7 +17,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $title = 'WSBS Collection';
+        $title = 'Dashboard';
         return view('user.index', compact('title'));
     }
 

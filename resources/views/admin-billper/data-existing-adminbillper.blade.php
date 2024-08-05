@@ -6,9 +6,11 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data Plotting
+                <span class="d-block d-md-none">
+                    Data Plotting Existing
+                </span>
                 <span id="info-filter" class="fs-6 fw-normal">
-
+                    {{-- Info --}}
                 </span>
             </span>
 

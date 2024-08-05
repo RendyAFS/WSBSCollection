@@ -2,7 +2,7 @@
     --primary-color: #EF352B;
     --secondary-color: #831a16;
     --grey-color: #727375;
-    --soft-grey-color: #eeeeee;
+    --soft-grey-color: #E0E0E0;
     --white-color: #FFFFFF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
@@ -10,6 +10,7 @@
     --blue-color: #00467a;
     --yellow-color: #FFCE20;
 }
+
 
 /* Super Admin */
 #th {

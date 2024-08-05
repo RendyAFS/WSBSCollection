@@ -42,31 +42,7 @@
         <!-- Page Content -->
         <div id="content-wrapper">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg ">
-                <div class="container-fluid d-flex align-items-center justify-content-between">
-                    <img src="{{  asset('storage/file_assets/logo-telkom2.png') }}" alt=""
-                        id="nav-logo-telkom">
-
-                    <div class="dropdown ms-auto" id="drowpdown-account">
-                        <button class="btn dropdown-toggle account" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Logout
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            @include('layouts.navbar')
 
             <!-- Main Content -->
             <div id="content">

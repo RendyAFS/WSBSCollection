@@ -27,7 +27,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="filterForm" action="{{ route('reportdatabillper.index') }}" method="GET">
+                            <form id="filterForm" action="{{ route('reportdataexisting.index') }}" method="GET">
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="filter_type">Jenis Filter</label>

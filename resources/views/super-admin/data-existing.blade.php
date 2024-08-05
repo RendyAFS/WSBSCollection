@@ -1,6 +1,6 @@
 @extends('layouts.app-super-admin')
 
-@include('layouts.loading')
+@extends('layouts.loading')
 
 @section('content')
     <div class="px-3 py-4">
@@ -94,13 +94,13 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('cek-pembayaranexisting') }}" method="POST" enctype="multipart/form-data">
+                            <form id="cekPembayaranForm" action="{{ route('cek-pembayaranexisting') }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="nper">Pilih Bulan-Tahun</label>
-                                        <input type="month" id="nper" name="nper" class="form-control"
-                                            required>
+                                        <input type="month" id="nper" name="nper" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="formFile" class="form-label">Upload File SND</label>
@@ -118,10 +118,10 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
-                                        disabled>Cek
-                                        Pembayaran</button>
+                                        disabled>Cek Pembayaran</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,8 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form id="downloadForm" action="{{ route('download.filtered.excelexistingsuperadmin') }}" method="POST">
+                                <form id="downloadForm" action="{{ route('download.filtered.excelexistingsuperadmin') }}"
+                                    method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group mb-3">
@@ -427,6 +428,18 @@
                     checkFileButton.classList.remove('d-none');
                 });
         });
+
+        document.getElementById('cekPembayaranForm').addEventListener('submit', function(event) {
+            let submitButton = document.getElementById('cekPembayaranButton');
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+        <div class="spinner-border text-dark" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        Proses
+    `;
+        });
+
 
 
         // Modal delete confirmation

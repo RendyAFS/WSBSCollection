@@ -1,6 +1,6 @@
 @extends('layouts.app-user')
 
-@include('layouts.loading')
+@extends('layouts.loading')
 
 @section('content')
     <div class="px-3 py-4">

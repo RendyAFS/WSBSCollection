@@ -90,7 +90,6 @@
         function formatPercent(value) {
             return value.toFixed(2) + '%'; // Format angka dengan 2 desimal dan tambahkan persen
         }
-
         // Chart data from the server
         var categories = @json($chartData['categories']);
         var totalData = @json($chartData['total_ssl'] ?? ($chartData['total'] ?? []));
@@ -102,16 +101,22 @@
         // Mendapatkan jenis grafik
         var jenisGrafik = @json($jenisGrafik);
 
+        // Tentukan nama seri dan data berdasarkan jenis grafik
+        var progressName = jenisGrafik === 'SSL' ? 'Progress SSL' : 'Progress Billing';
+        var totalName = jenisGrafik === 'SSL' ? 'Total SSL' : 'Total Billing';
+        var totalSeriesData = jenisGrafik === 'SSL' ? totalData : billingData;
+
+
         // Chart options
         var options = {
             series: [{
-                name: 'Progress Billing',
+                name: progressName,
                 type: 'line',
                 color: '#000000',
                 data: billingData,
                 yAxis: 1
             }, {
-                name: 'Total Billing',
+                name: totalName,
                 type: 'column',
                 color: '#0D6EFD',
                 data: totalData
@@ -196,7 +201,7 @@
                     {
                         formatter: function(value) {
                             return jenisGrafik === 'SSL' ? value : formatRupiah(
-                            value); // Total Billing in Rupiah
+                                value); // Total Billing in Rupiah
                         }
                     },
                     {

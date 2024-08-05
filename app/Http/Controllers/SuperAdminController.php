@@ -696,8 +696,6 @@ class SuperAdminController extends Controller
             $sndList[] = $row[array_search('SND', $data[0])];
         }
 
-        Log::info('Total items in $sndList: ' . count($sndList));
-        Log::info('Content of $sndList:', $sndList);
 
         // Fetch records from the database
         $records = Billper::where('nper', $nper)->get();
@@ -1550,9 +1548,6 @@ class SuperAdminController extends Controller
             if ($index == 0) continue; // Skip header row
             $sndList[] = $row[array_search('SND', $data[0])];
         }
-
-        Log::info('Total items in $sndList: ' . count($sndList));
-        Log::info('Content of $sndList:', $sndList);
 
         // Fetch records from the database
         $records = Existing::where('nper', $nper)->get();

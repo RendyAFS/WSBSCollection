@@ -84,9 +84,6 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ route('grafikdatabillper.index') }}" class="btn btn-green ">
-                    <i class="bi bi-clipboard-data"></i> Grafik
-                </a>
             </div>
         </div>
     </div>

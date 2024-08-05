@@ -6,7 +6,9 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data Billper
+                <span class="d-block d-md-none">
+                    Data Billper
+                </span>
                 <span id="info-filter-head">
 
                 </span>

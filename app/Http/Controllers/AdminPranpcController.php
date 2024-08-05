@@ -34,7 +34,7 @@ class AdminPranpcController extends Controller
     public function indexpranpcadminpranpc()
     {
         confirmDelete();
-        $title = 'Data Pranpc';
+        $title = 'Data Plotting Pranpc';
         $pranpcs = Pranpc::all();
         $users = User::where('level', 'User')->get();
         return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'pranpcs', 'users'));
@@ -243,7 +243,7 @@ class AdminPranpcController extends Controller
     public function indexreportpranpcadminpranpc(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data Pranpc';
+        $title = 'Report Sales Pranpc';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));
@@ -418,7 +418,7 @@ class AdminPranpcController extends Controller
     public function indexexistingadminpranpc()
     {
         confirmDelete();
-        $title = 'Data Existing';
+        $title = 'Data Plotting Existing';
         $existings = Existing::all();
         $users = User::where('level', 'User')->get();
         return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
@@ -634,11 +634,11 @@ class AdminPranpcController extends Controller
     }
 
 
-    // Report Data Existing
+    // Report Sales Existing
     public function indexreportexistingadminpranpc(Request $request)
     {
         confirmDelete();
-        $title = 'Report Data Existng';
+        $title = 'Report Sales Existng';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));

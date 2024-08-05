@@ -6,7 +6,9 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Data PraNPC
+                <span class="d-block d-md-none">
+                    Data Pranpc
+                </span>
                 <span id="info-filter" class="fs-6 fw-normal">
 
                 </span>
@@ -84,7 +86,8 @@
                 </div>
 
                 {{-- Button Riwayat --}}
-                <a class="btn btn-white me-2" href="{{route('pranpcriwayat.index')}}" role="button"><i class="bi bi-clock-fill"></i> Riwayat</a>
+                <a class="btn btn-white me-2" href="{{ route('pranpcriwayat.index') }}" role="button"><i
+                        class="bi bi-clock-fill"></i> Riwayat</a>
 
                 {{-- BTN DOWNLOAD --}}
                 <div class="btn-group">

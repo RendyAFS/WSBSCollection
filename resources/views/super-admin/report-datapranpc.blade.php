@@ -4,10 +4,12 @@
     <div class="px-3 py-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
-                Report Data Pranpc
+                <span class="d-block d-md-none">
+                    Report Data Pranpc
+                </span>
                 <span id="info-filter">
                     @if (isset($year) && isset($bulan) && !$show_all)
-                        - {{ $year }} ({{ $bulan }})
+                        {{ $year }} ({{ $bulan }})
                     @endif
                 </span>
             </span>
@@ -106,7 +108,7 @@
             @foreach ($reports as $report)
                 <tr>
                     <td>{{ $report->sto }}</td>
-                    <td class="text-center align-middle">Rp.{{ number_format($report->total_ssl) }}</td>
+                    <td class="text-center align-middle">{{ $report->total_ssl }}</td>
                     <td class="text-center align-middle">Rp.{{ number_format($report->total_bill_bln) }}</td>
                     <td class="text-center align-middle">Rp.{{ number_format($report->total_bill_bln1) }}</td>
                     <td class="text-center align-middle">Rp.{{ number_format($report->total_paid_bill_bln) }}</td>
@@ -121,7 +123,7 @@
         <tfoot class="table-secondary">
             <tr>
                 <td class="text-center align-middle fw-bold">Total</td>
-                <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_ssl) }}</td>
+                <td class="text-center align-middle fw-bold">{{ $total_ssl }}</td>
                 <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_bill_bln) }}</td>
                 <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_bill_bln1) }}</td>
                 <td class="text-center align-middle fw-bold">Rp.{{ number_format($total_paid_bill_bln) }}</td>

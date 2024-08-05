@@ -4,6 +4,11 @@
 
 @section('content')
     <div class="px-3 py-4">
+        <div class="mb-4 d-block d-md-none">
+            <span class="fw-bold fs-2">
+                Report Sales Pranpc
+            </span>
+        </div>
         <div class="card shadow shadow-sm">
             <div class="card-body">
                 <div class="mb-3">
@@ -148,7 +153,8 @@
                             <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="downloadForm" action="{{ route('download.filtered.excelreportpranpcsuperadmin') }}" method="POST">
+                        <form id="downloadForm" action="{{ route('download.filtered.excelreportpranpcsuperadmin') }}"
+                            method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="form-group mb-3">

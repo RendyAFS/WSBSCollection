@@ -2,7 +2,7 @@
     --primary-color: #EF352B;
     --secondary-color: #831a16;
     --grey-color: #727375;
-    --soft-grey-color: #eeeeee;
+    --soft-grey-color: #E0E0E0;
     --white-color: #FFFFFF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
@@ -86,6 +86,16 @@
 
 .btn.btn-grey:hover {
     background-color: var(--dark-color);
+    color: var(--white-color);
+}
+.btn.btn-soft-grey {
+    background-color: var(--soft-grey-color);
+    color: var(--secondary-color);
+    transition: 0.5s;
+}
+
+.btn.btn-soft-grey:hover {
+    background-color: var(--grey-color);
     color: var(--white-color);
 }
 

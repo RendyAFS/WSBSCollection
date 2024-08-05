@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="px-3 py-4">
-        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3 d-block d-md-none">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Edit Preview Data Master
             </span>
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center">
-                                <a href="{{ route('datamaster.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
+                                <a href="{{ route('previewdatamaster.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
                                 <button type="submit" class="btn btn-secondary w-25">Edit</button>
                             </div>
                         </form>

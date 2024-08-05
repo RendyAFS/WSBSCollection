@@ -3,6 +3,11 @@
 
 @section('content')
     <div class="px-3 py-4">
+        <div class="mb-4 d-block d-md-none">
+            <span class="fw-bold fs-2">
+                Report Sales Billper
+            </span>
+        </div>
         {{-- Filter Form --}}
         <div class="card shadow shadow-sm">
             <div class="card-body">

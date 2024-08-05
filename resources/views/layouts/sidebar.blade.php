@@ -13,9 +13,9 @@
                 </a>
             </li>
 
-            <li class="{{ Route::is('datamaster.index') ? 'active' : '' }}">
+            <li class="{{ Route::is('datamaster.index') || Route::is('edit-datamasters') || Route::is('previewdatamaster.index') || Route::is('edit-tempdatamasters') ? 'active' : '' }}">
                 <a href="{{ route('datamaster.index') }}">
-                    <i class="bi bi-database{{ Route::is('datamaster.index') ? '-fill' : '' }}"></i>
+                    <i class="bi bi-database{{ Route::is('datamaster.index') || Route::is('edit-datamasters') || Route::is('previewdatamaster.index') || Route::is('edit-tempdatamasters') ? '-fill' : '' }}"></i>
                     Data Master
                 </a>
             </li>
@@ -29,6 +29,7 @@
                 Manajer Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatabillpersuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsbillper.index') ? 'active' : '' }}">
@@ -38,9 +39,9 @@
                             Tool
                         </a>
                     </li>
-                    <li class="{{ Route::is('billper.index') ? 'active' : '' }}">
+                    <li class="{{ Route::is('billper.index') || Route::is('edit-billpers') ? 'active' : '' }}">
                         <a href="{{ route('billper.index') }}">
-                            <i class="bi bi-clipboard2-data{{ Route::is('billper.index') ? '-fill' : '' }}"></i>
+                            <i class="bi bi-clipboard2-data{{ Route::is('billper.index') || Route::is('edit-billpers') ? '-fill' : '' }}"></i>
                             Data
                         </a>
                     </li>
@@ -71,6 +72,7 @@
                 Manajer Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdataexistingsuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsexisting.index') ? 'active' : '' }}">
@@ -80,9 +82,9 @@
                             Tool
                         </a>
                     </li>
-                    <li class="{{ Route::is('existing.index') ? 'active' : '' }}">
+                    <li class="{{ Route::is('existing.index') || Route::is('edit-existings') ? 'active' : '' }}">
                         <a href="{{ route('existing.index') }}">
-                            <i class="bi bi-clipboard2-data{{ Route::is('existing.index') ? '-fill' : '' }}"></i>
+                            <i class="bi bi-clipboard2-data{{ Route::is('existing.index') || Route::is('edit-existings') ? '-fill' : '' }}"></i>
                             Data
                         </a>
                     </li>
@@ -113,6 +115,7 @@
                 Manajer Pra NPC
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatapranpcsuperadmin">
                 <ul class="list-unstyled">
                     <li class=" {{ Route::is('toolspranpc.index') ? 'active' : '' }}">
@@ -122,9 +125,9 @@
                             Tool
                         </a>
                     </li>
-                    <li class=" {{ Route::is('pranpc.index') ? 'active' : '' }}">
+                    <li class=" {{ Route::is('pranpc.index') || Route::is('edit-pranpcs') ? 'active' : '' }}">
                         <a href="{{ route('pranpc.index') }}">
-                            <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index') ? '-fill' : '' }}"></i>
+                            <i class="bi bi-clipboard2-data {{ Route::is('pranpc.index') || Route::is('edit-pranpcs') ? '-fill' : '' }}"></i>
                             Data Pra NPC
                         </a>
                     </li>
@@ -153,6 +156,7 @@
                 Profil
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdataprofilesuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('data-akun.index') ? 'active' : '' }}">
@@ -167,7 +171,7 @@
             <li class="{{ Route::is('adminbillper.index') ? 'active' : '' }}">
                 <a href="{{ route('adminbillper.index') }}">
                     <i class="bi bi-grid{{ Route::is('adminbillper.index') ? '-fill' : '' }}"></i>
-                    Dashboard Admin
+                    Dashboard
                 </a>
             </li>
 
@@ -180,6 +184,7 @@
                 Manajer Data Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatabillperadminbillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('billper-adminbillper.index') ? 'active' : '' }}">
@@ -210,6 +215,7 @@
                 Manajer Data Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdataexistingadminbillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('existing-adminbillper.index') ? 'active' : '' }}">
@@ -234,7 +240,7 @@
             <li class="{{ Route::is('adminpranpc.index') ? 'active' : '' }}">
                 <a href="{{ route('adminpranpc.index') }}">
                     <i class="bi bi-grid{{ Route::is('adminpranpc.index') ? '-fill' : '' }}"></i>
-                    Dashboard Admin
+                    Dashboard
                 </a>
             </li>
 
@@ -247,6 +253,7 @@
                 Manajer Data Pranpc
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatapranpcadminpranpc">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('pranpc-adminpranpc.index') ? 'active' : '' }}">
@@ -276,6 +283,7 @@
                 Manajer Data Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdataexistingadminpranpc">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('existing-adminpranpc.index') ? 'active' : '' }}">
@@ -300,7 +308,7 @@
             <li class="{{ Route::is('user.index') ? 'active' : '' }}">
                 <a href="{{ route('user.index') }}">
                     <i class="bi bi-grid{{ Route::is('user.index') ? '-fill' : '' }}"></i>
-                    Dashboard User
+                    Dashboard
                 </a>
             </li>
             <div class="my-4">
@@ -311,6 +319,7 @@
                 Operasional Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatabillperuser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentbillper.index') ? 'active' : '' }}">
@@ -340,6 +349,7 @@
                 Operasional Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdataexistinguser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentexisting.index') ? 'active' : '' }}">
@@ -370,6 +380,7 @@
                 Operasional Pranpc
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
+            <hr class="border border-white my-1">
             <div class="collapse show" id="manajerdatapranpcperuser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentpranpc.index') ? 'active' : '' }}">

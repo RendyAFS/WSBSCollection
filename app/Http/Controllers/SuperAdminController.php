@@ -257,7 +257,7 @@ class SuperAdminController extends Controller
     public function indextoolbillper()
     {
         confirmDelete();
-        $title = 'Tool Billper';
+        $title = 'Tools Billper';
         $temp_billpers = TempBillper::all();
         return view('super-admin.tools-billper', compact('title', 'temp_billpers'));
     }
@@ -791,7 +791,7 @@ class SuperAdminController extends Controller
     // Report Data Billper
     public function indexreportbillper(Request $request)
     {
-        $title = 'Report Billper';
+        $title = 'Report Data Billper';
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
@@ -1109,7 +1109,7 @@ class SuperAdminController extends Controller
     public function indextoolexisting()
     {
         confirmDelete();
-        $title = 'Tool Existing';
+        $title = 'Tools Existing';
         $temp_existings = TempExisting::all();
         return view('super-admin.tools-existing', compact('title', 'temp_existings'));
     }
@@ -1643,7 +1643,7 @@ class SuperAdminController extends Controller
     // Report Data Existing
     public function indexreportexisting(Request $request)
     {
-        $title = 'Report Existing';
+        $title = 'Report Data Existing';
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
@@ -1961,7 +1961,7 @@ class SuperAdminController extends Controller
     public function indextoolpranpc()
     {
         confirmDelete();
-        $title = 'Tool Pranpc';
+        $title = 'Tools Pranpc';
         $temp_pranpcs = TempPranpc::all();
         return view('super-admin.tools-pranc', compact('title', 'temp_pranpcs'));
     }
@@ -2351,7 +2351,7 @@ class SuperAdminController extends Controller
     // Report Data Pranpc
     public function indexreportpranpc(Request $request)
     {
-        $title = 'Report Pranpc';
+        $title = 'Report Data Pranpc';
 
         // Fetch filter values
         $year = $request->input('year');

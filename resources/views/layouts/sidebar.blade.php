@@ -24,12 +24,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapsebillper" role="button"
-                aria-expanded="false" aria-controls="dataManagerCollapsebillper">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatabillpersuperadmin" role="button"
+                aria-expanded="false" aria-controls="manajerdatabillpersuperadmin">
                 Manajer Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="dataManagerCollapsebillper">
+            <div class="collapse show" id="manajerdatabillpersuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('toolsbillper.index') }}">
@@ -66,12 +66,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#dataManagerCollapseexisting" role="button"
-                aria-expanded="false" aria-controls="dataManagerCollapseexisting">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataexistingsuperadmin" role="button"
+                aria-expanded="false" aria-controls="manajerdataexistingsuperadmin">
                 Manajer Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="dataManagerCollapseexisting">
+            <div class="collapse show" id="manajerdataexistingsuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('toolsexisting.index') }}">
@@ -108,12 +108,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#preNpcManagerCollapse" role="button"
-                aria-expanded="false" aria-controls="preNpcManagerCollapse">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatapranpcsuperadmin" role="button"
+                aria-expanded="false" aria-controls="manajerdatapranpcsuperadmin">
                 Manajer Pra NPC
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="preNpcManagerCollapse">
+            <div class="collapse show" id="manajerdatapranpcsuperadmin">
                 <ul class="list-unstyled">
                     <li class=" {{ Route::is('toolspranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('toolspranpc.index') }}">
@@ -148,12 +148,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#profileCollapse" role="button"
-                aria-expanded="false" aria-controls="profileCollapse">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataprofilesuperadmin" role="button"
+                aria-expanded="false" aria-controls="manajerdataprofilesuperadmin">
                 Profil
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="profileCollapse">
+            <div class="collapse show" id="manajerdataprofilesuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('data-akun.index') ? 'active' : '' }}">
                         <a href="{{ route('data-akun.index') }}">
@@ -175,12 +175,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapsebillper"
-                role="button" aria-expanded="false" aria-controls="adminDataManagerCollapsebillper">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatabillperadminbillper"
+                role="button" aria-expanded="false" aria-controls="manajerdatabillperadminbillper">
                 Manajer Data Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapsebillper">
+            <div class="collapse show" id="manajerdatabillperadminbillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('billper-adminbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('billper-adminbillper.index') }}">
@@ -190,8 +190,6 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="collapse show" id="adminDataManagerCollapsebillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('report-billper-adminbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('report-billper-adminbillper.index') }}">
@@ -207,12 +205,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapseexisting"
-                role="button" aria-expanded="false" aria-controls="adminDataManagerCollapseexisting">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataexistingadminbillper"
+                role="button" aria-expanded="false" aria-controls="manajerdataexistingadminbillper">
                 Manajer Data Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapseexisting">
+            <div class="collapse show" id="manajerdataexistingadminbillper">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('existing-adminbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('existing-adminbillper.index') }}">
@@ -222,8 +220,6 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="collapse show" id="adminDataManagerCollapseexisting">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('report-existing-adminbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('report-existing-adminbillper.index') }}">
@@ -246,12 +242,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse1" role="button"
-                aria-expanded="false" aria-controls="adminDataManagerCollapse1">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatapranpcadminpranpc"
+                role="button" aria-expanded="false" aria-controls="manajerdatapranpcadminpranpc">
                 Manajer Data Pranpc
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapse1">
+            <div class="collapse show" id="manajerdatapranpcadminpranpc">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('pranpc-adminpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('pranpc-adminpranpc.index') }}">
@@ -261,8 +257,6 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="collapse show" id="adminDataManagerCollapse1">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('report-pranpc-adminpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('report-pranpc-adminpranpc.index') }}">
@@ -277,12 +271,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse2" role="button"
-                aria-expanded="false" aria-controls="adminDataManagerCollapse2">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataexistingadminpranpc"
+                role="button" aria-expanded="false" aria-controls="manajerdataexistingadminpranpc">
                 Manajer Data Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapse2">
+            <div class="collapse show" id="manajerdataexistingadminpranpc">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('existing-adminpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('existing-adminpranpc.index') }}">
@@ -292,8 +286,6 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="collapse show" id="adminDataManagerCollapse2">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('report-existing-adminpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('report-existing-adminpranpc.index') }}">
@@ -314,12 +306,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse1" role="button"
-                aria-expanded="false" aria-controls="adminDataManagerCollapse1">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatabillperuser" role="button"
+                aria-expanded="false" aria-controls="manajerdatabillperuser">
                 Operasional Billper
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapse1">
+            <div class="collapse show" id="manajerdatabillperuser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('assignmentbillper.index') }}">
@@ -329,9 +321,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
 
-            <div class="collapse show" id="adminDataManagerCollapse1">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('reportassignmentbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentbillper.index') }}">
@@ -345,12 +335,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse2" role="button"
-                aria-expanded="false" aria-controls="adminDataManagerCollapse2">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataexistinguser" role="button"
+                aria-expanded="false" aria-controls="manajerdataexistinguser">
                 Operasional Existing
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapse2">
+            <div class="collapse show" id="manajerdataexistinguser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('assignmentexisting.index') }}">
@@ -360,9 +350,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
 
-            <div class="collapse show" id="adminDataManagerCollapse2">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('reportassignmentexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentexisting.index') }}">
@@ -377,12 +365,12 @@
             <div class="my-4">
                 {{-- diver --}}
             </div>
-            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#adminDataManagerCollapse3" role="button"
-                aria-expanded="false" aria-controls="adminDataManagerCollapse3">
+            <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdatapranpcperuser" role="button"
+                aria-expanded="false" aria-controls="manajerdatapranpcperuser">
                 Operasional Pranpc
                 <i class="bi bi-chevron-down float-end"></i>
             </span>
-            <div class="collapse show" id="adminDataManagerCollapse3">
+            <div class="collapse show" id="manajerdatapranpcperuser">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('assignmentpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('assignmentpranpc.index') }}">
@@ -392,8 +380,6 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="collapse show" id="adminDataManagerCollapse3">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('reportassignmentpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentpranpc.index') }}">

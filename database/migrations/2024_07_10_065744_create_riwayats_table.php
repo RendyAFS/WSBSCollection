@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('deskripsi_riwayat')->nullable();
             $table->string('tanggal_riwayat')->nullable();
+            $table->string('riwayat_id')->nullable();
             $table->timestamps();
         });
     }

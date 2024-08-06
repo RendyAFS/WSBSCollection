@@ -3,8 +3,8 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
-        <div class="mb-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
+        <div class="mb-4 d-block d-md-none">
             <span class="fw-bold fs-2">
                 Riwayat Data Billper
             </span>
@@ -22,7 +22,7 @@
                     <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Umur Customer</th>
                     <th id="th" class="align-middle text-center">Produk</th>
-                    <th id="th" class="align-middle text-center">Status Pembayaran</th>
+                    <th id="th" class="align-middle text-center">created_at</th>
                 </tr>
             </thead>
         </table>
@@ -101,23 +101,15 @@
                         visible: false
                     },
                     {
-                        data: 'status_pembayaran',
-                        name: 'status_pembayaran',
+                        data: 'created_at',
+                        name: 'created_at',
                         className: 'align-middle text-center',
-                        render: function(data, type, row) {
-                            if (data === 'Unpaid') {
-                                return '<span class="badge text-bg-warning">Unpaid</span>';
-                            } else if (data === 'Pending') {
-                                return '<span class="badge text-bg-Secondary">Pending</span>';
-                            } else if (data === 'Paid') {
-                                return '<span class="badge text-bg-success">Paid</span>';
-                            }
-                            return data;
-                        }
+                        visible: false
                     },
+
                 ],
                 order: [
-                    [7, 'asc']
+                    [9, 'desc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

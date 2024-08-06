@@ -598,7 +598,11 @@ class SuperAdminController extends Controller
     {
         $billper = Billper::findOrFail($id);
 
-        // Update data dengan data baru
+        // Store the original values
+        $original_no_tlf = $billper->no_tlf;
+        $original_email = $billper->email;
+
+        // Update data with new values
         $billper->nama = $request->input('nama');
         $billper->no_inet = $request->input('no_inet');
         $billper->saldo = $request->input('saldo');
@@ -611,23 +615,27 @@ class SuperAdminController extends Controller
         $billper->nper = $request->input('nper');
         $billper->save();
 
-        // Simpan data yang sudah diperbarui ke tabel riwayat
-        RiwayatBillper::create([
-            'nama' => $billper->nama,
-            'no_inet' => $billper->no_inet,
-            'saldo' => $billper->saldo,
-            'no_tlf' => $billper->no_tlf,
-            'email' => $billper->email,
-            'sto' => $billper->sto,
-            'umur_customer' => $billper->umur_customer,
-            'produk' => $billper->produk,
-            'status_pembayaran' => $billper->status_pembayaran,
-            'nper' => $billper->nper,
-        ]);
+        // Check if either no_tlf or email has changed
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email')) {
+            // Save updated data to the riwayat table
+            RiwayatBillper::create([
+                'nama' => $billper->nama,
+                'no_inet' => $billper->no_inet,
+                'saldo' => $billper->saldo,
+                'no_tlf' => $billper->no_tlf,
+                'email' => $billper->email,
+                'sto' => $billper->sto,
+                'umur_customer' => $billper->umur_customer,
+                'produk' => $billper->produk,
+                'status_pembayaran' => $billper->status_pembayaran,
+                'nper' => $billper->nper,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('billper.index');
     }
+
 
     public function viewPDFreportbillpersuperadmin($id)
     {
@@ -704,6 +712,7 @@ class SuperAdminController extends Controller
         $riwayat = new Riwayat();
         $riwayat->deskripsi_riwayat = $request->file('file')->getClientOriginalName();
         $riwayat->tanggal_riwayat = $nper;
+        $riwayat->riwayat_id = 'riwayat_billper';
         $riwayat->save();
 
         // Process each record
@@ -795,6 +804,7 @@ class SuperAdminController extends Controller
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
+            ->where('riwayat_id', 'riwayat_billper')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -1451,7 +1461,11 @@ class SuperAdminController extends Controller
     {
         $existing = Existing::findOrFail($id);
 
-        // Update data dengan data baru
+        // Store the original values
+        $original_no_tlf = $existing->no_tlf;
+        $original_email = $existing->email;
+
+        // Update data with new values
         $existing->nama = $request->input('nama');
         $existing->no_inet = $request->input('no_inet');
         $existing->saldo = $request->input('saldo');
@@ -1464,19 +1478,22 @@ class SuperAdminController extends Controller
         $existing->nper = $request->input('nper');
         $existing->save();
 
-        // Simpan data yang sudah diperbarui ke tabel riwayat
-        RiwayatExisting::create([
-            'nama' => $existing->nama,
-            'no_inet' => $existing->no_inet,
-            'saldo' => $existing->saldo,
-            'no_tlf' => $existing->no_tlf,
-            'email' => $existing->email,
-            'sto' => $existing->sto,
-            'umur_customer' => $existing->umur_customer,
-            'produk' => $existing->produk,
-            'status_pembayaran' => $existing->status_pembayaran,
-            'nper' => $existing->nper,
-        ]);
+        // Check if either no_tlf or email has changed
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email')) {
+            // Save updated data to the riwayat table
+            RiwayatExisting::create([
+                'nama' => $existing->nama,
+                'no_inet' => $existing->no_inet,
+                'saldo' => $existing->saldo,
+                'no_tlf' => $existing->no_tlf,
+                'email' => $existing->email,
+                'sto' => $existing->sto,
+                'umur_customer' => $existing->umur_customer,
+                'produk' => $existing->produk,
+                'status_pembayaran' => $existing->status_pembayaran,
+                'nper' => $existing->nper,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('existing.index');
@@ -1556,6 +1573,7 @@ class SuperAdminController extends Controller
         $riwayat = new Riwayat();
         $riwayat->deskripsi_riwayat = $request->file('file')->getClientOriginalName();
         $riwayat->tanggal_riwayat = $nper;
+        $riwayat->riwayat_id = 'riwayat_existing';
         $riwayat->save();
 
         // Process each record
@@ -1647,6 +1665,7 @@ class SuperAdminController extends Controller
 
         // History
         $riwayats = Riwayat::where('created_at', '>=', Carbon::now()->subWeek())
+            ->where('riwayat_id', 'riwayat_existing')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -2222,11 +2241,17 @@ class SuperAdminController extends Controller
         $voc_kendala = VocKendala::all();
         return view('super-admin.edit-pranpc', compact('title', 'pranpc', 'user', 'sales_report', 'voc_kendala'));
     }
+
     public function updatepranpcs(Request $request, $id)
     {
         $pranpc = Pranpc::findOrFail($id);
 
-        // Update data dengan data baru
+        // Store the original values
+        $original_multi_kontak1 = $pranpc->multi_kontak1;
+        $original_email = $pranpc->email;
+        $original_alamat = $pranpc->alamat;
+
+        // Update data with new values
         $pranpc->nama = $request->input('nama');
         $pranpc->status_pembayaran = $request->input('status_pembayaran');
         $pranpc->snd = $request->input('snd');
@@ -2240,24 +2265,28 @@ class SuperAdminController extends Controller
         $pranpc->alamat = $request->input('alamat');
         $pranpc->save();
 
-        // Simpan data yang sudah diperbarui ke tabel riwayat
-        RiwayatPranpc::create([
-            'nama' => $pranpc->nama,
-            'status_pembayaran' => $pranpc->status_pembayaran,
-            'snd' => $pranpc->snd,
-            'sto' => $pranpc->sto,
-            'bill_bln' => $pranpc->bill_bln,
-            'bill_bln1' => $pranpc->bill_bln1,
-            'mintgk' => $pranpc->mintgk,
-            'maxtgk' => $pranpc->maxtgk,
-            'multi_kontak1' => $pranpc->multi_kontak1,
-            'email' => $pranpc->email,
-            'alamat' => $pranpc->alamat,
-        ]);
+        // Check if either multi_kontak1 or email has changed
+        if ($original_multi_kontak1 !== $request->input('multi_kontak1') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
+            // Save updated data to the riwayat table
+            RiwayatPranpc::create([
+                'nama' => $pranpc->nama,
+                'status_pembayaran' => $pranpc->status_pembayaran,
+                'snd' => $pranpc->snd,
+                'sto' => $pranpc->sto,
+                'bill_bln' => $pranpc->bill_bln,
+                'bill_bln1' => $pranpc->bill_bln1,
+                'mintgk' => $pranpc->mintgk,
+                'maxtgk' => $pranpc->maxtgk,
+                'multi_kontak1' => $pranpc->multi_kontak1,
+                'email' => $pranpc->email,
+                'alamat' => $pranpc->alamat,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('pranpc.index');
     }
+
 
     public function viewPDFreportpranpcsuperadmin($id)
     {

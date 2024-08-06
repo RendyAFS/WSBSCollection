@@ -16,10 +16,10 @@ class UserMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->level === 'User') {
+        if (Auth::check() && Auth::user()->level === 'Sales') {
             return $next($request);
         }
 
-        return redirect()->route('user.index')->with('error', 'Tidak Memiliki Previllage!');
+        return redirect()->back()->with('error', 'Tidak Memiliki Previllage!');
     }
 }

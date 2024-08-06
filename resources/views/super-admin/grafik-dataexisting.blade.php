@@ -1,10 +1,13 @@
 @extends('layouts.app-super-admin')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
-            <span class="fw-bold fs-2">
-                Grafik Data Existing
+            <span class="fw-bold fs-2 d-block d-md-none">
+                Grafik Existing
+            </span>
+            <span class="d-none d-md-block">
+                {{-- Diver --}}
             </span>
             <div class="d-flex">
                 <!-- Button Filter modal -->
@@ -62,9 +65,9 @@
 
             </div>
         </div>
-    </div>
 
-    <div id="chartpelangganexisting"></div>
+        <div id="chartpelangganexisting"></div>
+    </div>
 @endsection
 
 @push('scripts')

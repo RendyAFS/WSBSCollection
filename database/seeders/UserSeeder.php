@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('qawsedrf'),
             ],
             [
-                'level' => 'Admin PraNPC',
+                'level' => 'Admin Pranpc',
                 'status' => 'Aktif',
                 'name' => 'Admin Pra NPC',
                 'nik' => '123456',
@@ -46,9 +46,9 @@ class UserSeeder extends Seeder
         // Tambah user kedua dan seterusnya
         for ($i = 1; $i <= 10; $i++) {
             DB::table('users')->insert([
-                'level' => 'User',
+                'level' => 'Sales',
                 'status' => 'Aktif',
-                'name' => 'User' . $i,
+                'name' => 'Sales' . $i,
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 'u' . $i . '@u' . $i,

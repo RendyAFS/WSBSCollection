@@ -36,7 +36,7 @@ class AdminPranpcController extends Controller
         confirmDelete();
         $title = 'Data Plotting Pranpc';
         $pranpcs = Pranpc::all();
-        $users = User::where('level', 'User')->get();
+        $users = User::where('level', 'Sales')->get();
         return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'pranpcs', 'users'));
     }
 
@@ -266,7 +266,7 @@ class AdminPranpcController extends Controller
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount(['pranpcs as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                 $query->whereYear('created_at', $filterYear)
                     ->whereMonth('created_at', $filterMonth);
@@ -420,7 +420,7 @@ class AdminPranpcController extends Controller
         confirmDelete();
         $title = 'Data Plotting Existing';
         $existings = Existing::all();
-        $users = User::where('level', 'User')->get();
+        $users = User::where('level', 'Sales')->get();
         return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users'));
     }
 
@@ -663,7 +663,7 @@ class AdminPranpcController extends Controller
         }])->get();
 
         // Retrieve Existing sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount([
                 'existings as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)

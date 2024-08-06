@@ -9,11 +9,16 @@
     --green-color: #005e43;
     --blue-color: #00467a;
     --yellow-color: #FFCE20;
+    --background-color: #F3F3F3;
 }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
 body {
     height: 100%;
+    font-family: "Poppins", sans-serif;
+    font-weight: normal;
+    font-style: normal;
 }
 
 
@@ -24,7 +29,14 @@ body {
 
 .left-side {
     width: 40%;
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.left-side-register {
+    width: 40%;
+    background-color: var(--secondary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,6 +70,16 @@ body {
     margin-bottom: 20px;
 }
 
+.register-box {
+    width: 80%;
+    max-width: 400px;
+    color: var(--white-color);
+}
+
+.register-box h2 {
+    margin-bottom: 20px;
+}
+
 
 
 .btn-login {
@@ -65,7 +87,7 @@ body {
     padding: 10px;
     border: none;
     border-radius: 10px;
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: var(--white-color);
     cursor: pointer;
     transition: 0.5s;
@@ -91,8 +113,18 @@ body {
     text-decoration: underline;
 }
 
+.contain-head{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .logo-container {
     text-align: center;
+}
+
+.logo-left-side {
+    width: 50%;
 }
 
 .logo {
@@ -152,13 +184,39 @@ body {
     .right-side {
         width: 0%;
     }
+    .content {
+        display: flex;
+        height: 100vh;
+    }
+
 
     .left-side {
         width: 100%;
-        align-items: normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .left-side-register {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 120vh;
     }
 
     #home-logo-telkom{
         width: 40%;
     }
+
+    .register-box {
+        width: 80%;
+        max-width: 400px;
+        color: var(--white-color);
+    }
+
+    .register-box h2 {
+        margin-bottom: 20px;
+    }
+
 }

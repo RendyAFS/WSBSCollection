@@ -16,10 +16,10 @@ class AdminPranpcMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->level === 'Admin PraNPC') {
+        if (Auth::check() && Auth::user()->level === 'Admin Pranpc') {
             return $next($request);
         }
 
-        return redirect()->route('adminpranpc.index')->with('error', 'Tidak Memiliki Previllage!');
+        return redirect()->back()->with('error', 'Tidak Memiliki Previllage!');
     }
 }

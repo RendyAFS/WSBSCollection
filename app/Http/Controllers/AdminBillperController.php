@@ -32,7 +32,7 @@ class AdminBillperController extends Controller
         confirmDelete();
         $title = 'Data Plotting Billper';
         $billpers = Billper::all();
-        $users = User::where('level', 'User')->get();
+        $users = User::where('level', 'Sales')->get();
         return view('admin-billper.data-billper-adminbillper', compact('title', 'billpers', 'users'));
     }
 
@@ -276,7 +276,7 @@ class AdminBillperController extends Controller
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount([
                 'billpers as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
@@ -436,7 +436,7 @@ class AdminBillperController extends Controller
         confirmDelete();
         $title = 'Data Plotting Existing';
         $existings = Existing::all();
-        $users = User::where('level', 'User')->get();
+        $users = User::where('level', 'Sales')->get();
         return view('admin-billper.data-existing-adminbillper', compact('title', 'existings', 'users'));
     }
 
@@ -680,7 +680,7 @@ class AdminBillperController extends Controller
         }])->get();
 
         // Retrieve Existing sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount([
                 'existings as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)

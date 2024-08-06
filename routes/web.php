@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -279,7 +279,6 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('info-assignmentbillper/{id}', [UserController::class, 'infoassignmentbillper'])->name('info-assignmentbillper');
         Route::post('update-assignmentbillper/{id}', [UserController::class, 'updateassignmentbillper'])->name('update-assignmentbillper');
 
-
         // Report Assignment Billper
         Route::get('/report-assignment-billper', [UserController::class, 'indexreportassignmentbillper'])->name('reportassignmentbillper.index');
         Route::get('gettabelreportassignmentbillper', [UserController::class, 'getDatareportassignmentbillper'])->name('gettabelreportassignmentbillper');
@@ -290,13 +289,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
-
         // Assignment Existing
         Route::get('/assignment-existing', [UserController::class, 'indexassignmentexisting'])->name('assignmentexisting.index');
         Route::get('gettabelassignmentexisting', [UserController::class, 'getDataassignmentexisting'])->name('gettabelassignmentexisting');
         Route::get('info-assignmentexisting/{id}', [UserController::class, 'infoassignmentexisting'])->name('info-assignmentexisting');
         Route::post('update-assignmentexisting/{id}', [UserController::class, 'updateassignmentexisting'])->name('update-assignmentexisting');
-
 
         // Report Assignment Existing
         Route::get('/report-assignment-existing', [UserController::class, 'indexreportassignmentexisting'])->name('reportassignmentexisting.index');
@@ -308,17 +305,11 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
 
 
-
-
-
-
         // Assignment Pranpc
         Route::get('/assignment-pranpc', [UserController::class, 'indexassignmentpranpc'])->name('assignmentpranpc.index');
         Route::get('gettabelassignmentpranpc', [UserController::class, 'getDataassignmentpranpc'])->name('gettabelassignmentpranpc');
         Route::get('info-assignmentpranpc/{id}', [UserController::class, 'infoassignmentpranpc'])->name('info-assignmentpranpc');
         Route::post('update-assignmentpranpc/{id}', [UserController::class, 'updateassignmentpranpc'])->name('update-assignmentpranpc');
-
-
 
         // Report Assignment Pranpc
         Route::get('/report-assignment-pranpc', [UserController::class, 'indexreportassignmentpranpc'])->name('reportassignmentpranpc.index');

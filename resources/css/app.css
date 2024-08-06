@@ -9,6 +9,7 @@
     --green-color: #005e43;
     --blue-color: #00467a;
     --yellow-color: #FFCE20;
+    --background-color: #F3F3F3;
 }
 
 
@@ -25,7 +26,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ubah nilai z-index menjadi lebih tinggi dari z-index lainnya */
+    z-index: 1000;
+    /* Ubah nilai z-index menjadi lebih tinggi dari z-index lainnya */
     height: 100vh;
     width: 100%;
     background-color: var(--bg-loading-color);
@@ -55,10 +57,18 @@
 
 /* user */
 .img-preview {
-    max-width: 250px; /* Set the desired fixed width */
-    max-height: 200px; /* Set the desired fixed height */
-    object-fit: cover; /* Ensure the image covers the set dimensions without distortion */
-    display: block; /* Ensure the image is displayed as a block element */
+    max-width: 250px;
+    /* Set the desired fixed width */
+    max-height: 200px;
+    /* Set the desired fixed height */
+    object-fit: cover;
+    /* Ensure the image covers the set dimensions without distortion */
+    display: block;
+    /* Ensure the image is displayed as a block element */
     cursor: pointer;
 }
 
+
+.contain-div{
+    background-color: var(--white-color);
+}

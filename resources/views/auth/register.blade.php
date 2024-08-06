@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="content">
-        <div class="left-side">
-            <div class="login-box">
+        <div class="left-side-register">
+            <div class="register-box">
                 <div class="d-flex flex-row mb-3">
                     <a href="/login" class="text-white">
                         <i class="bi bi-chevron-left me-3 fs-4"></i>
@@ -100,7 +100,7 @@
                     </div>
 
                     {{-- level --}}
-                    <div class="row mb-3 d-none">
+                    <div class="row mb-3 d-block">
                         <label for="level"
                             class="col-md-4 col-form-label text-md-end fw-bold">{{ __('Level') }}</label>
                         <div class="col-md-6">
@@ -118,7 +118,7 @@
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                                 required onclick="setLevel('AdminPra NPC')" {{ old('btnradio') == 'AdminPra NPC' ? 'checked' : '' }}>
-                            <label class="btn btn-outline-light" for="btnradio2">Admin Pra NPC</label>
+                            <label class="btn btn-outline-light" for="btnradio2">Admin Pranpc</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                                 required onclick="setLevel('User')" {{ old('btnradio') == 'User' ? 'checked' : '' }}>
@@ -170,13 +170,13 @@
 
             document.getElementById('btnradio2').addEventListener('change', function() {
                 if (this.checked) {
-                    setLevel('Admin PraNPC');
+                    setLevel('Admin Pranpc');
                 }
             });
 
             document.getElementById('btnradio3').addEventListener('change', function() {
                 if (this.checked) {
-                    setLevel('User');
+                    setLevel('Sales');
                 }
             });
         });

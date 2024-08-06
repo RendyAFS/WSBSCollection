@@ -1,7 +1,7 @@
 @extends('layouts.app-user')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3 d-block d-md-none">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Info Assignment
@@ -128,9 +128,7 @@
                                         <div class="mb-3">
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
                                             <input type="datetime-local" class="form-control" id="waktu_visit"
-                                                name="waktu_visit"
-                                                value=""
-                                                required>
+                                                name="waktu_visit" value="" required>
                                         </div>
 
                                         <!-- Select Jmlh Visit -->

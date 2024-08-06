@@ -76,7 +76,6 @@
                 </div>
             </div>
         </form>
-
     </div>
     <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="mb-4">
@@ -111,106 +110,110 @@
         <span class="fw-bold fs-2">
             Report Pranpc
         </span>
-    </div>
 
-    {{-- Table --}}
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">No. </th>
-                <th scope="col">Jenis Voc Kendala</th>
-                <th scope="col">Total Reports</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($voc_kendalas as $voc_kendala)
+
+
+        {{-- Table --}}
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="row">{{ $loop->iteration }}</th>
-                    <td>{{ $voc_kendala->voc_kendala }}</td>
-                    <td>{{ $voc_kendala->sales_reports_count }}</td>
+                    <th scope="col">No. </th>
+                    <th scope="col">Jenis Voc Kendala</th>
+                    <th scope="col">Total Reports</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($voc_kendalas as $voc_kendala)
+                    <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
+                        <td>{{ $voc_kendala->voc_kendala }}</td>
+                        <td>{{ $voc_kendala->sales_reports_count }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
-        <span class="fw-bold fs-2">
-            Detail Pranpc
-        </span>
-        <div class="btn-group">
-            <a href="{{ route('download.excelreportpranpcsuperadmin') }}" class="btn btn-green">
-                <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
-            </a>
-            <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu p-3">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
+            <span class="fw-bold fs-2">
+                Detail Pranpc
+            </span>
+            <div class="btn-group">
+                <a href="{{ route('download.excelreportpranpcsuperadmin') }}" class="btn btn-green">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download Semua
+                </a>
+                <button type="button" class="btn btn-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu p-3">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="fs-6" id="exampleModalLabel">Filter Download</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="downloadForm" action="{{ route('download.filtered.excelreportpranpcsuperadmin') }}"
+                                method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="tahun_bulan">Pilih Bulan-Tahun</label>
+                                        <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="nama_sales">Nama Sales</label>
+                                        <select id="nama_sales" name="nama_sales" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($sales as $sale)
+                                                <option value="{{ $sale->name }}">{{ $sale->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="voc_kendala">VOC & Kendala</label>
+                                        <select id="voc_kendala" name="voc_kendala" class="form-select">
+                                            <option value="">Semua</option>
+                                            @foreach ($voc_kendalas as $voc_kendala)
+                                                <option value="{{ $voc_kendala->voc_kendala }}">
+                                                    {{ $voc_kendala->voc_kendala }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="btn-filter-download"
+                                        class="btn btn-green btn-filter-download">
+                                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <form id="downloadForm" action="{{ route('download.filtered.excelreportpranpcsuperadmin') }}"
-                            method="POST">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="form-group mb-3">
-                                    <label for="tahun_bulan">Pilih Bulan-Tahun</label>
-                                    <input type="month" id="tahun_bulan" name="tahun_bulan" class="form-control" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="nama_sales">Nama Sales</label>
-                                    <select id="nama_sales" name="nama_sales" class="form-select">
-                                        <option value="">Semua</option>
-                                        @foreach ($sales as $sale)
-                                            <option value="{{ $sale->name }}">{{ $sale->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="voc_kendala">VOC & Kendala</label>
-                                    <select id="voc_kendala" name="voc_kendala" class="form-select">
-                                        <option value="">Semua</option>
-                                        @foreach ($voc_kendalas as $voc_kendala)
-                                            <option value="{{ $voc_kendala->voc_kendala }}">
-                                                {{ $voc_kendala->voc_kendala }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" id="btn-filter-download"
-                                    class="btn btn-green btn-filter-download">
-                                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Download
-                                </button>
-                            </div>
-                        </form>
                     </div>
-                </div>
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-    {{-- DataTable --}}
-    <table class="table table-hover table-bordered datatable shadow" id="datareportpranpcsuperadmin" style="width: 100%">
-        <thead>
-            <tr>
-                <th id="th" class="align-middle text-center">SND</th>
-                <th id="th" class="align-middle text-center">Nama Customer</th>
-                <th id="th" class="align-middle text-center">Waktu Visit</th>
-                <th id="th" class="align-middle text-center">Nama Sales</th>
-                <th id="th" class="align-middle text-center">VOC & Kendala</th>
-                <th id="th" class="align-middle text-center">Follow Up</th>
-                <th id="th" class="align-middle text-center">Visit</th>
-                <th id="th" class="align-middle text-center">Evidence</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{-- Data will be populated by DataTables --}}
-        </tbody>
-    </table>
+        {{-- DataTable --}}
+        <table class="table table-hover table-bordered datatable shadow" id="datareportpranpcsuperadmin"
+            style="width: 100%">
+            <thead>
+                <tr>
+                    <th id="th" class="align-middle text-center">SND</th>
+                    <th id="th" class="align-middle text-center">Nama Customer</th>
+                    <th id="th" class="align-middle text-center">Waktu Visit</th>
+                    <th id="th" class="align-middle text-center">Nama Sales</th>
+                    <th id="th" class="align-middle text-center">VOC & Kendala</th>
+                    <th id="th" class="align-middle text-center">Follow Up</th>
+                    <th id="th" class="align-middle text-center">Visit</th>
+                    <th id="th" class="align-middle text-center">Evidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- Data will be populated by DataTables --}}
+            </tbody>
+        </table>
     </div>
 @endsection
 @push('scripts')

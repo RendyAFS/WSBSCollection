@@ -3,7 +3,7 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="mb-4 d-block d-md-none">
             <span class="fw-bold fs-2">Assignment Pranpc</span>
         </div>

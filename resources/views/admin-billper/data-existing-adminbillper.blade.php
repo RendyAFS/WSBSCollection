@@ -3,7 +3,7 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 <span class="d-block d-md-none">
@@ -199,7 +199,7 @@
                         d.status_pembayaran = $('#status_pembayaran_filter').val();
                         d.jenis_produk = $('#jenis_produk_filter').val();
                     },
-                    reSend: function() {
+                    beforeSend: function() {
                         $('#loadingScreen').removeClass('d-none');
                     },
                     complete: function() {

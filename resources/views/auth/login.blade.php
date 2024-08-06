@@ -4,11 +4,13 @@
     <div class="content">
         <div class="left-side">
             <div class="login-box">
-                <div class="d-flex flex-row mb-3">
-                    <a href="/" class="text-white">
-                        <i class="bi bi-chevron-left me-3 fs-4"></i>
-                    </a>
-                    <span class="h2">Login</span>
+                <div class="mb-4 w-100 text-center contain-head">
+                    <div class="logo-left-side text-center">
+                        <img src="{{ asset('storage/file_assets/logo-telkom2.png') }}" alt="Logo 1" class="logo">
+                    </div>
+                    <span class="h3">
+                        Management Data Collection
+                    </span>
                 </div>
                 <form method="POST" action="{{ route('login') }}">
                     @csrf

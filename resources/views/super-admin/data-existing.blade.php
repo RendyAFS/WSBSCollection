@@ -3,7 +3,7 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 <span class="d-block d-md-none">
@@ -196,7 +196,6 @@
                     <th id="th" class="align-middle text-center">No. Inet</th>
                     <th id="th" class="align-middle text-center">Saldo</th>
                     <th id="th" class="align-middle text-center">No. Tlf</th>
-                    <th id="th" class="align-middle">Email</th>
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Umur Customer</th>
@@ -259,11 +258,6 @@
                         className: 'align-middle text-center'
                     },
                     {
-                        data: 'email',
-                        name: 'email',
-                        className: 'align-middle text-center'
-                    },
-                    {
                         data: 'sto',
                         name: 'sto',
                         className: 'align-middle text-center'
@@ -307,7 +301,7 @@
                     }
                 ],
                 order: [
-                    [7, 'asc']
+                    [5, 'desc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

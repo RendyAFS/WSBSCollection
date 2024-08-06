@@ -1,7 +1,7 @@
 @extends('layouts.app-admin')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0 d-block d-md-none">
                 Edit Data Plotting
@@ -9,10 +9,12 @@
             <span class="d-none d-md-block">
                 {{-- Diver --}}
             </span>
-            <a href="{{ route('view-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}" class="btn btn-green fw-bold d-none">
+            <a href="{{ route('view-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}"
+                class="btn btn-green fw-bold d-none">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> View
             </a>
-            <a href="{{ route('download-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}" class="btn btn-yellow fw-bold">
+            <a href="{{ route('download-pdf-report-existingadminpranpc', ['id' => $existing->id]) }}"
+                class="btn btn-yellow fw-bold">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> Download
             </a>
         </div>

@@ -2,81 +2,81 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4 mb-3">
         <div class="mb-4 d-block d-md-none">
             <span class="fw-bold fs-2">
                 Report Sales Billper
             </span>
         </div>
         {{-- Filter Form --}}
-        <div class="card shadow shadow-sm">
-            <div class="card-body">
-                <div class="mb-3">
-                    <span class="fw-bold fs-2">
-                        Filter Data
-                    </span>
-                </div>
-                <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="month" class="form-label fw-bold">Bulan</label>
-                            @php
-                                // Array of month names in Indonesian
-                                $months = [
-                                    '01' => 'Januari',
-                                    '02' => 'Februari',
-                                    '03' => 'Maret',
-                                    '04' => 'April',
-                                    '05' => 'Mei',
-                                    '06' => 'Juni',
-                                    '07' => 'Juli',
-                                    '08' => 'Agustus',
-                                    '09' => 'September',
-                                    '10' => 'Oktober',
-                                    '11' => 'November',
-                                    '12' => 'Desember',
-                                ];
-                            @endphp
 
-                            <select id="month" name="month" class="form-control">
-                                @foreach ($months as $value => $name)
-                                    <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
-                                        {{ $name }}
-                                    </option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                        <div class="col-md-3">
-                            <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
-                            <select id="year" name="year" class="form-control">
-                                @for ($y = now()->year; $y >= 2000; $y--)
-                                    <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
-                                        {{ $y }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
-                            <select id="filter_sales" name="filter_sales" class="form-control">
-                                <option value="">Semua</option>
-                                @foreach ($sales as $sale)
-                                    <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
-                                        {{ $sale->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
-                            <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
-                                <i class="bi bi-funnel-fill"></i> Filter
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <div class="mb-3">
+            <span class="fw-bold fs-2">
+                Filter Data
+            </span>
         </div>
+        <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="month" class="form-label fw-bold">Bulan</label>
+                    @php
+                        // Array of month names in Indonesian
+                        $months = [
+                            '01' => 'Januari',
+                            '02' => 'Februari',
+                            '03' => 'Maret',
+                            '04' => 'April',
+                            '05' => 'Mei',
+                            '06' => 'Juni',
+                            '07' => 'Juli',
+                            '08' => 'Agustus',
+                            '09' => 'September',
+                            '10' => 'Oktober',
+                            '11' => 'November',
+                            '12' => 'Desember',
+                        ];
+                    @endphp
+
+                    <select id="month" name="month" class="form-control">
+                        @foreach ($months as $value => $name)
+                            <option value="{{ $value }}" {{ $filterMonth == $value ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                </div>
+                <div class="col-md-3">
+                    <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
+                    <select id="year" name="year" class="form-control">
+                        @for ($y = now()->year; $y >= 2000; $y--)
+                            <option value="{{ $y }}" {{ $filterYear == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
+                    <select id="filter_sales" name="filter_sales" class="form-control">
+                        <option value="">Semua</option>
+                        @foreach ($sales as $sale)
+                            <option value="{{ $sale->name }}" {{ $filterSales == $sale->name ? 'selected' : '' }}>
+                                {{ $sale->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
+                    <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
+                        <i class="bi bi-funnel-fill"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="mb-4">
             <span class="fw-bold fs-2">
                 Report Progres Sales
@@ -153,8 +153,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="downloadForm" action="{{ route('download.filtered.excelreportexistingadminpranpc') }}"
-                                method="POST">
+                            <form id="downloadForm"
+                                action="{{ route('download.filtered.excelreportexistingadminpranpc') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
@@ -195,7 +195,8 @@
             </div>
         </div>
         {{-- DataTable --}}
-        <table class="table table-hover table-bordered datatable shadow" id="datareportexistingadminpranpc" style="width: 100%">
+        <table class="table table-hover table-bordered datatable shadow" id="datareportexistingadminpranpc"
+            style="width: 100%">
             <thead>
                 <tr>
                     <th id="th" class="align-middle text-center">SND</th>

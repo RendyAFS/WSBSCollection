@@ -1,7 +1,7 @@
 @extends('layouts.app-super-admin')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 <span class="d-block d-md-none">
@@ -103,49 +103,49 @@
                 </a>
             </div>
         </div>
-    </div>
-    <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
-        <thead class="table-warning">
-            <tr>
-                <th id="th" class="align-middle">{{ $filter_type === 'umur_customer' ? 'Umur Customer' : 'STO' }}
-                </th>
-                <th id="th" class="align-middle text-center">Total SSL</th>
-                <th id="th" class="align-middle text-center">Saldo Awal</th>
-                <th id="th" class="align-middle text-center">Paid</th>
-                <th id="th" class="align-middle text-center">Unpaid</th>
-                <th id="th" class="align-middle text-center">Pending</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($reports as $report)
+        <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
+            <thead class="table-warning">
                 <tr>
-                    <td id="td" class="align-middle">
-                        {{ $filter_type === 'umur_customer' ? $report->umur_customer : $report->sto }}</td>
-                    <td id="td" class="align-middle text-center">{{ $report->total_ssl }}</td>
-                    <td id="td" class="align-middle text-center">
-                        Rp{{ number_format($report->total_saldo, 0, ',', '.') }}</td>
-                    <td id="td" class="align-middle text-center">
-                        Rp{{ number_format($report->total_paid, 0, ',', '.') }}</td>
-                    <td id="td" class="align-middle text-center">
-                        Rp{{ number_format($report->total_unpaid, 0, ',', '.') }}</td>
-                    <td id="td" class="align-middle text-center">
-                        Rp{{ number_format($report->total_pending, 0, ',', '.') }}</td>
+                    <th id="th" class="align-middle">{{ $filter_type === 'umur_customer' ? 'Umur Customer' : 'STO' }}
+                    </th>
+                    <th id="th" class="align-middle text-center">Total SSL</th>
+                    <th id="th" class="align-middle text-center">Saldo Awal</th>
+                    <th id="th" class="align-middle text-center">Paid</th>
+                    <th id="th" class="align-middle text-center">Unpaid</th>
+                    <th id="th" class="align-middle text-center">Pending</th>
                 </tr>
-            @endforeach
-        </tbody>
-        <tfoot class="table-secondary">
-            <tr>
-                <td class="align-middle fw-bold">Total</td>
-                <td class="align-middle fw-bold text-center">{{ $total_ssl }}</td>
-                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_saldo, 0, ',', '.') }}</td>
-                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_paid, 0, ',', '.') }}</td>
-                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_unpaid, 0, ',', '.') }}
-                </td>
-                <td class="align-middle fw-bold text-center">Rp{{ number_format($total_pending, 0, ',', '.') }}
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($reports as $report)
+                    <tr>
+                        <td id="td" class="align-middle">
+                            {{ $filter_type === 'umur_customer' ? $report->umur_customer : $report->sto }}</td>
+                        <td id="td" class="align-middle text-center">{{ $report->total_ssl }}</td>
+                        <td id="td" class="align-middle text-center">
+                            Rp{{ number_format($report->total_saldo, 0, ',', '.') }}</td>
+                        <td id="td" class="align-middle text-center">
+                            Rp{{ number_format($report->total_paid, 0, ',', '.') }}</td>
+                        <td id="td" class="align-middle text-center">
+                            Rp{{ number_format($report->total_unpaid, 0, ',', '.') }}</td>
+                        <td id="td" class="align-middle text-center">
+                            Rp{{ number_format($report->total_pending, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <tfoot class="table-secondary">
+                <tr>
+                    <td class="align-middle fw-bold">Total</td>
+                    <td class="align-middle fw-bold text-center">{{ $total_ssl }}</td>
+                    <td class="align-middle fw-bold text-center">Rp{{ number_format($total_saldo, 0, ',', '.') }}</td>
+                    <td class="align-middle fw-bold text-center">Rp{{ number_format($total_paid, 0, ',', '.') }}</td>
+                    <td class="align-middle fw-bold text-center">Rp{{ number_format($total_unpaid, 0, ',', '.') }}
+                    </td>
+                    <td class="align-middle fw-bold text-center">Rp{{ number_format($total_pending, 0, ',', '.') }}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 @endsection
 @push('scripts')
     <script type="module">

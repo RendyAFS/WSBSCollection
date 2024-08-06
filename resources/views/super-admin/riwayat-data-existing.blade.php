@@ -3,7 +3,7 @@
 @extends('layouts.loading')
 
 @section('content')
-    <div class="px-3 py-4">
+    card shadow shadow-sm border border-0
         <div class="mb-4">
             <span class="fw-bold fs-2">
                 Riwayat Data Existing

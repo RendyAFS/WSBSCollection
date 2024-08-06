@@ -1,7 +1,7 @@
 @extends('layouts.app-admin')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <span class="fw-bold fs-2 mb-3 mb-md-0 d-block d-md-none">
                 Edit Data Plotting
@@ -103,7 +103,8 @@
                                 <div class="contain-header mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h5 class="card-title">{{ $existing->user ? $existing->user->name : 'Tidak ada' }}</h5>
+                                            <h5 class="card-title">
+                                                {{ $existing->user ? $existing->user->name : 'Tidak ada' }}</h5>
                                             <h6 class="card-subtitle mb-2 text-body-secondary">
                                                 {{ $existing->user ? $existing->user->nik : 'Tidak ada' }}
                                             </h6>

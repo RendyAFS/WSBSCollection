@@ -1,7 +1,7 @@
 @extends('layouts.app-user')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3 d-block d-md-none">
             <span class="fw-bold fs-2 mb-3 mb-md-0">
                 Info Report Assignment
@@ -16,7 +16,7 @@
                     <div class="card px-3 py-4 shadow">
                         <div class="card-body">
                             <div class="contain-header mb-3">
-                                <h5 class="card-title">{{$sales_report->billpers->nama }}</h5>
+                                <h5 class="card-title">{{ $sales_report->billpers->nama }}</h5>
                                 <h6 class="card-subtitle mb-2 text-body-secondary">{{ $sales_report->snd }}</h6>
                             </div>
                             <hr class="border border-dark border-3 opacity-75 my-4">
@@ -36,9 +36,11 @@
                                                 value="{{ $sales_report->snd }}">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="status_pembayaran" class="form-label fw-bold">Status Pembayaran</label>
-                                            <input type="text" class="form-control bg-body-secondary" id="status_pembayaran" name="status_pembayaran"
-                                                value="{{$sales_report->billpers->status_pembayaran}}" readonly>
+                                            <label for="status_pembayaran" class="form-label fw-bold">Status
+                                                Pembayaran</label>
+                                            <input type="text" class="form-control bg-body-secondary"
+                                                id="status_pembayaran" name="status_pembayaran"
+                                                value="{{ $sales_report->billpers->status_pembayaran }}" readonly>
                                         </div>
                                         <div class="mb-3 d-none">
                                             <label for="witel" class="form-label fw-bold">Witel</label>
@@ -48,14 +50,16 @@
 
                                         <div class="mb-3">
                                             <label for="waktu_visit" class="form-label fw-bold">Waktu Visit</label>
-                                            <input type="datetime-local" class="form-control" id="waktu_visit" name="waktu_visit"
-                                                value="{{ $sales_report->waktu_visit ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i:s') : '' }}" required>
+                                            <input type="datetime-local" class="form-control" id="waktu_visit"
+                                                name="waktu_visit"
+                                                value="{{ $sales_report->waktu_visit ? \Carbon\Carbon::parse($sales_report->waktu_visit)->format('Y-m-d\TH:i:s') : '' }}"
+                                                required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="jmlh_visit" class="form-label fw-bold">Visit</label>
-                                            <input type="text" class="form-control bg-body-secondary" id="jmlh_visit" name="jmlh_visit"
-                                                value="{{$sales_report->jmlh_visit}}" readonly>
+                                            <input type="text" class="form-control bg-body-secondary" id="jmlh_visit"
+                                                name="jmlh_visit" value="{{ $sales_report->jmlh_visit }}" readonly>
                                         </div>
 
 

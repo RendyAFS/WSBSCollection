@@ -20,6 +20,6 @@ class AdminBillperMiddleware
             return $next($request);
         }
 
-        return redirect()->route('adminbillper.index')->with('error', 'Tidak Memiliki Previllage!');
+        return redirect()->back()->with('error', 'Tidak Memiliki Previllage!');
     }
 }

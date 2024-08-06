@@ -967,7 +967,7 @@ class SuperAdminController extends Controller
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount([
                 'billpers as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
@@ -1817,7 +1817,7 @@ class SuperAdminController extends Controller
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount([
                 'existings as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                     $query->whereYear('created_at', $filterYear)
@@ -2558,7 +2558,7 @@ class SuperAdminController extends Controller
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
-        $sales = User::where('level', 'user')
+        $sales = User::where('level', 'Sales')
             ->withCount(['pranpcs as total_assignment' => function ($query) use ($filterMonth, $filterYear) {
                 $query->whereYear('created_at', $filterYear)
                     ->whereMonth('created_at', $filterMonth);

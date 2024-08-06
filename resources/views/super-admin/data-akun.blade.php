@@ -1,7 +1,7 @@
 @extends('layouts.app-super-admin')
 
 @section('content')
-    <div class="px-3 py-4">
+    <div class="px-4 py-4 card shadow shadow-sm border border-0 rounded-4">
         <div class="mb-4 d-block d-md-none">
             <span class="fw-bold fs-2">
                 Data Akun
@@ -31,11 +31,11 @@
                             <span class="fw-normal">{{ $user->no_hp }}</span>
                         </th>
                         <th class="align-middle text-center">
-                            @if ($user->level == 'User')
+                            @if ($user->level == 'Sales')
                                 <span class="badge text-bg-secondary">User</span>
                             @elseif($user->level == 'Admin Billper')
                                 <span class="badge text-bg-success">Admin Billper</span>
-                            @elseif($user->level == 'Admin PraNPC')
+                            @elseif($user->level == 'Admin Pranpc')
                                 <span class="badge text-bg-primary">Admin PraNPC</span>
                             @else
                                 <span class="fw-normal">{{ $user->level }}</span>

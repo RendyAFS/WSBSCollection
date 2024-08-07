@@ -202,15 +202,42 @@
 @endsection
 @push('scripts')
     <script type="module">
-        document.getElementById('toggleEvidencePembayaran').addEventListener('change', function() {
-            var wrapper = document.getElementById('evidencePembayaranWrapper');
-            if (this.checked) {
-                wrapper.style.display = 'block';
-                document.getElementById('evidence_pembayaran').required = true;
-            } else {
-                wrapper.style.display = 'none';
-                document.getElementById('evidence_pembayaran').required = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            var vocSelect = document.getElementById('voc_kendalas_id');
+            var toggleCheckbox = document.getElementById('toggleEvidencePembayaran');
+            var evidenceWrapper = document.getElementById('evidencePembayaranWrapper');
+            var evidenceInput = document.getElementById('evidence_pembayaran');
+
+            // Function to update checkbox state based on select value
+            function updateCheckboxState() {
+                if (vocSelect.value === '1') { // Jika nilai adalah '1', maka aktifkan checkbox
+                    toggleCheckbox.disabled = false;
+                } else {
+                    toggleCheckbox.disabled = true;
+                    toggleCheckbox.checked = false;
+                    evidenceWrapper.style.display = 'none';
+                    evidenceInput.required = false;
+                }
             }
+
+            // Initial update based on the current select value
+            updateCheckboxState();
+
+            // Handle change event for the voc_kendalas_id select
+            vocSelect.addEventListener('change', updateCheckboxState);
+
+            // Handle change event for the toggleEvidencePembayaran checkbox
+            toggleCheckbox.addEventListener('change', function() {
+                if (!this.disabled) {
+                    if (this.checked) {
+                        evidenceWrapper.style.display = 'block';
+                        evidenceInput.required = true;
+                    } else {
+                        evidenceWrapper.style.display = 'none';
+                        evidenceInput.required = false;
+                    }
+                }
+            });
         });
     </script>
 @endpush

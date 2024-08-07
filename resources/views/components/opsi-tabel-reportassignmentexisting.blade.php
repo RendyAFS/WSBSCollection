@@ -4,7 +4,7 @@
             <i class="bi bi-info-circle-fill fs-5"></i>
         </div>
     </a>
-    @if ($sales_report->billpers && $sales_report->billpers->status_pembayaran !== 'Paid')
+    @if ($sales_report->existings && $sales_report->existings->status_pembayaran !== 'Paid')
         <button type="button" class="btn border border-0" onclick="confirmReset('{{ $sales_report->id }}')">
             <div class="d-flex align-items-center text-danger">
                 <i class="bi bi-x-circle-fill fs-5"></i>

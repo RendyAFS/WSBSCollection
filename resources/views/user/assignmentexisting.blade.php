@@ -103,7 +103,9 @@
                         name: 'status_pembayaran',
                         className: 'align-middle text-center',
                         render: function(data) {
-                            if (data === 'Unpaid') {
+                            if (data === 'Unpaid Visit 1') {
+                                return '<span class="badge text-bg-danger">Unpaid Visit 1</span>';
+                            } else if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
                             } else if (data === 'Pending') {
                                 return '<span class="badge text-bg-secondary">Pending</span>';
@@ -122,7 +124,7 @@
                     }
                 ],
                 order: [
-                    [7, 'asc']
+                    [9, 'desc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

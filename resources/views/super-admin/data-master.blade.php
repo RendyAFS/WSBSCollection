@@ -105,32 +105,38 @@
                     {
                         data: 'pelanggan',
                         name: 'pelanggan',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'event_source',
                         name: 'event_source',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'csto',
                         name: 'csto',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'mobile_contact_tel',
                         name: 'mobile_contact_tel',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'email_address',
                         name: 'email_address',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'alamat_pelanggan',
                         name: 'alamat_pelanggan',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        orderable: false
                     },
                     {
                         data: 'opsi-tabel-datamaster',
@@ -163,6 +169,8 @@
                 },
             });
         });
+
+
 
         document.getElementById('formFile').addEventListener('change', function() {
             document.getElementById('checkFileDataMaster').classList.remove('d-none');

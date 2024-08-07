@@ -375,6 +375,7 @@ class SuperAdminController extends Controller
                     'saldo' => $saldoFormatted,
                     'no_tlf' => $dataMaster->mobile_contact_tel,
                     'email' => $dataMaster->email_address,
+                    'alamat' => $dataMaster->alamat_pelanggan,
                     'sto' => $dataMaster->csto,
                     'umur_customer' => $ageRange,
                     'produk' => $row1[array_search('PRODUK', $data1[0])],
@@ -389,6 +390,7 @@ class SuperAdminController extends Controller
                     'saldo' => '0',
                     'no_tlf' => 'N/A',
                     'email' => 'N/A',
+                    'alamat' => 'N/A',
                     'sto' => 'N/A',
                     'umur_customer' => 'N/A',
                     'produk' => 'N/A',
@@ -405,6 +407,7 @@ class SuperAdminController extends Controller
                 'saldo' => $row['saldo'] ?: 'N/A',
                 'no_tlf' => $row['no_tlf'] ?: 'N/A',
                 'email' => $row['email'] ?: 'N/A',
+                'alamat' => $row['alamat'] ?: 'N/A',
                 'sto' => $row['sto'] ?: 'N/A',
                 'umur_customer' => $row['umur_customer'] ?: 'N/A',
                 'produk' => $row['produk'] ?: 'N/A',
@@ -445,6 +448,7 @@ class SuperAdminController extends Controller
                 'saldo' => $row->saldo ?: '0',
                 'no_tlf' => $row->no_tlf ?: 'N/A',
                 'email' => $row->email ?: 'N/A',
+                'alamat' => $row->alamat ?: 'N/A',
                 'sto' => $row->sto ?: 'N/A',
                 'umur_customer' => $row->umur_customer ?: 'N/A',
                 'produk' => $row->produk ?: 'N/A',
@@ -601,6 +605,7 @@ class SuperAdminController extends Controller
         // Store the original values
         $original_no_tlf = $billper->no_tlf;
         $original_email = $billper->email;
+        $original_alamat = $billper->alamat;
 
         // Update data with new values
         $billper->nama = $request->input('nama');
@@ -608,6 +613,7 @@ class SuperAdminController extends Controller
         $billper->saldo = $request->input('saldo');
         $billper->no_tlf = $request->input('no_tlf');
         $billper->email = $request->input('email');
+        $billper->alamat = $request->input('alamat');
         $billper->sto = $request->input('sto');
         $billper->produk = $request->input('produk');
         $billper->umur_customer = $request->input('umur_customer');
@@ -616,7 +622,7 @@ class SuperAdminController extends Controller
         $billper->save();
 
         // Check if either no_tlf or email has changed
-        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email')) {
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
             // Save updated data to the riwayat table
             RiwayatBillper::create([
                 'nama' => $billper->nama,
@@ -624,6 +630,7 @@ class SuperAdminController extends Controller
                 'saldo' => $billper->saldo,
                 'no_tlf' => $billper->no_tlf,
                 'email' => $billper->email,
+                'alamat' => $billper->alamat,
                 'sto' => $billper->sto,
                 'umur_customer' => $billper->umur_customer,
                 'produk' => $billper->produk,
@@ -1237,6 +1244,7 @@ class SuperAdminController extends Controller
                     'saldo' => $saldoFormatted,
                     'no_tlf' => $dataMaster->mobile_contact_tel,
                     'email' => $dataMaster->email_address,
+                    'alamat' => $dataMaster->alamat_pelanggan,
                     'sto' => $dataMaster->csto,
                     'umur_customer' => $ageRange,
                     'produk' => $row1[array_search('PRODUK', $data1[0])],
@@ -1251,6 +1259,7 @@ class SuperAdminController extends Controller
                     'saldo' => '0',
                     'no_tlf' => 'N/A',
                     'email' => 'N/A',
+                    'alamat' => 'N/A',
                     'sto' => 'N/A',
                     'umur_customer' => 'N/A',
                     'produk' => 'N/A',
@@ -1267,6 +1276,7 @@ class SuperAdminController extends Controller
                 'saldo' => $row['saldo'] ?: 'N/A',
                 'no_tlf' => $row['no_tlf'] ?: 'N/A',
                 'email' => $row['email'] ?: 'N/A',
+                'alamat' => $row['alamat'] ?: 'N/A',
                 'sto' => $row['sto'] ?: 'N/A',
                 'umur_customer' => $row['umur_customer'] ?: 'N/A',
                 'produk' => $row['produk'] ?: 'N/A',
@@ -1308,6 +1318,7 @@ class SuperAdminController extends Controller
                 'saldo' => $row->saldo ?: '0',
                 'no_tlf' => $row->no_tlf ?: 'N/A',
                 'email' => $row->email ?: 'N/A',
+                'alamat' => $row->alamat ?: 'N/A',
                 'sto' => $row->sto ?: 'N/A',
                 'umur_customer' => $row->umur_customer ?: 'N/A',
                 'produk' => $row->produk ?: 'N/A',
@@ -1464,6 +1475,7 @@ class SuperAdminController extends Controller
         // Store the original values
         $original_no_tlf = $existing->no_tlf;
         $original_email = $existing->email;
+        $original_alamat = $existing->alamat;
 
         // Update data with new values
         $existing->nama = $request->input('nama');
@@ -1471,6 +1483,7 @@ class SuperAdminController extends Controller
         $existing->saldo = $request->input('saldo');
         $existing->no_tlf = $request->input('no_tlf');
         $existing->email = $request->input('email');
+        $existing->alamat = $request->input('alamat');
         $existing->sto = $request->input('sto');
         $existing->produk = $request->input('produk');
         $existing->umur_customer = $request->input('umur_customer');
@@ -1479,7 +1492,7 @@ class SuperAdminController extends Controller
         $existing->save();
 
         // Check if either no_tlf or email has changed
-        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email')) {
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
             // Save updated data to the riwayat table
             RiwayatExisting::create([
                 'nama' => $existing->nama,
@@ -1487,6 +1500,7 @@ class SuperAdminController extends Controller
                 'saldo' => $existing->saldo,
                 'no_tlf' => $existing->no_tlf,
                 'email' => $existing->email,
+                'alamat' => $existing->alamat,
                 'sto' => $existing->sto,
                 'umur_customer' => $existing->umur_customer,
                 'produk' => $existing->produk,

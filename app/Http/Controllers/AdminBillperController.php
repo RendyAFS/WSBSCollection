@@ -6,6 +6,8 @@ use App\Exports\AllExport;
 use App\Exports\SalesReportBillperExisting;
 use App\Models\Billper;
 use App\Models\Existing;
+use App\Models\RiwayatBillper;
+use App\Models\RiwayatExisting;
 use App\Models\SalesReport;
 use App\Models\User;
 use App\Models\VocKendala;
@@ -191,17 +193,43 @@ class AdminBillperController extends Controller
     public function updatebillpersadminbillper(Request $request, $id)
     {
         $billper = Billper::findOrFail($id);
+
+        // Store the original values
+        $original_no_tlf = $billper->no_tlf;
+        $original_email = $billper->email;
+        $original_alamat = $billper->alamat;
+
+        // Update data with new values
         $billper->nama = $request->input('nama');
         $billper->no_inet = $request->input('no_inet');
         $billper->saldo = $request->input('saldo');
         $billper->no_tlf = $request->input('no_tlf');
         $billper->email = $request->input('email');
+        $billper->alamat = $request->input('alamat');
         $billper->sto = $request->input('sto');
         $billper->produk = $request->input('produk');
         $billper->umur_customer = $request->input('umur_customer');
         $billper->status_pembayaran = $request->input('status_pembayaran');
+        $billper->nper = $request->input('nper');
         $billper->save();
 
+        // Check if either no_tlf or email has changed
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
+            // Save updated data to the riwayat table
+            RiwayatBillper::create([
+                'nama' => $billper->nama,
+                'no_inet' => $billper->no_inet,
+                'saldo' => $billper->saldo,
+                'no_tlf' => $billper->no_tlf,
+                'email' => $billper->email,
+                'alamat' => $billper->alamat,
+                'sto' => $billper->sto,
+                'umur_customer' => $billper->umur_customer,
+                'produk' => $billper->produk,
+                'status_pembayaran' => $billper->status_pembayaran,
+                'nper' => $billper->nper,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('billper-adminbillper.index');
@@ -272,7 +300,6 @@ class AdminBillperController extends Controller
                     $q->where('name', $filterSales);
                 });
             }
-
         }])->get();
 
         // Retrieve all sales with total assignments and total visits
@@ -595,17 +622,43 @@ class AdminBillperController extends Controller
     public function updateexistingsadminbillper(Request $request, $id)
     {
         $existing = Existing::findOrFail($id);
+
+        // Store the original values
+        $original_no_tlf = $existing->no_tlf;
+        $original_email = $existing->email;
+        $original_alamat = $existing->alamat;
+
+        // Update data with new values
         $existing->nama = $request->input('nama');
         $existing->no_inet = $request->input('no_inet');
         $existing->saldo = $request->input('saldo');
         $existing->no_tlf = $request->input('no_tlf');
         $existing->email = $request->input('email');
+        $existing->alamat = $request->input('alamat');
         $existing->sto = $request->input('sto');
         $existing->produk = $request->input('produk');
         $existing->umur_customer = $request->input('umur_customer');
         $existing->status_pembayaran = $request->input('status_pembayaran');
+        $existing->nper = $request->input('nper');
         $existing->save();
 
+        // Check if either no_tlf or email has changed
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
+            // Save updated data to the riwayat table
+            RiwayatExisting::create([
+                'nama' => $existing->nama,
+                'no_inet' => $existing->no_inet,
+                'saldo' => $existing->saldo,
+                'no_tlf' => $existing->no_tlf,
+                'email' => $existing->email,
+                'alamat' => $existing->alamat,
+                'sto' => $existing->sto,
+                'umur_customer' => $existing->umur_customer,
+                'produk' => $existing->produk,
+                'status_pembayaran' => $existing->status_pembayaran,
+                'nper' => $existing->nper,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('existing-adminbillper.index');
@@ -676,7 +729,6 @@ class AdminBillperController extends Controller
                     $q->where('name', $filterSales);
                 });
             }
-
         }])->get();
 
         // Retrieve Existing sales with total assignments and total visits

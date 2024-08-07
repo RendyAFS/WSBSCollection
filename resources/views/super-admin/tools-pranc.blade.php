@@ -260,6 +260,7 @@
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            showLoading();
                             form.submit();
                         }
                     });
@@ -287,6 +288,7 @@
                     reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        showLoading();
                         form.submit();
                     }
                 });

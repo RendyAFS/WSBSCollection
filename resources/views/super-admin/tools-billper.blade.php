@@ -64,7 +64,7 @@
                     @if ($temp_billpers->isEmpty())
                         {{-- None --}}
                     @else
-                        <form action="{{ route('savebillpers') }}" method="POST">
+                        <form action="{{ route('savebillpers') }}" method="POST" id="saveForm">
                             @csrf
                             <!-- Tambahkan input lainnya sesuai kebutuhan -->
                             <button type="submit" class="btn btn-green btn-save me-2" id="btn-save">
@@ -227,7 +227,6 @@
         // Modal delete confirmation
         $(".datatable").on("click", ".btn-delete", function(e) {
             e.preventDefault();
-
             var form = $(this).closest("form");
 
             Swal.fire({
@@ -250,7 +249,6 @@
             document.querySelectorAll('.btn-save').forEach(function(button) {
                 button.addEventListener('click', function(event) {
                     event.preventDefault();
-
                     const form = this.closest('form');
 
                     Swal.fire({
@@ -265,6 +263,7 @@
                         cancelButtonColor: '#727375'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            showLoading();
                             form.submit();
                         }
                     });
@@ -272,12 +271,10 @@
             });
         });
 
-
         // Modal delete all confirmation
         document.querySelectorAll('.btn-delete-all').forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-
                 const form = this.closest('form');
 
                 Swal.fire({
@@ -292,6 +289,7 @@
                     cancelButtonColor: '#727375'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        showLoading();
                         form.submit();
                     }
                 });
@@ -348,17 +346,16 @@
             file1StatusElement.classList.remove('text-success', 'text-danger');
 
             let vlookupButton = document.getElementById('vlookupBtn');
-
             let checkFileButton = document.getElementById('checkFile1');
             checkFileButton.classList.add('d-none');
             let loadingElement = document.createElement('div');
             loadingElement.classList.add('loading', 'd-block');
             loadingElement.innerHTML = `
-        <div class="spinner-border text-dark" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Proses
-    `;
+            <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Proses
+        `;
             checkFileButton.parentElement.appendChild(loadingElement);
 
             fetch('{{ route('vlookup.checkFile1billper') }}', {

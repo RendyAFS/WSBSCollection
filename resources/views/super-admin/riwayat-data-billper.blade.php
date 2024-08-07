@@ -18,6 +18,7 @@
                     <th id="th" class="align-middle text-center">Saldo</th>
                     <th id="th" class="align-middle text-center">No. Tlf</th>
                     <th id="th" class="align-middle">Email</th>
+                    <th id="th" class="align-middle">Alamat</th>
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Umur Customer</th>
@@ -80,6 +81,11 @@
                         className: 'align-middle text-center'
                     },
                     {
+                        data: 'alamat',
+                        name: 'alamat',
+                        className: 'align-middle text-center'
+                    },
+                    {
                         data: 'sto',
                         name: 'sto',
                         className: 'align-middle text-center'
@@ -109,7 +115,7 @@
 
                 ],
                 order: [
-                    [9, 'desc']
+                    [10, 'desc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

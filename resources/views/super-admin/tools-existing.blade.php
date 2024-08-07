@@ -239,6 +239,7 @@
                 cancelButtonColor: '#727375'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    showLoading();
                     form.submit();
                 }
             });
@@ -264,6 +265,7 @@
                         cancelButtonColor: '#727375'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            showLoading();
                             form.submit();
                         }
                     });

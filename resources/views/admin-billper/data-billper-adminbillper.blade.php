@@ -167,6 +167,7 @@
                     <th id="th" class="align-middle text-center">STO</th>
                     <th id="th" class="align-middle text-center">NPER</th>
                     <th id="th" class="align-middle text-center">Produk</th>
+                    <th id="th" class="align-middle text-center">Alamat</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Sales</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
@@ -253,6 +254,11 @@
                         className: 'align-middle text-center'
                     },
                     {
+                        data: 'alamat',
+                        name: 'alamat',
+                        className: 'align-middle text-center'
+                    },
+                    {
                         data: 'status_pembayaran',
                         name: 'status_pembayaran',
                         className: 'align-middle text-center',
@@ -281,7 +287,7 @@
                     }
                 ],
                 order: [
-                    [4, 'desc']
+                    [5, 'desc']
                 ],
                 lengthMenu: [
                     [100, 500, 1000, -1],

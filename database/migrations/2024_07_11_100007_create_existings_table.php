@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('saldo')->nullable();
             $table->string('no_tlf')->nullable();
             $table->string('email')->nullable();
+            $table->string('alamat')->nullable();
             $table->string('sto')->nullable();
             $table->string('umur_customer')->nullable();
             $table->string('produk')->nullable();

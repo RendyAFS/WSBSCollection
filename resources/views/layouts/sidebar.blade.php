@@ -38,7 +38,8 @@
                 Manajer Billper
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('toolsbillper.index') || Route::is('billper.index') || Route::is('billperriwayat.index')  || Route::is('edit-billpers') ||  Route::is('reportdatabillper.index') || Route::is('grafikdatabillper.index') || Route::is('reportsalesbillper.index') ? 'show' : '' }} " id="manajerdatabillpersuperadmin">
+            <div class="collapse {{ Route::is('toolsbillper.index') || Route::is('billper.index') || Route::is('billperriwayat.index') || Route::is('edit-billpers') || Route::is('reportdatabillper.index') || Route::is('grafikdatabillper.index') || Route::is('reportsalesbillper.index') ? 'show' : '' }} "
+                id="manajerdatabillpersuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsbillper.index') ? 'active' : '' }}">
                         <a href="{{ route('toolsbillper.index') }}">
@@ -47,7 +48,8 @@
                             Tool
                         </a>
                     </li>
-                    <li class="{{ Route::is('billper.index') || Route::is('edit-billpers') || Route::is('billperriwayat.index') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('billper.index') || Route::is('edit-billpers') || Route::is('billperriwayat.index') ? 'active' : '' }}">
                         <a href="{{ route('billper.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('billper.index') || Route::is('edit-billpers') || Route::is('billperriwayat.index') ? '-fill' : '' }}"></i>
@@ -82,7 +84,8 @@
                 Manajer Existing
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('toolsexisting.index') ||  Route::is('existing.index') || Route::is('existingriwayat.index') || Route::is('edit-existings') || Route::is('reportdataexisting.index') || Route::is('grafikdataexisting.index') ||  Route::is('reportsalesexisting.index') ? 'show' : '' }}" id="manajerdataexistingsuperadmin">
+            <div class="collapse {{ Route::is('toolsexisting.index') || Route::is('existing.index') || Route::is('existingriwayat.index') || Route::is('edit-existings') || Route::is('reportdataexisting.index') || Route::is('grafikdataexisting.index') || Route::is('reportsalesexisting.index') ? 'show' : '' }}"
+                id="manajerdataexistingsuperadmin">
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('toolsexisting.index') ? 'active' : '' }}">
                         <a href="{{ route('toolsexisting.index') }}">
@@ -91,7 +94,8 @@
                             Tool
                         </a>
                     </li>
-                    <li class="{{ Route::is('existing.index') || Route::is('edit-existings') || Route::is('existingriwayat.index') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('existing.index') || Route::is('edit-existings') || Route::is('existingriwayat.index') ? 'active' : '' }}">
                         <a href="{{ route('existing.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('existing.index') || Route::is('edit-existings') || Route::is('existingriwayat.index') ? '-fill' : '' }}"></i>
@@ -126,7 +130,8 @@
                 Manajer Pra NPC
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('toolspranpc.index') || Route::is('pranpc.index') || Route::is('pranpcriwayat.index') || Route::is('edit-pranpcs') || Route::is('reportdatapranpc.index') || Route::is('reportsalespranpc.index') ? 'show' : '' }}" id="manajerdatapranpcsuperadmin">
+            <div class="collapse {{ Route::is('toolspranpc.index') || Route::is('pranpc.index') || Route::is('pranpcriwayat.index') || Route::is('edit-pranpcs') || Route::is('reportdatapranpc.index') || Route::is('reportsalespranpc.index') ? 'show' : '' }}"
+                id="manajerdatapranpcsuperadmin">
                 <ul class="list-unstyled">
                     <li class=" {{ Route::is('toolspranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('toolspranpc.index') }}">
@@ -135,7 +140,8 @@
                             Tool
                         </a>
                     </li>
-                    <li class=" {{ Route::is('pranpc.index') || Route::is('edit-pranpcs') || Route::is('pranpcriwayat.index') ? 'active' : '' }}">
+                    <li
+                        class=" {{ Route::is('pranpc.index') || Route::is('edit-pranpcs') || Route::is('pranpcriwayat.index') ? 'active' : '' }}">
                         <a href="{{ route('pranpc.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('pranpc.index') || Route::is('edit-pranpcs') || Route::is('pranpcriwayat.index') ? '-fill' : '' }}"></i>
@@ -178,17 +184,6 @@
                     </li>
                 </ul>
             </div>
-
-
-
-
-
-
-
-
-
-
-
         @elseif(auth()->user()->level == 'Admin Billper')
             <li class="{{ Route::is('adminbillper.index') ? 'active' : '' }}">
                 <a href="{{ route('adminbillper.index') }}" class="fw-bold">
@@ -207,9 +202,11 @@
                 Manajer Data Billper
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('billper-adminbillper.index') || Route::is('report-billper-adminbillper.index') || Route::is('edit-billpersadminbillper') ? 'show' : '' }}" id="manajerdatabillperadminbillper">
+            <div class="collapse {{ Route::is('billper-adminbillper.index') || Route::is('report-billper-adminbillper.index') || Route::is('edit-billpersadminbillper') ? 'show' : '' }}"
+                id="manajerdatabillperadminbillper">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('billper-adminbillper.index') || Route::is('edit-billpersadminbillper') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('billper-adminbillper.index') || Route::is('edit-billpersadminbillper') ? 'active' : '' }}">
                         <a href="{{ route('billper-adminbillper.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('billper-adminbillper.index') || Route::is('edit-billpersadminbillper') ? '-fill' : '' }}"></i>
@@ -238,9 +235,11 @@
                 Manajer Data Existing
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('existing-adminbillper.index') || Route::is('report-existing-adminbillper.index') || Route::is('edit-existingsadminbillper') ? 'show' : '' }}" id="manajerdataexistingadminbillper">
+            <div class="collapse {{ Route::is('existing-adminbillper.index') || Route::is('report-existing-adminbillper.index') || Route::is('edit-existingsadminbillper') ? 'show' : '' }}"
+                id="manajerdataexistingadminbillper">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('existing-adminbillper.index') || Route::is('edit-existingsadminbillper') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('existing-adminbillper.index') || Route::is('edit-existingsadminbillper') ? 'active' : '' }}">
                         <a href="{{ route('existing-adminbillper.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('existing-adminbillper.index') || Route::is('edit-existingsadminbillper') ? '-fill' : '' }}"></i>
@@ -258,19 +257,6 @@
                     </li>
                 </ul>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
         @elseif(auth()->user()->level == 'Admin Pranpc')
             <li class="{{ Route::is('adminpranpc.index') ? 'active' : '' }}">
                 <a href="{{ route('adminpranpc.index') }}" class="fw-bold">
@@ -289,9 +275,11 @@
                 Manajer Data Pranpc
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('pranpc-adminpranpc.index') || Route::is('report-pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? 'show' : '' }}" id="manajerdatapranpcadminpranpc">
+            <div class="collapse {{ Route::is('pranpc-adminpranpc.index') || Route::is('report-pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? 'show' : '' }}"
+                id="manajerdatapranpcadminpranpc">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? 'active' : '' }}">
                         <a href="{{ route('pranpc-adminpranpc.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? '-fill' : '' }}"></i>
@@ -302,7 +290,8 @@
                 <ul class="list-unstyled">
                     <li class="{{ Route::is('report-pranpc-adminpranpc.index') ? 'active' : '' }}">
                         <a href="{{ route('report-pranpc-adminpranpc.index') }}">
-                            <i class="bi bi-flag{{ Route::is('report-pranpc-adminpranpc.index') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-flag{{ Route::is('report-pranpc-adminpranpc.index') ? '-fill' : '' }}"></i>
                             Report Sales Pranpc
                         </a>
                     </li>
@@ -318,9 +307,11 @@
                 Manajer Data Existing
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('existing-adminpranpc.index') ||   Route::is('report-existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? 'show' : '' }}" id="manajerdataexistingadminpranpc">
+            <div class="collapse {{ Route::is('existing-adminpranpc.index') || Route::is('report-existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? 'show' : '' }}"
+                id="manajerdataexistingadminpranpc">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? 'active' : '' }}">
                         <a href="{{ route('existing-adminpranpc.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? '-fill' : '' }}"></i>
@@ -338,22 +329,6 @@
                     </li>
                 </ul>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         @elseif(auth()->user()->level == 'Sales')
             <li class="{{ Route::is('user.index') ? 'active' : '' }}">
                 <a href="{{ route('user.index') }}" class="fw-bold">
@@ -370,9 +345,11 @@
                 Operasional Billper
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('assignmentbillper.index') || Route::is('reportassignmentbillper.index') || Route::is('info-assignmentbillper') || Route::is('info-reportassignmentbillper') ? 'show' : '' }}" id="manajerdatabillperuser">
+            <div class="collapse {{ Route::is('assignmentbillper.index') || Route::is('reportassignmentbillper.index') || Route::is('info-assignmentbillper') || Route::is('info-reportassignmentbillper') ? 'show' : '' }}"
+                id="manajerdatabillperuser">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('assignmentbillper.index') ||  Route::is('info-assignmentbillper') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('assignmentbillper.index') || Route::is('info-assignmentbillper') ? 'active' : '' }}">
                         <a href="{{ route('assignmentbillper.index') }}">
                             <i
                                 class="bi bi-clipboard-check{{ Route::is('assignmentbillper.index') || Route::is('info-assignmentbillper') ? '-fill' : '' }}"></i>
@@ -382,9 +359,11 @@
                 </ul>
 
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('reportassignmentbillper.index') ||  Route::is('info-reportassignmentbillper') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('reportassignmentbillper.index') || Route::is('info-reportassignmentbillper') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentbillper.index') }}">
-                            <i class="bi bi-flag{{ Route::is('reportassignmentbillper.index') || Route::is('info-reportassignmentbillper') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-flag{{ Route::is('reportassignmentbillper.index') || Route::is('info-reportassignmentbillper') ? '-fill' : '' }}"></i>
                             Report
                         </a>
                     </li>
@@ -400,9 +379,11 @@
                 Operasional Existing
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('assignmentexisting.index') || Route::is('reportassignmentexisting.index') || Route::is('info-assignmentexisting') || Route::is('info-reportassignmentexisting') ? 'show' : '' }}" id="manajerdataexistinguser">
+            <div class="collapse {{ Route::is('assignmentexisting.index') || Route::is('reportassignmentexisting.index') || Route::is('info-assignmentexisting') || Route::is('info-reportassignmentexisting') ? 'show' : '' }}"
+                id="manajerdataexistinguser">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('assignmentexisting.index') ||  Route::is('info-assignmentexisting') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('assignmentexisting.index') || Route::is('info-assignmentexisting') ? 'active' : '' }}">
                         <a href="{{ route('assignmentexisting.index') }}">
                             <i
                                 class="bi bi-clipboard-check{{ Route::is('assignmentexisting.index') || Route::is('info-assignmentexisting') ? '-fill' : '' }}"></i>
@@ -412,9 +393,11 @@
                 </ul>
 
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('reportassignmentexisting.index') ||  Route::is('info-reportassignmentexisting') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('reportassignmentexisting.index') || Route::is('info-reportassignmentexisting') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentexisting.index') }}">
-                            <i class="bi bi-flag{{ Route::is('reportassignmentexisting.index') ||  Route::is('info-reportassignmentexisting') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-flag{{ Route::is('reportassignmentexisting.index') || Route::is('info-reportassignmentexisting') ? '-fill' : '' }}"></i>
                             Report
                         </a>
                     </li>
@@ -431,9 +414,11 @@
                 Operasional Pranpc
             </span>
             <hr class="border border-white my-1">
-            <div class="collapse {{ Route::is('assignmentpranpc.index') || Route::is('reportassignmentpranpc.index') || Route::is('info-assignmentpranpc') || Route::is('info-reportassignmentpranpc') ? 'show' : '' }}" id="manajerdatapranpcperuser">
+            <div class="collapse {{ Route::is('assignmentpranpc.index') || Route::is('reportassignmentpranpc.index') || Route::is('info-assignmentpranpc') || Route::is('info-reportassignmentpranpc') ? 'show' : '' }}"
+                id="manajerdatapranpcperuser">
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('assignmentpranpc.index') ||  Route::is('info-assignmentpranpc') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('assignmentpranpc.index') || Route::is('info-assignmentpranpc') ? 'active' : '' }}">
                         <a href="{{ route('assignmentpranpc.index') }}">
                             <i
                                 class="bi bi-clipboard-check{{ Route::is('assignmentpranpc.index') || Route::is('info-assignmentpranpc') ? '-fill' : '' }}"></i>
@@ -443,9 +428,11 @@
                 </ul>
 
                 <ul class="list-unstyled">
-                    <li class="{{ Route::is('reportassignmentpranpc.index') ||  Route::is('info-reportassignmentpranpc') ? 'active' : '' }}">
+                    <li
+                        class="{{ Route::is('reportassignmentpranpc.index') || Route::is('info-reportassignmentpranpc') ? 'active' : '' }}">
                         <a href="{{ route('reportassignmentpranpc.index') }}">
-                            <i class="bi bi-flag{{ Route::is('reportassignmentpranpc.index') ||  Route::is('info-reportassignmentpranpc') ? '-fill' : '' }}"></i>
+                            <i
+                                class="bi bi-flag{{ Route::is('reportassignmentpranpc.index') || Route::is('info-reportassignmentpranpc') ? '-fill' : '' }}"></i>
                             Report
                         </a>
                     </li>
@@ -460,9 +447,16 @@
     document.addEventListener('DOMContentLoaded', function() {
         var collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
         collapseElements.forEach(function(collapseElement) {
+            var target = document.querySelector(collapseElement.getAttribute('href'));
+            var icon = collapseElement.querySelector('i.bi');
+
+            // Check if the target collapse is already shown (active route)
+            if (target.classList.contains('show')) {
+                icon.classList.remove('bi-chevron-right');
+                icon.classList.add('bi-chevron-down');
+            }
+
             collapseElement.addEventListener('click', function() {
-                var target = document.querySelector(collapseElement.getAttribute('href'));
-                var icon = collapseElement.querySelector('i.bi');
                 target.addEventListener('shown.bs.collapse', function() {
                     icon.classList.remove('bi-chevron-right');
                     icon.classList.add('bi-chevron-down');

@@ -41,8 +41,41 @@ class SuperAdminController extends Controller
     public function index()
     {
         $title = 'Dashboard';
-        return view('super-admin.index', compact('title'));
+
+        // Menghitung jumlah data dari setiap model
+        $billperCount = Billper::count();
+        $existingCount = Existing::count();
+        $dataMasterCount = DataMaster::count();
+
+        // Menghitung jumlah data untuk bulan ini
+        $currentMonth = date('Y-m');
+        $lastMonth = date('Y-m', strtotime('-1 month'));
+
+        // Billper
+        $billperCurrentMonthCount = Billper::where('nper', $currentMonth)->count();
+        $billperLastMonthCount = Billper::where('nper', $lastMonth)->count();
+        $percentBillper = $billperLastMonthCount > 0 ? (($billperCurrentMonthCount - $billperLastMonthCount) / $billperLastMonthCount) * 100 : 0;
+
+        // Existing
+        $existingCurrentMonthCount = Existing::where('nper', $currentMonth)->count();
+        $existingLastMonthCount = Existing::where('nper', $lastMonth)->count();
+        $percentExisting = $existingLastMonthCount > 0 ? (($existingCurrentMonthCount - $existingLastMonthCount) / $existingLastMonthCount) * 100 : 0;
+
+        // Data Master
+        $dataMasterCurrentMonthCount = DataMaster::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+        $dataMasterLastMonthCount = DataMaster::whereMonth('created_at', date('m', strtotime('-1 month')))->whereYear('created_at', date('Y', strtotime('-1 month')))->count();
+        $percentDataMaster = $dataMasterLastMonthCount > 0 ? (($dataMasterCurrentMonthCount - $dataMasterLastMonthCount) / $dataMasterLastMonthCount) * 100 : 0;
+        // dd(
+        //     $dataMasterCurrentMonthCount,
+        //     $dataMasterLastMonthCount,
+        //     $percentDataMaster
+        // );
+
+        // Mengirimkan data ke tampilan view
+        return view('super-admin.index', compact('title', 'billperCount', 'existingCount', 'dataMasterCount', 'percentBillper', 'percentExisting', 'percentDataMaster'));
     }
+
+
 
 
     // Data Master

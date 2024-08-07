@@ -70,6 +70,11 @@
                                             value="{{ $billper->email }}">
                                     </div>
                                     <div class="mb-3">
+                                        <label for="alamat" class="form-label fw-bold">Alamat</label>
+                                        <input type="text" class="form-control" id="alamat" name="alamat"
+                                            value="{{ $billper->alamat }}">
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="saldo" class="form-label fw-bold">Saldo</label>
                                         <input type="text" class="form-control bg-secondary text-dark bg-opacity-25"
                                             readonly id="saldo" name="saldo" value="{{ $billper->saldo }}">

@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             [
                 'level' => 'Admin Pranpc',
                 'status' => 'Aktif',
-                'name' => 'Admin Pra NPC',
+                'name' => 'Admin Pranpc',
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 'ap@ap',

@@ -172,7 +172,6 @@
                     <th id="th" class="align-middle text-center">Bill Bln1</th>
                     <th id="th" class="align-middle text-center">No Hp</th>
                     <th id="th" class="align-middle">Email</th>
-                    <th id="th" class="align-middle text-center">Alamat</th>
                     <th id="th" class="align-middle text-center">Status Pembayaran</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
@@ -258,11 +257,6 @@
                     {
                         data: 'email',
                         name: 'email',
-                        className: 'align-middle text-center'
-                    },
-                    {
-                        data: 'alamat',
-                        name: 'alamat',
                         className: 'align-middle text-center'
                     },
                     {

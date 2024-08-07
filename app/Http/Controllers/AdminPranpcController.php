@@ -9,6 +9,8 @@ use App\Exports\SalesReportPranpc;
 use App\Models\Billper;
 use App\Models\Existing;
 use App\Models\Pranpc;
+use App\Models\RiwayatExisting;
+use App\Models\RiwayatPranpc;
 use App\Models\SalesReport;
 use App\Models\User;
 use App\Models\VocKendala;
@@ -132,6 +134,13 @@ class AdminPranpcController extends Controller
     public function updatepranpcsadminpranpc(Request $request, $id)
     {
         $pranpc = Pranpc::findOrFail($id);
+
+        // Store the original values
+        $original_multi_kontak1 = $pranpc->multi_kontak1;
+        $original_email = $pranpc->email;
+        $original_alamat = $pranpc->alamat;
+
+        // Update data with new values
         $pranpc->nama = $request->input('nama');
         $pranpc->status_pembayaran = $request->input('status_pembayaran');
         $pranpc->snd = $request->input('snd');
@@ -145,6 +154,23 @@ class AdminPranpcController extends Controller
         $pranpc->alamat = $request->input('alamat');
         $pranpc->save();
 
+        // Check if either multi_kontak1 or email has changed
+        if ($original_multi_kontak1 !== $request->input('multi_kontak1') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
+            // Save updated data to the riwayat table
+            RiwayatPranpc::create([
+                'nama' => $pranpc->nama,
+                'status_pembayaran' => $pranpc->status_pembayaran,
+                'snd' => $pranpc->snd,
+                'sto' => $pranpc->sto,
+                'bill_bln' => $pranpc->bill_bln,
+                'bill_bln1' => $pranpc->bill_bln1,
+                'mintgk' => $pranpc->mintgk,
+                'maxtgk' => $pranpc->maxtgk,
+                'multi_kontak1' => $pranpc->multi_kontak1,
+                'email' => $pranpc->email,
+                'alamat' => $pranpc->alamat,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('pranpc-adminpranpc.index');
@@ -579,17 +605,43 @@ class AdminPranpcController extends Controller
     public function updateexistingsadminpranpc(Request $request, $id)
     {
         $existing = Existing::findOrFail($id);
+
+        // Store the original values
+        $original_no_tlf = $existing->no_tlf;
+        $original_email = $existing->email;
+        $original_alamat = $existing->alamat;
+
+        // Update data with new values
         $existing->nama = $request->input('nama');
         $existing->no_inet = $request->input('no_inet');
         $existing->saldo = $request->input('saldo');
         $existing->no_tlf = $request->input('no_tlf');
         $existing->email = $request->input('email');
+        $existing->alamat = $request->input('alamat');
         $existing->sto = $request->input('sto');
         $existing->produk = $request->input('produk');
         $existing->umur_customer = $request->input('umur_customer');
         $existing->status_pembayaran = $request->input('status_pembayaran');
+        $existing->nper = $request->input('nper');
         $existing->save();
 
+        // Check if either no_tlf or email has changed
+        if ($original_no_tlf !== $request->input('no_tlf') || $original_email !== $request->input('email') || $original_alamat !== $request->input('alamat')) {
+            // Save updated data to the riwayat table
+            RiwayatExisting::create([
+                'nama' => $existing->nama,
+                'no_inet' => $existing->no_inet,
+                'saldo' => $existing->saldo,
+                'no_tlf' => $existing->no_tlf,
+                'email' => $existing->email,
+                'alamat' => $existing->alamat,
+                'sto' => $existing->sto,
+                'umur_customer' => $existing->umur_customer,
+                'produk' => $existing->produk,
+                'status_pembayaran' => $existing->status_pembayaran,
+                'nper' => $existing->nper,
+            ]);
+        }
 
         Alert::success('Data Berhasil Diperbarui');
         return redirect()->route('existing-adminpranpc.index');

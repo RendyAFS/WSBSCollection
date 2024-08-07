@@ -9,6 +9,6 @@ class Riwayat extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'deskripsi_riwayat', 'tanggal_riwayat'
+        'deskripsi_riwayat', 'tanggal_riwayat', 'riwayat_id'
     ];
 }

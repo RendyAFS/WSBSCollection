@@ -36,7 +36,7 @@
                             @elseif($user->level == 'Admin Billper')
                                 <span class="badge text-bg-success">Admin Billper</span>
                             @elseif($user->level == 'Admin Pranpc')
-                                <span class="badge text-bg-primary">Admin PraNPC</span>
+                                <span class="badge text-bg-primary">Admin Pranpc</span>
                             @else
                                 <span class="fw-normal">{{ $user->level }}</span>
                             @endif

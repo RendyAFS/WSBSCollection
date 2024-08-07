@@ -153,7 +153,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
         Route::get('viewpranpc/pdf/{id}', [SuperAdminController::class, 'viewgeneratePDFpranpc'])->name('viewpranpc.pdf');
         Route::get('pranpc/pdf/{id}', [SuperAdminController::class, 'generatePDFpranpc'])->name('pranpc.pdf');
         Route::delete('/destroy-pranpcs/{id}', [SuperAdminController::class, 'destroypranpcs'])->name('destroy-pranpcs');
-        Route::get('/data-pranp-criwayat', [SuperAdminController::class, 'indexpranpcriwayat'])->name('pranpcriwayat.index');
+        Route::get('/data-pranpc-riwayat', [SuperAdminController::class, 'indexpranpcriwayat'])->name('pranpcriwayat.index');
         Route::get('gettabelpranpcsriwayat', [SuperAdminController::class, 'getDatapranpcsriwayat'])->name('gettabelpranpcsriwayat');
 
         // Report Data Pranpc

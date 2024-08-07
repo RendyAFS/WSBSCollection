@@ -45,7 +45,7 @@ Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
 
         // Preview Data Master
         Route::get('/preview-data-master', [SuperAdminController::class, 'indexpreviewdatamaster'])->name('previewdatamaster.index');
-        Route::get('gettabelpreviewdatamaster', [SuperAdminController::class, 'getPreviewDatamasters'])->name('gettabelpreviewdatamaster');
+        Route::get('gettabelpreviewdatamaster', [SuperAdminController::class, 'getTempDatamasters'])->name('gettabelpreviewdatamaster');
         Route::get('edit-previewdatamasters/{id}', [SuperAdminController::class, 'editpreviewdatamasters'])->name('edit-tempdatamasters');
         Route::post('update-previewdatamasters/{id}', [SuperAdminController::class, 'updatepreviewdatamasters'])->name('update-previewdatamasters');
         Route::post('/savedatamasters', [SuperAdminController::class, 'savetempdatamasters'])->name('savedatamasters');

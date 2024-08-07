@@ -33,7 +33,10 @@ class UserController extends Controller
         if ($request->ajax()) {
             $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
             $query = Billper::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
-                ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
+                ->where('status_pembayaran', 'Unpaid') // Memfilter data dengan status pembayaran 'Unpaid'
+                ->with(['salesReports' => function ($query) {
+                    $query->select('billper_id', 'jmlh_visit'); // Memilih kolom yang dibutuhkan
+                }]); // Menambahkan relasi dengan SalesReport
 
             $data_billpers = $query->get();
             return datatables()->of($data_billpers)
@@ -41,9 +44,20 @@ class UserController extends Controller
                 ->addColumn('opsi-tabel-assignmentbillper', function ($billper) {
                     return view('components.opsi-tabel-assignmentbillper', compact('billper'));
                 })
+                ->addColumn('status_pembayaran', function ($billper) {
+                    $visitStatus = $billper->salesReports->contains(function ($report) {
+                        return $report->jmlh_visit === 'Visit 1';
+                    });
+
+                    if ($visitStatus) {
+                        return 'Unpaid Visit 1';
+                    }
+                    return $billper->status_pembayaran;
+                })
                 ->toJson();
         }
     }
+
 
     public function infoassignmentbillper($id)
     {
@@ -296,13 +310,26 @@ class UserController extends Controller
         if ($request->ajax()) {
             $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
             $query = Existing::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
-                ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
+                ->where('status_pembayaran', 'Unpaid') // Memfilter data dengan status pembayaran 'Unpaid'
+                ->with(['salesReports' => function ($query) {
+                    $query->select('existing_id', 'jmlh_visit'); // Memilih kolom yang dibutuhkan
+                }]); // Menambahkan relasi dengan SalesReport
 
             $data_existings = $query->get();
             return datatables()->of($data_existings)
                 ->addIndexColumn()
                 ->addColumn('opsi-tabel-assignmentexisting', function ($existing) {
                     return view('components.opsi-tabel-assignmentexisting', compact('existing'));
+                })
+                ->addColumn('status_pembayaran', function ($existing) {
+                    $visitStatus = $existing->salesReports->contains(function ($report) {
+                        return $report->jmlh_visit === 'Visit 1';
+                    });
+
+                    if ($visitStatus) {
+                        return 'Unpaid Visit 1';
+                    }
+                    return $existing->status_pembayaran;
                 })
                 ->toJson();
         }
@@ -590,12 +617,26 @@ class UserController extends Controller
         if ($request->ajax()) {
             $userId = Auth::id(); // Mendapatkan ID pengguna yang sedang masuk
             $query = Pranpc::where('users_id', $userId) // Memfilter data berdasarkan ID pengguna
-                ->where('status_pembayaran', 'Unpaid'); // Memfilter data dengan status pembayaran 'Unpaid'
+                ->where('status_pembayaran', 'Unpaid') // Memfilter data dengan status pembayaran 'Unpaid'
+                ->with(['salesReports' => function ($query) {
+                    $query->select('pranpc_id', 'jmlh_visit'); // Memilih kolom yang dibutuhkan
+                }]); // Menambahkan relasi dengan SalesReport
 
-            return datatables()->of($query)
+            $data_pranpcs = $query->get();
+            return datatables()->of($data_pranpcs)
                 ->addIndexColumn()
                 ->addColumn('opsi-tabel-assignmentpranpc', function ($pranpc) {
                     return view('components.opsi-tabel-assignmentpranpc', compact('pranpc'));
+                })
+                ->addColumn('status_pembayaran', function ($pranpc) {
+                    $visitStatus = $pranpc->salesReports->contains(function ($report) {
+                        return $report->jmlh_visit === 'Visit 1';
+                    });
+
+                    if ($visitStatus) {
+                        return 'Unpaid Visit 1';
+                    }
+                    return $pranpc->status_pembayaran;
                 })
                 ->toJson();
         }

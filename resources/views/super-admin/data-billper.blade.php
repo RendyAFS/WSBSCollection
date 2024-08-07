@@ -257,7 +257,6 @@
                         name: 'no_tlf',
                         className: 'align-middle text-center'
                     },
-
                     {
                         data: 'sto',
                         name: 'sto',
@@ -276,7 +275,7 @@
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle text-center',
+                        className: 'align-middle text-center'
                     },
                     {
                         data: 'status_pembayaran',
@@ -305,8 +304,8 @@
                     [5, 'desc']
                 ],
                 lengthMenu: [
-                    [100, 500, 1000, -1],
-                    [100, 500, 1000, "Semua"]
+                    [100, 500],
+                    [100, 500]
                 ],
                 language: {
                     search: "Cari",
@@ -334,6 +333,7 @@
                 dataTable.ajax.reload();
             });
         });
+
 
         function formatRupiah(angka, prefix) {
             var numberString = angka.replace(/[^,\d]/g, '').toString(),

@@ -107,12 +107,15 @@
                         name: 'status_pembayaran',
                         className: 'align-middle text-center',
                         render: function(data) {
-                            if (data === 'Unpaid')
+                            if (data === 'Unpaid Visit 1') {
+                                return '<span class="badge text-bg-danger">Unpaid Visit 1</span>';
+                            } else if (data === 'Unpaid') {
                                 return '<span class="badge text-bg-warning">Unpaid</span>';
-                            if (data === 'Pending')
+                            } else if (data === 'Pending') {
                                 return '<span class="badge text-bg-secondary">Pending</span>';
-                            if (data === 'Paid')
+                            } else if (data === 'Paid') {
                                 return '<span class="badge text-bg-success">Paid</span>';
+                            }
                             return data;
                         }
                     },

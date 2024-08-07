@@ -57,15 +57,50 @@ class SuperAdminController extends Controller
     public function getDatamasters(Request $request)
     {
         if ($request->ajax()) {
-            $data_masters = DataMaster::all();
-            return datatables()->of($data_masters)
-                ->addIndexColumn()
-                ->addColumn('opsi-tabel-datamaster', function ($masters) {
-                    return view('components.opsi-tabel-datamaster', compact('masters'));
-                })
-                ->toJson();
+            $query = DataMaster::orderBy('id', 'desc');
+
+            $totalData = $query->count();
+            $start = $request->input('start');
+            $length = $request->input('length');
+            $draw = $request->input('draw');
+            $searchValue = $request->input('search.value');
+
+            if (!empty($searchValue)) {
+                $query->where('pelanggan', 'like', '%' . $searchValue . '%')
+                    ->orWhere('event_source', 'like', '%' . $searchValue . '%')
+                    ->orWhere('csto', 'like', '%' . $searchValue . '%')
+                    ->orWhere('mobile_contact_tel', 'like', '%' . $searchValue . '%')
+                    ->orWhere('email_address', 'like', '%' . $searchValue . '%')
+                    ->orWhere('alamat_pelanggan', 'like', '%' . $searchValue . '%');
+            }
+
+            $filteredData = $query->count();
+            $data_masters = $query->skip($start)->take($length)->get();
+
+            $data = [];
+            foreach ($data_masters as $masters) {
+                $data[] = [
+                    'id' => $masters->id,
+                    'pelanggan' => $masters->pelanggan,
+                    'event_source' => $masters->event_source,
+                    'csto' => $masters->csto,
+                    'mobile_contact_tel' => $masters->mobile_contact_tel,
+                    'email_address' => $masters->email_address,
+                    'alamat_pelanggan' => $masters->alamat_pelanggan,
+                    'opsi-tabel-datamaster' => view('components.opsi-tabel-datamaster', compact('masters'))->render()
+                ];
+            }
+
+            return response()->json([
+                'draw' => intval($draw),
+                'recordsTotal' => $totalData,
+                'recordsFiltered' => $filteredData,
+                'data' => $data
+            ]);
         }
     }
+
+
 
     public function cekFileDataMaster(Request $request)
     {
@@ -169,7 +204,7 @@ class SuperAdminController extends Controller
         return view('super-admin.preview-data-master', compact('title', 'temp_data_masters'));
     }
 
-    public function getPreviewDatamasters(Request $request)
+    public function getTempDatamasters(Request $request)
     {
         if ($request->ajax()) {
             $temp_data_masters = TempDataMaster::all();

@@ -205,6 +205,16 @@
     color: var(--white-color);
 }
 
+.font-grey{
+    color: var(--grey-color);
+}
+
+.text-footer-card,
+.percent-footer-card{
+    font-size: 10pt;
+}
+
+
 
 #label-semua,
 #label-billper,

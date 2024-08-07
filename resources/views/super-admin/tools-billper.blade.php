@@ -91,6 +91,7 @@
                         <th id="th" class="align-middle text-center">Saldo</th>
                         <th id="th" class="align-middle text-center">No. Tlf</th>
                         <th id="th" class="align-middle">Email</th>
+                        <th id="th" class="align-middle text-center">NPER</th>
                         <th id="th" class="align-middle text-center">STO</th>
                         <th id="th" class="align-middle text-center">Umur Customer</th>
                         <th id="th" class="align-middle text-center">Produk</th>
@@ -158,6 +159,11 @@
                     {
                         data: 'email',
                         name: 'email',
+                        className: 'align-middle text-center'
+                    },
+                    {
+                        data: 'nper',
+                        name: 'nper',
                         className: 'align-middle text-center'
                     },
                     {

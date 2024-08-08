@@ -65,14 +65,120 @@ class SuperAdminController extends Controller
         $dataMasterCurrentMonthCount = DataMaster::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
         $dataMasterLastMonthCount = DataMaster::whereMonth('created_at', date('m', strtotime('-1 month')))->whereYear('created_at', date('Y', strtotime('-1 month')))->count();
         $percentDataMaster = $dataMasterLastMonthCount > 0 ? (($dataMasterCurrentMonthCount - $dataMasterLastMonthCount) / $dataMasterLastMonthCount) * 100 : 0;
-        // dd(
-        //     $dataMasterCurrentMonthCount,
-        //     $dataMasterLastMonthCount,
-        //     $percentDataMaster
-        // );
+
+
+        // Mengambil 3 kendala teratas dengan mengabaikan kendala dengan data "Tidak Ada"
+        $topKendalabillper = SalesReport::select('voc_kendalas.voc_kendala', DB::raw('COUNT(sales_reports.id) as count'))
+            ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
+            ->whereNotNull('sales_reports.billper_id')
+            ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->groupBy('voc_kendalas.voc_kendala')
+            ->orderBy('count', 'desc')
+            ->limit(3)
+            ->get();
+
+        // Menyiapkan data untuk chart
+        $labelbillper = $topKendalabillper->pluck('voc_kendala');
+        $databillper = $topKendalabillper->pluck('count');
+
+
+        // Mengambil 3 kendala teratas dengan mengabaikan kendala dengan data "Tidak Ada"
+        $topKendalaexisting = SalesReport::select('voc_kendalas.voc_kendala', DB::raw('COUNT(sales_reports.id) as count'))
+            ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
+            ->whereNotNull('sales_reports.existing_id')
+            ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->groupBy('voc_kendalas.voc_kendala')
+            ->orderBy('count', 'desc')
+            ->limit(3)
+            ->get();
+
+        // Menyiapkan data untuk chart
+        $labelexisting = $topKendalaexisting->pluck('voc_kendala');
+        $dataexisting = $topKendalaexisting->pluck('count');
+
+
+        // Mengambil 3 kendala teratas dengan mengabaikan kendala dengan data "Tidak Ada"
+        $topKendalapranpc = SalesReport::select('voc_kendalas.voc_kendala', DB::raw('COUNT(sales_reports.id) as count'))
+            ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
+            ->whereNotNull('sales_reports.pranpc_id')
+            ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->groupBy('voc_kendalas.voc_kendala')
+            ->orderBy('count', 'desc')
+            ->limit(3)
+            ->get();
+
+        // Menyiapkan data untuk chart
+        $labelpranpc = $topKendalapranpc->pluck('voc_kendala');
+        $datapranpc = $topKendalapranpc->pluck('count');
+
+
+
+        // Menghitung jumlah produk berdasarkan jenis dari tabel Billpers
+        $billperProdukCounts = DB::table('billpers')
+            ->select('produk', DB::raw('count(*) as count'))
+            ->groupBy('produk')
+            ->pluck('count', 'produk')
+            ->toArray();
+
+        // Menghitung jumlah produk berdasarkan jenis dari tabel Existing
+        $existingProdukCounts = DB::table('existings')
+            ->select('produk', DB::raw('count(*) as count'))
+            ->groupBy('produk')
+            ->pluck('count', 'produk')
+            ->toArray();
+
+        // Daftar jenis produk yang ingin ditampilkan
+        $jenisProduk = ['Internet', 'Telepon', 'Wifi Manage Service'];
+
+        // Menambahkan nilai default 0 untuk jenis produk yang tidak ada di Billpers
+        foreach ($jenisProduk as $jenis) {
+            if (!isset($billperProdukCounts[$jenis])) {
+                $billperProdukCounts[$jenis] = 0;
+            }
+        }
+
+        // Menambahkan nilai default 0 untuk jenis produk yang tidak ada di Existing
+        foreach ($jenisProduk as $jenis) {
+            if (!isset($existingProdukCounts[$jenis])) {
+                $existingProdukCounts[$jenis] = 0;
+            }
+        }
+
+        // Mengurutkan array agar sesuai dengan urutan jenis produk yang diinginkan
+        $billperProdukCounts = array_merge(array_flip($jenisProduk), $billperProdukCounts);
+        $existingProdukCounts = array_merge(array_flip($jenisProduk), $existingProdukCounts);
+
+        // Menghitung jumlah total produk dari tabel Billpers
+        $totalProdukBillper = DB::table('billpers')->count();
+
+        // Menghitung jumlah total produk dari tabel Existing
+        $totalProdukExisting = DB::table('existings')->count();
+
+        // Menjumlahkan total produk dari Billpers dan Existing
+        $produkCountBillperExisting = $totalProdukBillper + $totalProdukExisting;
 
         // Mengirimkan data ke tampilan view
-        return view('super-admin.index', compact('title', 'billperCount', 'existingCount', 'dataMasterCount', 'percentBillper', 'percentExisting', 'percentDataMaster'));
+        return view(
+            'super-admin.index',
+            compact(
+                'title',
+                'billperCount',
+                'existingCount',
+                'dataMasterCount',
+                'percentBillper',
+                'percentExisting',
+                'percentDataMaster',
+                'labelbillper',
+                'databillper',
+                'labelexisting',
+                'dataexisting',
+                'labelpranpc',
+                'datapranpc',
+                'billperProdukCounts',
+                'existingProdukCounts',
+                'produkCountBillperExisting' // Menambahkan data produkCountBillperExisting ke view
+            )
+        );
     }
 
 

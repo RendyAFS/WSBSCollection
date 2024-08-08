@@ -69,6 +69,113 @@
 }
 
 
-.contain-div{
+.contain-div {
     background-color: var(--white-color);
+}
+
+
+
+
+
+/* Dashboard Super Admin */
+.dashbooard-wraper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.dashboard-side-kiri {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: 180px;
+}
+
+.dashboard-side-kiri .card-content {
+    flex: 1 1 calc(33.333% - 10px);
+    display: flex;
+}
+
+.dashboard-side-kiri .card-content .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+}
+
+
+.wrapper-content-2 {
+    display: flex;
+    flex-direction: column;
+    /* Ensure items stack vertically */
+    align-items: center;
+    /* Center items horizontally */
+}
+
+.wrapper-content-2 .d-flex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.wrapper-content-2 .text-left {
+    text-align: left;
+    /* Align text to the left */
+}
+
+.wrapper-content-2 .text-right {
+    text-align: right;
+    /* Align text to the right */
+}
+
+.wrapper-content-2 .text-left .mt-1,
+.wrapper-content-2 .text-right .mt-1 {
+    margin-top: 0.5rem;
+    /* Adjust spacing between lines */
+}
+
+.wrapper-content-2 .content-2 {
+    display: flex;
+    /* Ensure the content inside is using flexbox */
+    justify-content: center;
+    /* Center items horizontally within content-2 */
+    width: 98%;
+    /* Ensure content-2 takes up the full width available */
+}
+
+
+
+
+
+.dashboard-side-kanan {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+/* Media Query for medium screens (up to 1060px) */
+@media (max-width: 1400px) {
+    .dashbooard-wraper {
+        flex-direction: column;
+    }
+
+    .dashboard-side-kiri {
+        flex-direction: row;
+    }
+
+    .dashboard-side-kiri .card-content {
+        flex: 1 1 100%;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-side-kiri .card-content .card {
+        height: auto;
+    }
+
+    .dashboard-side-kanan {
+        width: 100%;
+        margin-top: 10px;
+    }
 }

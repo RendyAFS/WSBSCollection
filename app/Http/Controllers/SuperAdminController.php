@@ -48,16 +48,22 @@ class SuperAdminController extends Controller
         $dataMasterCount = DataMaster::count();
 
         // Menghitung jumlah data untuk bulan ini
-        $currentMonth = date('Y-m');
+        $currentMonthYear = date('Y-m');
         $lastMonth = date('Y-m', strtotime('-1 month'));
 
+        // Untuk tipe created_at dan update_at
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+
+
         // Billper
-        $billperCurrentMonthCount = Billper::where('nper', $currentMonth)->count();
+        $billperCurrentMonthCount = Billper::where('nper', $currentMonthYear)->count();
         $billperLastMonthCount = Billper::where('nper', $lastMonth)->count();
         $percentBillper = $billperLastMonthCount > 0 ? (($billperCurrentMonthCount - $billperLastMonthCount) / $billperLastMonthCount) * 100 : 0;
 
         // Existing
-        $existingCurrentMonthCount = Existing::where('nper', $currentMonth)->count();
+        $existingCurrentMonthCount = Existing::where('nper', $currentMonthYear)->count();
         $existingLastMonthCount = Existing::where('nper', $lastMonth)->count();
         $percentExisting = $existingLastMonthCount > 0 ? (($existingCurrentMonthCount - $existingLastMonthCount) / $existingLastMonthCount) * 100 : 0;
 
@@ -72,6 +78,8 @@ class SuperAdminController extends Controller
             ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
             ->whereNotNull('sales_reports.billper_id')
             ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->whereMonth('sales_reports.updated_at', $currentMonth)
+            ->whereYear('sales_reports.updated_at', $currentYear)
             ->groupBy('voc_kendalas.voc_kendala')
             ->orderBy('count', 'desc')
             ->limit(3)
@@ -87,6 +95,8 @@ class SuperAdminController extends Controller
             ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
             ->whereNotNull('sales_reports.existing_id')
             ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->whereMonth('sales_reports.updated_at', $currentMonth)
+            ->whereYear('sales_reports.updated_at', $currentYear)
             ->groupBy('voc_kendalas.voc_kendala')
             ->orderBy('count', 'desc')
             ->limit(3)
@@ -102,6 +112,8 @@ class SuperAdminController extends Controller
             ->join('voc_kendalas', 'sales_reports.voc_kendalas_id', '=', 'voc_kendalas.id')
             ->whereNotNull('sales_reports.pranpc_id')
             ->where('voc_kendalas.voc_kendala', '!=', 'Tidak Ada')
+            ->whereMonth('sales_reports.updated_at', $currentMonth)
+            ->whereYear('sales_reports.updated_at', $currentYear)
             ->groupBy('voc_kendalas.voc_kendala')
             ->orderBy('count', 'desc')
             ->limit(3)
@@ -116,6 +128,7 @@ class SuperAdminController extends Controller
         // Menghitung jumlah produk berdasarkan jenis dari tabel Billpers
         $billperProdukCounts = DB::table('billpers')
             ->select('produk', DB::raw('count(*) as count'))
+            ->where('nper', $currentMonthYear) // Menambahkan kondisi untuk bulan saat ini
             ->groupBy('produk')
             ->pluck('count', 'produk')
             ->toArray();
@@ -123,6 +136,7 @@ class SuperAdminController extends Controller
         // Menghitung jumlah produk berdasarkan jenis dari tabel Existing
         $existingProdukCounts = DB::table('existings')
             ->select('produk', DB::raw('count(*) as count'))
+            // Menambahkan kondisi untuk bulan saat ini
             ->groupBy('produk')
             ->pluck('count', 'produk')
             ->toArray();
@@ -149,13 +163,218 @@ class SuperAdminController extends Controller
         $existingProdukCounts = array_merge(array_flip($jenisProduk), $existingProdukCounts);
 
         // Menghitung jumlah total produk dari tabel Billpers
-        $totalProdukBillper = DB::table('billpers')->count();
+        $totalProdukBillper = DB::table('billpers')
+            ->where('nper', $currentMonthYear)
+            ->count();
 
         // Menghitung jumlah total produk dari tabel Existing
-        $totalProdukExisting = DB::table('existings')->count();
+        $totalProdukExisting = DB::table('existings')
+            ->where('nper', $currentMonthYear)
+            ->count();
 
         // Menjumlahkan total produk dari Billpers dan Existing
         $produkCountBillperExisting = $totalProdukBillper + $totalProdukExisting;
+
+
+        // Progress Sales
+        $totalVisitSales = DB::table('sales_reports')
+            ->whereMonth('sales_reports.updated_at', $currentMonth)
+            ->whereYear('sales_reports.updated_at', $currentYear)
+            ->count();
+
+
+
+        // Progress bar sales billper
+        $salesbillpertertinggi = User::where('level', 'Sales')
+            ->withCount([
+                'billpers as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('billper_id');
+                }
+            ])
+            ->orderByDesc('total_visit')
+            ->limit(5)
+            ->get();
+        // dd($salesbillpertertinggi);
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($salesbillpertertinggi as $salebillper) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salebillper->id)
+                ->whereNotNull('billper_id')
+                ->distinct('billper_id')
+                ->count('billper_id');
+
+            $salebillper->wo_sudah_visit = $wo_sudah_visit;
+            $salebillper->wo_belum_visit = $salebillper->total_assignment - $wo_sudah_visit;
+        }
+
+        $salesbillperterendah = User::where('level', 'Sales')
+            ->withCount([
+                'billpers as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('billper_id');
+                }
+            ])
+            ->orderBy('total_visit')  // Ascending order to get the fewest visits
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually for bottom 5 sales
+        foreach ($salesbillperterendah as $salebillper) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salebillper->id)
+                ->whereNotNull('billper_id')
+                ->distinct('billper_id')
+                ->count('billper_id');
+
+            $salebillper->wo_sudah_visit = $wo_sudah_visit;
+            $salebillper->wo_belum_visit = $salebillper->total_assignment - $wo_sudah_visit;
+        }
+        // dd($salesbillperterendah);
+
+        // Progress bar sales existing
+        $salesexistingtertinggi = User::where('level', 'Sales')
+            ->withCount([
+                'existings as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('existing_id');
+                }
+            ])
+            ->orderByDesc('total_visit')
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($salesexistingtertinggi as $saleexisting) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $saleexisting->id)
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
+
+            $saleexisting->wo_sudah_visit = $wo_sudah_visit;
+            $saleexisting->wo_belum_visit = $saleexisting->total_assignment - $wo_sudah_visit;
+        }
+
+        $salesexistingterendah = User::where('level', 'Sales')
+            ->withCount([
+                'existings as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('existing_id');
+                }
+            ])
+            ->orderBy('total_visit')  // Ascending order to get the fewest visits
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually for bottom 5 sales
+        foreach ($salesexistingterendah as $saleexisting) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $saleexisting->id)
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
+
+            $saleexisting->wo_sudah_visit = $wo_sudah_visit;
+            $saleexisting->wo_belum_visit = $saleexisting->total_assignment - $wo_sudah_visit;
+        }
+
+        // Progress bar sales pranpc
+        $salespranpctertinggi = User::where('level', 'Sales')
+            ->withCount([
+                'pranpcs as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('pranpc_id');
+                }
+            ])
+            ->orderByDesc('total_visit')
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($salespranpctertinggi as $salepranpc) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salepranpc->id)
+                ->whereNotNull('pranpc_id')
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $salepranpc->wo_sudah_visit = $wo_sudah_visit;
+            $salepranpc->wo_belum_visit = $salepranpc->total_assignment - $wo_sudah_visit;
+        }
+
+        $salespranpcterendah = User::where('level', 'Sales')
+            ->withCount([
+                'pranpcs as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('pranpc_id');
+                }
+            ])
+            ->orderBy('total_visit')  // Ascending order to get the fewest visits
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually for bottom 5 sales
+        foreach ($salespranpcterendah as $salepranpc) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salepranpc->id)
+                ->whereNotNull('pranpc_id')
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $salepranpc->wo_sudah_visit = $wo_sudah_visit;
+            $salepranpc->wo_belum_visit = $salepranpc->total_assignment - $wo_sudah_visit;
+        }
+
+
+        // Data akun
+        $users = User::where('level', '!=', 'Super Admin')
+            ->orderBy('status', 'desc') // Sort by created_at in ascending order
+            ->limit(10)
+            ->get();
 
         // Mengirimkan data ke tampilan view
         return view(
@@ -176,7 +395,16 @@ class SuperAdminController extends Controller
                 'datapranpc',
                 'billperProdukCounts',
                 'existingProdukCounts',
-                'produkCountBillperExisting' // Menambahkan data produkCountBillperExisting ke view
+                'produkCountBillperExisting',
+                'totalVisitSales',
+                'salesbillpertertinggi',
+                'salesexistingtertinggi',
+                'salespranpctertinggi',
+                'salesbillperterendah',
+                'salesexistingterendah',
+                'salespranpcterendah',
+                'users'
+
             )
         );
     }

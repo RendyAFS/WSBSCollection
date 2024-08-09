@@ -146,10 +146,6 @@
     /* Ensure content-2 takes up the full width available */
 }
 
-
-
-
-
 .dashboard-side-kanan {
     width: 300px;
     flex-shrink: 0;
@@ -179,3 +175,70 @@
         margin-top: 10px;
     }
 }
+
+
+
+/* List Chart Produk Billper */
+.list-legends-billper {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.list-legends-billper .legend-item-billper {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.list-legends-billper .legend-item-billper span {
+    margin-right: 8px;
+}
+
+.list-legends-billper .legend-item-billper span.color-box-billper {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-top: 5px;
+}
+
+.chart-dashboard-billper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* List Chart Produk Existing */
+.list-legends-existing {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.list-legends-existing .legend-item-existing {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.list-legends-existing .legend-item-existing span {
+    margin-right: 8px;
+}
+
+.list-legends-existing .legend-item-existing span.color-box-existing {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-top: 5px;
+}
+
+.chart-dashboard-existing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+

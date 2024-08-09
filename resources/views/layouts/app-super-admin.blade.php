@@ -64,7 +64,7 @@
             @include('layouts.navbar')
 
             <!-- Main Content -->
-            <div id="content">
+            <div id="content" class="mb-4">
                 @yield('content')
             </div>
         </div>

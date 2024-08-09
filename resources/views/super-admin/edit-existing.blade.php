@@ -201,8 +201,8 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-3">
-                    <a href="{{ route('existing.index') }}" class="btn btn-grey w-25 me-2">Batal</a>
-                    <button type="submit" class="btn btn-secondary w-25">Edit</button>
+                    <a href="{{ route('existing.index') }}" class="btn btn-grey me-2 px-5">Batal</a>
+                    <button type="submit" class="btn btn-secondary px-5">Edit</button>
                 </div>
 
             </form>

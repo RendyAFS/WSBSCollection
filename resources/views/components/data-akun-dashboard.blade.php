@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center">
     <span class="fw-bold">Akun</span>
-    <a href="{{ route('reportsalesbillper.index') }}" class="">
+    <a href="{{ route('data-akun.index') }}" class="">
         <i class="bi bi-three-dots fw-bold fs-4"></i>
     </a>
 </div>

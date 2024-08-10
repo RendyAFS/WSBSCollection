@@ -77,7 +77,7 @@
                         </span>
                         <div class="mt-1">
                             <span class="text-secondary">
-                                5 sales teratas dan terendah dengan WO Sudah Visit terbanyak dan paling sedikit
+                                Sales dengan aktifitas terbanyak dan sedikit
                             </span>
                         </div>
                     </div>

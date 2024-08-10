@@ -178,8 +178,8 @@ class SuperAdminController extends Controller
 
         // Progress Sales
         $totalVisitSales = DB::table('sales_reports')
-            ->whereMonth('sales_reports.updated_at', $currentMonth)
-            ->whereYear('sales_reports.updated_at', $currentYear)
+            ->whereMonth('sales_reports.created_at', $currentMonth)
+            ->whereYear('sales_reports.created_at', $currentYear)
             ->count();
 
 

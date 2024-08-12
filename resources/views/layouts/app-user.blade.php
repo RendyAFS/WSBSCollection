@@ -57,6 +57,7 @@
 
             <!-- Main Content -->
             <div id="content" >
+                @include('layouts.menu-mobile')
                 @yield('content')
                 @include('layouts.footer')
             </div>

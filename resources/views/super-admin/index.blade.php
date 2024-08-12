@@ -29,7 +29,7 @@
 
             {{-- Baris 2 --}}
             <div
-                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2 mt-2">
+                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2">
                 <div class="d-flex justify-content-between w-100 mb-3">
                     <div class="text-left">
                         <span class="fs-3">
@@ -69,7 +69,7 @@
 
             {{-- Baris 3 --}}
             <div
-                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2 mt-2">
+                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2">
                 <div class="d-flex justify-content-between w-100 mb-3">
                     <div class="text-left">
                         <span class="fs-3">

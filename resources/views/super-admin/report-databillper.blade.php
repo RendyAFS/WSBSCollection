@@ -13,9 +13,9 @@
                     @endif
                 </span>
             </span>
-            <div class="d-flex">
+            <div class="d-flex flex-column flex-lg-row">
                 <!-- Button trigger modal Filter Data-->
-                <button type="button" class="btn btn-white me-2" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                <button type="button" class="btn btn-white me-2 mb-2 mb-xl-0" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
                     <i class="bi bi-funnel-fill"></i> Filter Data
                 </button>
 
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- Button trigger modal Riwayat-->
-                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modalRiwayat">
+                <button type="button" class="btn btn-secondary me-2 mb-2 mb-xl-0" data-bs-toggle="modal" data-bs-target="#modalRiwayat">
                     <i class="bi bi-clock-history"></i> Riwayat
                 </button>
 

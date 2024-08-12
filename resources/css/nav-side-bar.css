@@ -137,6 +137,78 @@ body {
     overflow-y: auto;
 }
 
+
+
+/* Mobuile */
+#btn-menu-mobile {
+    position: fixed;
+    bottom: 20px;
+    /* Jarak dari bawah layar */
+    right: 20px;
+    /* Jarak dari kanan layar */
+    z-index: 1000;
+    /* Pastikan tombol berada di atas elemen lain */
+    border-radius: 50%;
+    /* Membuat tombol berbentuk bulat */
+    padding: 10px;
+
+    width: 45px;
+    height: 45px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Memberikan efek bayangan */
+
+    display: none;
+}
+
+.body-modal-menu-mobile {
+    background-color: var(--secondary-color);
+    display: none;
+}
+
+.header-menu-mobile {
+    display: flex;
+    align-items: center;
+}
+
+.header-menu-mobile img {
+    width: 10%;
+}
+
+.button-menu-mobile .sidebar-header span {
+    color: var(--dark-color);
+}
+
+
+.button-menu-mobile ul.components {
+    background-color: var(--secondary-color);
+}
+
+.button-menu-mobile ul li a {
+    padding: 10px;
+    margin: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: var(--white-color);
+    transition: 0.5s;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.button-menu-mobile ul li a:hover {
+    background: var(--white-color);
+    color: var(--secondary-color);
+    border-radius: 10px;
+}
+
+.button-menu-mobile ul li.active>a {
+    color: var(--secondary-color);
+    background: var(--white-color);
+    border-radius: 10px;
+}
+
+
+
 @media (max-width: 800px) {
     #sidebar {
         display: none;
@@ -169,6 +241,11 @@ body {
     #drowpdown-account {
         margin-left: auto;
         /* Ensure the dropdown stays on the right */
+    }
+
+    #btn-menu-mobile,
+    .body-modal-menu-mobile {
+        display: block;
     }
 }
 

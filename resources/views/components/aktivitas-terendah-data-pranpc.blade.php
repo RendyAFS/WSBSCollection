@@ -3,7 +3,7 @@
         Pranpc
     </span>
     <a href="{{ route('reportsalespranpc.index') }}" class="">
-        <i class="bi bi-three-dots fw-bold fs-4"></i>
+        <i class="bi bi-three-dots fw-bold fs-4 text-dark"></i>
     </a>
 </div>
 

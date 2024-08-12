@@ -57,8 +57,9 @@
             @include('layouts.navbar')
 
             <!-- Main Content -->
-            <div id="content" class="mb-4">
+            <div id="content" >
                 @yield('content')
+                @include('layouts.footer')
             </div>
         </div>
     </div>

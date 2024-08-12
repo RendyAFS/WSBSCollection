@@ -373,7 +373,7 @@ class SuperAdminController extends Controller
         // Data akun
         $users = User::where('level', '!=', 'Super Admin')
             ->orderBy('status', 'desc') // Sort by created_at in ascending order
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         // Mengirimkan data ke tampilan view

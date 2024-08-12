@@ -28,7 +28,202 @@ class AdminPranpcController extends Controller
     public function index()
     {
         $title = 'Dashboard';
-        return view('admin-pranpc.index', compact('title'));
+        // Menghitung jumlah data untuk bulan ini
+        $currentMonthYear = date('Y-m');
+
+        // Untuk tipe created_at dan update_at
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+
+        // Pranpc
+        $pranpcCurrentMonthCount = Pranpc::where('maxtgk', $currentMonthYear)
+            ->count();
+
+        // Existing
+        $existingCurrentMonthCount = Existing::where('nper', $currentMonthYear)
+            ->count();
+        // Pranpc
+        $plottingpranpcCurrentMonthCount = Pranpc::where('maxtgk', $currentMonthYear)
+            ->whereNotNull('users_id')
+            ->count();
+
+        // Existing
+        $plottingexistingCurrentMonthCount = Existing::where('nper', $currentMonthYear)
+            ->whereNotNull('users_id')
+            ->count();
+
+
+
+        // Table Pending Pranpc
+        $tabelPendingPranpc = Pranpc::where('maxtgk', $currentMonthYear)
+            ->whereNotNull('users_id')
+            ->where('status_pembayaran', 'Pending')
+            ->get();
+
+
+        // Table Pending Existing
+        $tabelPendingExisting = Existing::where('nper', $currentMonthYear)
+            ->whereNotNull('users_id')
+            ->where('status_pembayaran', 'Pending')
+            ->get();
+
+
+
+        $totalVisitpranpcexistingSales = 0;
+
+        // Progress bar sales pranpc
+        $salespranpctertinggi = User::where('level', 'Sales')
+            ->withCount([
+                'pranpcs as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('pranpc_id');
+                }
+            ])
+            ->orderByDesc('total_visit')
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($salespranpctertinggi as $salepranpc) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salepranpc->id)
+                ->whereNotNull('pranpc_id')
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $salepranpc->wo_sudah_visit = $wo_sudah_visit;
+            $salepranpc->wo_belum_visit = $salepranpc->total_assignment - $wo_sudah_visit;
+
+            // Add to total visit count
+            $totalVisitpranpcexistingSales += $wo_sudah_visit;
+        }
+
+        $salespranpcterendah = User::where('level', 'Sales')
+            ->withCount([
+                'pranpcs as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('pranpc_id');
+                }
+            ])
+            ->orderBy('total_visit')  // Ascending order to get the fewest visits
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually for bottom 5 sales
+        foreach ($salespranpcterendah as $salepranpc) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $salepranpc->id)
+                ->whereNotNull('pranpc_id')
+                ->distinct('pranpc_id')
+                ->count('pranpc_id');
+
+            $salepranpc->wo_sudah_visit = $wo_sudah_visit;
+            $salepranpc->wo_belum_visit = $salepranpc->total_assignment - $wo_sudah_visit;
+
+            // Add to total visit count
+            $totalVisitpranpcexistingSales += $wo_sudah_visit;
+        }
+        // dd($salespranpcterendah);
+
+        // Progress bar sales existing
+        $salesexistingtertinggi = User::where('level', 'Sales')
+            ->withCount([
+                'existings as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('existing_id');
+                }
+            ])
+            ->orderByDesc('total_visit')
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually
+        foreach ($salesexistingtertinggi as $saleexisting) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $saleexisting->id)
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
+
+            $saleexisting->wo_sudah_visit = $wo_sudah_visit;
+            $saleexisting->wo_belum_visit = $saleexisting->total_assignment - $wo_sudah_visit;
+
+            // Add to total visit count
+            $totalVisitpranpcexistingSales += $wo_sudah_visit;
+        }
+
+        $salesexistingterendah = User::where('level', 'Sales')
+            ->withCount([
+                'existings as total_assignment' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth);
+                },
+                'salesReports as total_visit' => function ($query) use ($currentMonth, $currentYear) {
+                    $query->whereYear('created_at', $currentYear)
+                        ->whereMonth('created_at', $currentMonth)
+                        ->whereNotNull('existing_id');
+                }
+            ])
+            ->orderBy('total_visit')  // Ascending order to get the fewest visits
+            ->limit(5)
+            ->get();
+
+        // Calculate wo_sudah_visit and wo_belum_visit manually for bottom 5 sales
+        foreach ($salesexistingterendah as $saleexisting) {
+            $wo_sudah_visit = DB::table('sales_reports')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('users_id', $saleexisting->id)
+                ->whereNotNull('existing_id')
+                ->distinct('existing_id')
+                ->count('existing_id');
+
+            $saleexisting->wo_sudah_visit = $wo_sudah_visit;
+            $saleexisting->wo_belum_visit = $saleexisting->total_assignment - $wo_sudah_visit;
+
+            // Add to total visit count
+            $totalVisitpranpcexistingSales += $wo_sudah_visit;
+        }
+
+        return view(
+            'admin-pranpc.index',
+            compact(
+                'title',
+                'pranpcCurrentMonthCount',
+                'existingCurrentMonthCount',
+                'plottingpranpcCurrentMonthCount',
+                'plottingexistingCurrentMonthCount',
+                'tabelPendingPranpc',
+                'tabelPendingExisting',
+                'salespranpctertinggi',
+                'salesexistingtertinggi',
+                'salespranpcterendah',
+                'salesexistingterendah',
+                'totalVisitpranpcexistingSales',
+            )
+        );
     }
 
 

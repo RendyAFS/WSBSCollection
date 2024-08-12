@@ -5,12 +5,6 @@
         <span class="fs-4 fw-bold text-white">Data Collection</span>
     </div>
     <ul class="list-unstyled components p-4">
-
-
-
-
-
-
         @if (auth()->user()->level == 'Super Admin')
             <li class="{{ Route::is('super-admin.index') ? 'active' : '' }}">
                 <a href="{{ route('super-admin.index') }}" class="fw-bold">
@@ -441,6 +435,8 @@
         @endif
     </ul>
 </div>
+
+
 
 <!-- Tambahkan JavaScript untuk mengubah ikon saat collapse dibuka/tutup -->
 <script>

@@ -29,7 +29,7 @@
 
             {{-- Baris 2 --}}
             <div
-                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2">
+                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2 mt-2">
                 <div class="d-flex justify-content-between w-100 mb-3">
                     <div class="text-left">
                         <span class="fs-3">
@@ -37,7 +37,7 @@
                         </span>
                         <div class="mt-1">
                             <span class="text-secondary">
-                                Produk yang paling diminati
+                                Produk yang paling diminati.
                             </span>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                             </span>
                         </span>
                         <div class="mt-1">
-                            <span class="text-secondary">Total visit semua sales pada bulan ini</span>
+                            <span class="text-secondary">Total produk yang dijual pada bulan ini.</span>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
 
             {{-- Baris 3 --}}
             <div
-                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2">
+                class="w-100 d-flex flex-column bg-white border border-0 shadow shadow-sm rounded-4 px-4 py-4 wrapper-content-2 mt-2">
                 <div class="d-flex justify-content-between w-100 mb-3">
                     <div class="text-left">
                         <span class="fs-3">
@@ -77,7 +77,7 @@
                         </span>
                         <div class="mt-1">
                             <span class="text-secondary">
-                                Sales dengan aktifitas terbanyak dan sedikit
+                                Sales dengan aktifitas tertinggi dan terendah.
                             </span>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                             </span>
                         </span>
                         <div class="mt-1">
-                            <span class="text-secondary">Total produk yang dijual pada bulan ini</span>
+                            <span class="text-secondary">Total visit semua sales pada bulan ini.</span>
                         </div>
                     </div>
                 </div>

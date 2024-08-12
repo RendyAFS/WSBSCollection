@@ -2,7 +2,7 @@
     <span class="text" id="text-secondary">
         Existing
     </span>
-    <a href="{{ route('reportsalesexisting.index') }}" class="">
+    <a href="{{ route('report-existing-adminpranpc.index') }}" class="">
         <i class="bi bi-three-dots fw-bold fs-4 text-dark"></i>
     </a>
 </div>

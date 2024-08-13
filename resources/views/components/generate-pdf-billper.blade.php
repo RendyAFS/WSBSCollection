@@ -12,6 +12,10 @@
             margin-bottom: 0pt;
             margin-left: 30pt;
             margin-right: 30pt;
+            padding-top: 20pt;
+            padding-bottom: 0pt;
+            padding-left: 30pt;
+            padding-right: 30pt;
         }
 
         body {
@@ -54,11 +58,15 @@
         .header-image img {
             max-width: 100%;
             height: auto;
+            opacity: 0.5;
         }
 
         .content {
             clear: both;
             margin-top: 20px;
+        }
+        .content p{
+            text-align: justify;
         }
 
         .table-contain {
@@ -91,18 +99,24 @@
 
         .footer-1 {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .footer-content {
-            float: right;
+            float: left;
             font-size: 10pt;
             /* Ukuran font untuk footer */
+        }
+
+        .footer-content p {
+            margin: 0px;
+            margin-bottom: 20px;
         }
 
         .footer-image {
             display: inline-block;
             margin-left: 20px;
+            margin-bottom: 45px;
         }
 
         .footer-image img {
@@ -112,7 +126,7 @@
 
         .footer-2 {
             width: 100%;
-            margin-top: 285px;
+            margin-top: 175px;
         }
 
         .footer-content-2 {
@@ -139,6 +153,10 @@
         .contact-list li {
             margin-bottom: 2px;
         }
+
+        .contact-list li p {
+            margin: 0px;
+        }
     </style>
 </head>
 
@@ -154,12 +172,19 @@
         </div>
         <div class="content">
             <p>Surabaya, {{ $date }}</p>
-            <p>Kepada Yth.<br>Bpk/Ibu. {{ $billper->nama }}<br>Perihal: Informasi Tagihan</p>
+            <p><strong>Kepada Yth.</strong><br>
+                <strong>Bpk/Ibu. {{ $billper->nama }} </strong><br>
+                <strong> Alamat: {{$billper->alamat}} </strong><br>
+            </p>
+            <p>Perihal: <strong> Konfirmasi Data Tunggakan {{ $billper->no_inet }}</strong></p>
             <p>Dengan Hormat,</p>
-            <p>Pertama-tama kami menyampaikan terima kasih atas kepercayaan perusahaan Bapak/Ibu tetap setia menggunakan
-                jasa layanan PT. Telkom Indonesia, Tbk. di perusahaan yang Bapak/Ibu pimpin.</p>
-            <p>Sebagaimana perihal tersebut di atas, kami sampaikan informasi tagihan atas {{ $billper->nama }} dengan
-                nomor telepon {{ $billper->no_tlf }} sebagai berikut:</p>
+            <p>Pertama kami sampaikan rasa terima kasih atas kepercayaan perusahaan Bapak/Ibu yang senantiasa
+                menggunakan jasa layanan Telkom Solution sebagai sarana untuk membangun komunikasi baik internal maupun
+                eksternal.</p>
+            <p>Berdasarkan catatan data kami sampai dengan posisi tanggal untuk nomor layanan
+                <strong>{{ $billper->no_inet }}</strong> masih terdapat
+                beberapa tunggakan sebagai berikut:
+            </p>
 
             <div class="table-contain">
                 <table class="table">
@@ -182,9 +207,22 @@
                 </table>
                 <p class="tight-margin">Tagihan di atas sudah termasuk Ppn.</p>
             </div>
-            <p>Sehubungan dengan hal tersebut di atas, kami mohon tagihan dimaksud dapat segera dilakukan pelunasan
-                pembayaran.</p>
-            <p>Demikian kami sampaikan, atas perhatian dan kerjasamanya yang baik selama ini kami ucapkan terima kasih.
+            <p>Sehubungan dengan hal tsb diatas, kami mohon tagihan Telkom Solution dimaksud dapat segera dilakukan
+                penyelesaiannya melalui : Online Payment Point Bank (Internet Banking, Mobile Banking, ATM, loket bank)
+                pada seluruh bank domestik melalui menu pembayaran tagihan atau dapat melakukan pembayaran secara
+                Setoran Tunai melalui Plasa Telkom Group, Kantor Pos, Loket Bank dan gerai Indomaret, Alfamart).
+            </p>
+            <p>
+                Perlu kami informasikan, apabila perusahaan Bapak/Ibu tidak menyelesaikan seluruh kewajiban tersebut di
+                atas maka kami akan melakukan <strong>pengisoliran (pemutusan layanan)</strong> tanpa pemberitahuan
+                terlebih dahulu.
+                <strong>Apabila Bapak/Ibu telah melakukan pembayaran</strong> tunggakan sebelum surat ini diterima, bisa
+                untuk
+                mengabaikan surat ini dan mohon bantuan untuk bukti transfer agar dikirim atau menghubungi kami di nomor
+                Whatsapp 0812-5296-5434.
+            </p>
+            <p>
+                Demikian kami sampaikan, atas perhatian dan kerjasamanya yang baik selama ini kami ucapkan terima kasih.
             </p>
         </div>
         <div class="footer-1">
@@ -192,12 +230,12 @@
                 <p>Hormat Kami,<br>Witel Surabaya Selatan</p>
                 <br>
                 <div class="footer-image">
-                    <img src="{{ $image_src }}" alt="footer-image">
+                    {{-- <img src="{{ $image_src }}" alt="footer-image"> --}}
                 </div>
-                <p style="font-weight: normal;">
-                    <s style="text-decoration: none"> Munarti </s> <br>
-                    <s style="text-decoration: none"> Manager Business Service </s> <br>
-                    Witel Surabaya Selatan
+                <p style="font-weight: normal; margin:0px; ">
+                    <s style="text-decoration: underline"> HALIS RIDHO SANJAYA </s> <br>
+                    <s style="text-decoration: none"> MGR SHARED SERVICE & GENERAL SUPPORT </s> <br>
+                    WITEL SURAMADU
                 </p>
 
             </div>

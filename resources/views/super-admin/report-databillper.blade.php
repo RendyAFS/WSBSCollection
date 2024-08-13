@@ -103,6 +103,9 @@
                 </a>
             </div>
         </div>
+
+        <span class="fw-bold fst-italic">* Last Update: {{ $lastUpdate }}</span>
+
         <table id="tabel_report" class="table table-bordered shadow" style="width:100%;">
             <thead class="table-warning">
                 <tr>

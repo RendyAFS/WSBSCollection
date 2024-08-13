@@ -83,7 +83,7 @@
                 <!-- Button trigger modal Pembayaran-->
                 <button type="button" class="btn btn-secondary me-2 mb-2 mb-xl-0" data-bs-toggle="modal"
                     data-bs-target="#modalCekPembayaran">
-                    <i class="bi bi-capslock-fill"></i> Cek Pembayaran
+                    <i class="bi bi-capslock-fill"></i> Update Pembayaran
                 </button>
 
                 <!-- Modal -->
@@ -188,6 +188,8 @@
                 </div>
             </div>
         </div>
+
+        <span class="fw-bold fst-italic">* Last Update: {{ $lastUpdate }}</span>
 
         <table class="table table-hover table-bordered datatable shadow" id="tabelalls" style="width: 100%">
             <thead class="fw-bold">

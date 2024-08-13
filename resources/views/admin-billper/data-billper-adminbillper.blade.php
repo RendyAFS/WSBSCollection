@@ -154,6 +154,8 @@
             </button>
         </div>
 
+        <span class="fw-bold fst-italic">* Last Update: {{ $lastUpdate }}</span>
+
         <table class="table table-hover table-bordered datatable shadow" id="tabelbillpersadminbillper"
             style="width: 100%">
             <thead class="fw-bold">

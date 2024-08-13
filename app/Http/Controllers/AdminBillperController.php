@@ -223,7 +223,10 @@ class AdminBillperController extends Controller
         $title = 'Data Plotting Billper';
         $billpers = Billper::all();
         $users = User::where('level', 'Sales')->get();
-        return view('admin-billper.data-billper-adminbillper', compact('title', 'billpers', 'users'));
+
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+        return view('admin-billper.data-billper-adminbillper', compact('title', 'billpers', 'users', 'lastUpdate'));
     }
 
     public function getDatabillpersadminbillper(Request $request)
@@ -652,7 +655,9 @@ class AdminBillperController extends Controller
         $title = 'Data Plotting Existing';
         $existings = Existing::all();
         $users = User::where('level', 'Sales')->get();
-        return view('admin-billper.data-existing-adminbillper', compact('title', 'existings', 'users'));
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+        return view('admin-billper.data-existing-adminbillper', compact('title', 'existings', 'users', 'lastUpdate'));
     }
 
     public function getDataexistingsadminbillper(Request $request)

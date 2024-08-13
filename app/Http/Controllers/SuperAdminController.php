@@ -894,8 +894,13 @@ class SuperAdminController extends Controller
         confirmDelete();
         $title = 'Data Billper';
         $billpers = Billper::all();
-        return view('super-admin.data-billper', compact('title', 'billpers'));
+
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
+        return view('super-admin.data-billper', compact('title', 'billpers', 'lastUpdate'));
     }
+
 
     public function getDatabillpers(Request $request)
     {
@@ -1255,7 +1260,10 @@ class SuperAdminController extends Controller
         $total_unpaid = $reports->sum('total_unpaid');
         $total_pending = $reports->sum('total_pending');
 
-        return view('super-admin.report-databillper', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
+        return view('super-admin.report-databillper', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats', 'lastUpdate'));
     }
 
     public function indexgrafikbillper(Request $request)
@@ -1352,7 +1360,10 @@ class SuperAdminController extends Controller
             }
         }
 
-        return view('super-admin.grafik-databillper', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
+        return view('super-admin.grafik-databillper', compact('title', 'chartData', 'selectedYear', 'jenisGrafik', 'lastUpdate'));
     }
 
 
@@ -1764,7 +1775,10 @@ class SuperAdminController extends Controller
         confirmDelete();
         $title = 'Data Existing';
         $existings = Existing::all();
-        return view('super-admin.data-existing', compact('title', 'existings'));
+
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+        return view('super-admin.data-existing', compact('title', 'existings', 'lastUpdate'));
     }
 
     public function getDataexistings(Request $request)
@@ -2123,7 +2137,10 @@ class SuperAdminController extends Controller
         $total_unpaid = $reports->sum('total_unpaid');
         $total_pending = $reports->sum('total_pending');
 
-        return view('super-admin.report-dataexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats'));
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
+        return view('super-admin.report-dataexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats', 'lastUpdate'));
     }
 
     public function indexgrafikexisting(Request $request)
@@ -2220,7 +2237,10 @@ class SuperAdminController extends Controller
             }
         }
 
-        return view('super-admin.grafik-dataexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik'));
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
+        return view('super-admin.grafik-dataexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik', 'lastUpdate'));
     }
 
     // report sales Existing
@@ -2544,7 +2564,10 @@ class SuperAdminController extends Controller
         confirmDelete();
         $title = 'Data PraNPC';
         $pranpcs = Pranpc::all();
-        return view('super-admin.data-pranpc', compact('title', 'pranpcs'));
+
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Pranpc::latest()->first()->created_at->translatedFormat('d F Y H:i');
+        return view('super-admin.data-pranpc', compact('title', 'pranpcs', 'lastUpdate'));
     }
 
     public function getDatapranpcs(Request $request)
@@ -2845,6 +2868,9 @@ class SuperAdminController extends Controller
         $total_pending_bill_bln = $reports->sum('total_pending_bill_bln');
         $total_pending_bill_bln1 = $reports->sum('total_pending_bill_bln1');
 
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Pranpc::latest()->first()->created_at->translatedFormat('d F Y H:i');
+
         return view('super-admin.report-datapranpc', compact(
             'title',
             'reports',
@@ -2859,69 +2885,9 @@ class SuperAdminController extends Controller
             'total_pending_bill_bln1',
             'year',
             'bulan',
-            'show_all'
+            'show_all',
+            'lastUpdate'
         ));
-    }
-
-
-    public function indexgrafikpranpc()
-    {
-        $title = 'Grafik Billper';
-
-        // Fetch data from the database
-        $data = DB::table('billpers')
-            ->select(
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Paid' THEN saldo ELSE 0 END) as paid"),
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Unpaid' THEN saldo ELSE 0 END) as unpaid"),
-                DB::raw("SUM(CASE WHEN status_pembayaran = 'Pending' THEN saldo ELSE 0 END) as pending"),
-                DB::raw("SUM(saldo) as total"),
-                DB::raw("SUBSTRING(nper, 6, 2) as month"),
-                DB::raw("SUBSTRING(nper, 1, 4) as year")
-            )
-            ->groupBy('year', 'month')
-            ->get();
-
-        // Log the raw data for debugging
-        // Log::info('Raw Data:', $data->toArray());
-
-
-        // Process data to match the required format
-        $months = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
-
-        $chartData = [
-            'categories' => [],
-            'paid' => [],
-            'unpaid' => [],
-            'pending' => [],
-            'total' => [],
-            'billing' => []
-        ];
-
-        foreach ($months as $key => $month) {
-            $chartData['categories'][] = $month;
-            $monthData = $data->firstWhere('month', $key);
-
-            if ($monthData) {
-                $chartData['paid'][] = $monthData->paid;
-                $chartData['unpaid'][] = $monthData->unpaid;
-                $chartData['pending'][] = $monthData->pending;
-                $chartData['total'][] = $monthData->total;
-                $chartData['billing'][] = $monthData->total ? number_format(($monthData->paid / $monthData->total) * 100, 2) : 0;
-            } else {
-                $chartData['paid'][] = 0;
-                $chartData['unpaid'][] = 0;
-                $chartData['pending'][] = 0;
-                $chartData['total'][] = 0;
-                $chartData['billing'][] = 0;
-            }
-        }
-
-        // Log the processed chart data for debugging
-        // Log::info('Chart Data:', $chartData);
-
-        // dd($data, $chartData);
-
-        return view('super-admin.grafik-datapranpc', compact('title', 'chartData'));
     }
 
 

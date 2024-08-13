@@ -160,6 +160,9 @@
                 </div>
             </div>
         </div>
+
+        <span class="fw-bold fst-italic">* Last Update: {{ $lastUpdate }}</span>
+
         <table class="table table-hover table-bordered datatable shadow" id="tabelpranpcs" style="width: 100%">
             <thead class="fw-bold">
                 <tr>

@@ -334,7 +334,7 @@ class AdminBillperController extends Controller
         $data = [
             'billper' => $billper,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
@@ -360,7 +360,7 @@ class AdminBillperController extends Controller
         $data = [
             'billper' => $billper,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
@@ -763,7 +763,7 @@ class AdminBillperController extends Controller
         $data = [
             'existing' => $existing,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
@@ -789,7 +789,7 @@ class AdminBillperController extends Controller
         $data = [
             'existing' => $existing,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64

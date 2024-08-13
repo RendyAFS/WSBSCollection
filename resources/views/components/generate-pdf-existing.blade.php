@@ -63,7 +63,7 @@
 
         .content {
             clear: both;
-            margin-top: 20px;
+            margin-top: -20px;
         }
         .content p{
             text-align: justify;
@@ -174,14 +174,14 @@
             <p>Surabaya, {{ $date }}</p>
             <p><strong>Kepada Yth.</strong><br>
                 <strong>Bpk/Ibu. {{ $existing->nama }} </strong><br>
-                <strong> Alamat: {{$existing->alamat}} </strong><br>
+                <strong>{{$existing->alamat}}</strong><br>
             </p>
             <p>Perihal: <strong> Konfirmasi Data Tunggakan {{ $existing->no_inet }}</strong></p>
             <p>Dengan Hormat,</p>
             <p>Pertama kami sampaikan rasa terima kasih atas kepercayaan perusahaan Bapak/Ibu yang senantiasa
                 menggunakan jasa layanan Telkom Solution sebagai sarana untuk membangun komunikasi baik internal maupun
                 eksternal.</p>
-            <p>Berdasarkan catatan data kami sampai dengan posisi tanggal untuk nomor layanan
+            <p>Berdasarkan catatan data kami sampai dengan posisi {{$date}} untuk nomor layanan
                 <strong>{{ $existing->no_inet }}</strong> masih terdapat
                 beberapa tunggakan sebagai berikut:
             </p>
@@ -227,7 +227,7 @@
         </div>
         <div class="footer-1">
             <div class="footer-content">
-                <p>Hormat Kami,<br>Witel Surabaya Selatan</p>
+                <p>Hormat Kami,<br>Witel Suramadu</p>
                 <br>
                 <div class="footer-image">
                     {{-- <img src="{{ $image_src }}" alt="footer-image"> --}}
@@ -244,11 +244,11 @@
             <div class="footer-content-2">
                 <div class="contact-list">
                     <p>Contact person:<br>
-                        Collection witel SBS: 085176897993<br>
-                        Cexisting center:</p>
+                        Collection Witel Suramadu: 0812-5296-5434<br>
+                        Call center:</p>
                     <ul>
                         <li>1500250</li>
-                        <li>08001835566</li>
+                        <li>0812-5296-5434</li>
                     </ul>
                 </div>
             </div>

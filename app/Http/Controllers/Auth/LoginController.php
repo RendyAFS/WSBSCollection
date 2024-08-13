@@ -62,7 +62,7 @@ class LoginController extends Controller
             } elseif ($user->level === 'Admin Pranpc' && $user->status === 'Aktif') {
                 return redirect()->route('adminpranpc.index');
             } elseif ($user->level === 'Sales' && $user->status === 'Aktif') {
-                return redirect()->route('user.index');
+                return redirect()->route('assignmentbillper.index');
             }
         }
 

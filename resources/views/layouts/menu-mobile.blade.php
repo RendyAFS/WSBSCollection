@@ -356,12 +356,12 @@
                                 </ul>
                             </div>
                         @elseif(auth()->user()->level == 'Sales')
-                            <li class="{{ Route::is('user.index') ? 'active' : '' }}">
+                            {{-- <li class="{{ Route::is('user.index') ? 'active' : '' }}">
                                 <a href="{{ route('user.index') }}" class="fw-bold">
                                     <i class="bi bi-grid{{ Route::is('user.index') ? '-fill' : '' }}"></i>
                                     Dashboard
                                 </a>
-                            </li>
+                            </li> --}}
                             <div class="my-4">
                                 {{-- diver --}}
                             </div>
@@ -469,9 +469,6 @@
                             </div>
                         @endif
                     </ul>
-                    <div class="modal-content-footer d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                    </div>
                 </div>
             </div>
         </div>

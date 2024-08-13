@@ -100,7 +100,7 @@
                     </div>
 
                     {{-- level --}}
-                    <div class="row mb-3 d-block">
+                    <div class="row mb-3 d-none">
                         <label for="level"
                             class="col-md-4 col-form-label text-md-end fw-bold">{{ __('Level') }}</label>
                         <div class="col-md-6">

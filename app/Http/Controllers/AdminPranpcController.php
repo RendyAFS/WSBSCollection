@@ -387,7 +387,7 @@ class AdminPranpcController extends Controller
         $data = [
             'pranpc' => $pranpc,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'mintgk_bulan' => $mintgkDate->translatedFormat('F Y'),
             'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
@@ -412,7 +412,7 @@ class AdminPranpcController extends Controller
         $data = [
             'pranpc' => $pranpc,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'mintgk_bulan' => $mintgkDate->translatedFormat('F Y'),
             'maxtgk_bulan' => $maxtgkDate->translatedFormat('F Y'),
@@ -760,7 +760,7 @@ class AdminPranpcController extends Controller
         $data = [
             'existing' => $existing,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64
@@ -786,7 +786,7 @@ class AdminPranpcController extends Controller
         $data = [
             'existing' => $existing,
             'total_tagihan' => $total_tagihan,
-            'date' => now()->format('d/m/Y'),
+            'date' => Carbon::now()->translatedFormat('d F Y'),
             'nomor_surat' => $request->nomor_surat,
             'nper' => $nper->translatedFormat('F Y'),
             'image_src' => $imageSrc,  // Menyertakan gambar sebagai data base64

@@ -421,7 +421,14 @@ class AdminPranpcController extends Controller
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('components.generate-pdf-pranpc', $data);
-        return $pdf->download('invoice.pdf');
+        // Format tanggal untuk nama file
+        $mintgkFormatted = $mintgkDate->translatedFormat('F-Y');
+        $maxtgkFormatted = $maxtgkDate->translatedFormat('F-Y');
+
+        // Buat nama file menggunakan snd, nama, dan tanggal yang diformat
+        $fileName = 'Invoice-' . $pranpc->snd . '-' . $pranpc->nama . '-' . $mintgkFormatted . '-' . $maxtgkFormatted . '.pdf';
+
+        return $pdf->download($fileName);
     }
 
     public function viewPDFreportpranpc($id)

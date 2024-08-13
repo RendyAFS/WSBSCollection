@@ -58,7 +58,7 @@
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminbillper.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
-                                    @elseif (Auth::user()->level === 'Admin PraNPC')
+                                    @elseif (Auth::user()->level === 'Admin Pranpc')
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
@@ -67,13 +67,13 @@
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminpranpc.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
-                                    @elseif (Auth::user()->level === 'User')
+                                    @elseif (Auth::user()->level === 'Sales')
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
                                             <i class="bi bi-box-arrow-in-left"></i> Keluar
                                         </a>
-                                        <a class="btn btn-masuk fw-bold mt-5" href="{{ route('user.index') }}">
+                                        <a class="btn btn-masuk fw-bold mt-5" href="{{ route('assignmentbillper.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
                                         </a>
                                     @endif

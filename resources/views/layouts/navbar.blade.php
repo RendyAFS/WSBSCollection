@@ -19,7 +19,7 @@
                 <span class="d-none d-md-block me-2"> {{ Auth::user()->name }} </span>
                 <i class="bi bi-caret-down-fill"></i>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start">
                 <li>
                     <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.index') }}">
                         <i class="bi bi-person-fill me-2"></i> My Profile

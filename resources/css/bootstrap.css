@@ -263,3 +263,11 @@
     color: var(--white-color);
 }
 
+
+
+.btn-outline-light {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Memastikan elemen label memenuhi tinggi tombol */
+}

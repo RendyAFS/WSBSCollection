@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OtpCodeMail;
 use App\Models\User;
+use App\Models\OtpCode; // Pastikan OtpCode diimport
+use Illuminate\Support\Str; // Untuk generate kode OTP
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -87,7 +91,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        // Simpan data pengguna
+        $user = User::create([
             'level' => $data['level'],
             'status' => $data['status'],
             'name' => $data['name'],
@@ -96,5 +101,22 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        // Simpan ID pengguna di session
+        session()->put('user_id', $user->id);
+
+        // Generate kode OTP 6 digit
+        $otpCode = rand(100000, 999999);
+
+        // Simpan data OTP
+        OtpCode::create([
+            'email' => $data['email'],
+            'kode_otp' => $otpCode,
+        ]);
+
+        // Kirim email dengan OTP
+        Mail::to($data['email'])->send(new OtpCodeMail($otpCode));
+
+        return $user;
     }
 }

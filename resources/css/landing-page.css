@@ -32,6 +32,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 .left-side-register {
     width: 40%;
@@ -194,6 +195,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
+
     }
 
     .left-side-register {
@@ -201,7 +203,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 120vh;
+        height: 115vh;
     }
 
     #home-logo-telkom{

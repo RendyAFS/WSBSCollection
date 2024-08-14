@@ -51,17 +51,23 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            // Ambil data pengguna yang berhasil login
+            $user = Auth::user();
+
+            // Simpan ID pengguna di session
+            session()->put('user_id', $user->id);
+
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            if ($user->level === 'Super Admin' && $user->status === 'Aktif') {
+            if ($user->level === 'Super Admin' && $user->status === 'Aktif' && $user->email_verified_at !== null) {
                 return redirect()->route('super-admin.index');
-            } elseif ($user->level === 'Admin Billper' && $user->status === 'Aktif') {
+            } elseif ($user->level === 'Admin Billper' && $user->status === 'Aktif' && $user->email_verified_at !== null) {
                 return redirect()->route('adminbillper.index');
-            } elseif ($user->level === 'Admin Pranpc' && $user->status === 'Aktif') {
+            } elseif ($user->level === 'Admin Pranpc' && $user->status === 'Aktif' && $user->email_verified_at !== null) {
                 return redirect()->route('adminpranpc.index');
-            } elseif ($user->level === 'Sales' && $user->status === 'Aktif') {
+            } elseif ($user->level === 'Sales' && $user->status === 'Aktif' && $user->email_verified_at !== null) {
                 return redirect()->route('assignmentbillper.index');
             }
         }

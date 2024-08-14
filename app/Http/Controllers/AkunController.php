@@ -49,21 +49,7 @@ class AkunController extends Controller
         // Pesan validasi khusus
         $messages = [
             'name.required' => 'Nama wajib diisi.',
-            'name.string' => 'Nama harus berupa string.',
-            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-            'email.required' => 'Email wajib diisi.',
-            'email.string' => 'Email harus berupa string.',
-            'email.email' => 'Email harus berupa alamat email yang valid.',
-            'email.max' => 'Email tidak boleh lebih dari 255 karakter.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.string' => 'Kata sandi harus berupa string.',
-            'password.min' => 'Kata sandi harus minimal 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'nik.required' => 'NIK wajib diisi.',
-            'nik.regex' => 'NIK harus berupa angka dengan 5-6 digit.',
-            'no_hp.required' => 'Nomor HP wajib diisi.',
-            'no_hp.digits_between' => 'Nomor HP harus terdiri dari 1 hingga 15 digit.',
+            // Pesan lainnya...
             'foto_profile.image' => 'Foto profil harus berupa gambar.',
             'foto_profile.mimes' => 'Foto profil harus berformat jpeg, png, jpg, atau gif.',
             'foto_profile.max' => 'Foto profil tidak boleh lebih dari 2MB.',
@@ -79,6 +65,14 @@ class AkunController extends Controller
         $user->nik = $validatedData['nik'];
         $user->no_hp = $validatedData['no_hp'];
         $user->email = $validatedData['email'];
+
+        // Jika checkbox untuk hapus foto profil dicentang
+        if ($request->has('hapus_foto')) {
+            if ($user->foto_profile && Storage::exists('public/file_fotoprofile/' . $user->foto_profile)) {
+                Storage::delete('public/file_fotoprofile/' . $user->foto_profile);
+            }
+            $user->foto_profile = null; // Set kolom foto_profile menjadi null di database
+        }
 
         // Cek apakah ada foto profil baru
         if ($request->hasFile('foto_profile')) {

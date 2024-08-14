@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 's@s',
+                'email_verified_at' => now(),
                 'password' => bcrypt('qawsedrf'),
             ],
             [
@@ -31,6 +32,7 @@ class UserSeeder extends Seeder
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 'ab@ab',
+                'email_verified_at' => now(),
                 'password' => bcrypt('qawsedrf'),
             ],
             [
@@ -40,6 +42,7 @@ class UserSeeder extends Seeder
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 'ap@ap',
+                'email_verified_at' => now(),
                 'password' => bcrypt('qawsedrf'),
             ],
         ]);
@@ -52,6 +55,7 @@ class UserSeeder extends Seeder
                 'nik' => '123456',
                 'no_hp' => '089966851111',
                 'email' => 'u' . $i . '@u' . $i,
+                'email_verified_at' => now(),
                 'password' => Hash::make('qawsedrf'),
             ]);
         }

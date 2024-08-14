@@ -15,6 +15,7 @@
                     <th id="th" class="align-middle text-center">Nomor Telfon</th>
                     <th id="th" class="align-middle text-center w-25">Jenis Akun</th>
                     <th id="th" class="align-middle text-center w-25">Status</th>
+                    <th id="th" class="align-middle text-center w-25">Email</th>
                     <th id="th" class="align-middle text-center">Opsi</th>
                 </tr>
             </thead>
@@ -50,6 +51,14 @@
                                 <option value="Belum Aktif" class="text-danger fw-bold"
                                     {{ $user->status == 'Belum Aktif' ? 'selected' : '' }}>Belum Aktif</option>
                             </select>
+                        </th>
+                        <th class="align-middle text-center">
+                            @if ($user->email_verified_at)
+                                <span class="badge text-bg-success">Verified</span>
+                            @else
+                                <span class="badge text-bg-danger">Not Verified</span>
+                            @endif
+
                         </th>
                         <th class="align-middle text-center">
                             <form action="{{ route('destroy-akun', ['id' => $user->id]) }}" method="POST"

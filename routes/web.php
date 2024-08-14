@@ -4,9 +4,11 @@ use App\Http\Controllers\AdminBillperController;
 use App\Http\Controllers\AdminPranpcController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,9 +30,17 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 Route::post('/login', [LoginController::class, 'authenticate']);
 
-
+// Profile
 Route::get('/profile', [AkunController::class, 'index'])->name('profile.index');
 Route::post('/profile/update', [AkunController::class, 'update'])->name('profile.update');
+
+
+// OTP
+Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('verifyOtp');
+Route::post('/request-otp', [OtpController::class, 'requestOtp'])->name('requestOtp');
+
+
+
 
 Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
     // Route Super Admin

@@ -23,7 +23,7 @@
                         @endif
 
                     </div>
-                    <span class="fs-5 fw-bold text-center d-block">
+                    <span class="fs-5 fw-bold text-center d-block mb-3">
                         {{ $user->name }}
                     </span>
                     <div class="text-center">
@@ -36,11 +36,11 @@
                                         ? 'primary'
                                         : ($user->level == 'Sales'
                                             ? 'secondary'
-                                            : 'default'))) }}">
+                                            : 'default'))) }} fs-6 mb-2">
                             {{ $user->level }}
                         </span>
                     </div>
-                    <span class="text-secondary text-center d-block">
+                    <span class="text-secondary text-center d-block mb-2">
                         {{ $user->nik }}
                     </span>
                     <span class="text-secondary text-center d-block">
@@ -143,6 +143,23 @@
                         <!-- Form Upload Foto -->
                         <div class="mb-3">
                             <label for="foto_profile" class="form-label fw-bold">Foto Profil</label>
+
+                            {{-- Hapus Foto Dan Preview foto --}}
+                            @if ($user->foto_profile)
+                                <div class="my-3">
+                                    <img src="{{ asset('storage/file_fotoprofile/' . $user->foto_profile) }}"
+                                        alt="Foto Profil" class="img-fluid"
+                                        style="width: 150px; height: 150px; object-fit: cover;">
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input shadow shadow-sm" id="hapus_foto"
+                                        name="hapus_foto">
+                                    <label class="form-check-label fw-bold text-danger" for="hapus_foto">Hapus Foto
+                                        Profil</label>
+                                </div>
+                            @endif
+
+
                             <input type="file" name="foto_profile"
                                 class="form-control @error('foto_profile') is-invalid @enderror" id="foto_profile"
                                 accept="image/*">
@@ -152,6 +169,7 @@
                                 </span>
                             @enderror
                         </div>
+
 
                         <div class="ubah-password">
 
@@ -226,9 +244,9 @@
                                 <img id="cropper-image" src="#" alt="Crop Image"
                                     style="max-width: 100%; max-height: 100%;">
                             </div>
-                            <button type="button" class="btn btn-primary mt-3" id="cropImageBtn">Crop &
-                                Save</button>
-                            <button type="button" class="btn btn-secondary mt-3" id="cancelCropBtn">Cancel</button>
+                            <button type="button" class="btn btn-primary mt-3" id="cropImageBtn">Potong &
+                                Simpan</button>
+                            <button type="button" class="btn btn-secondary mt-3" id="cancelCropBtn">Batal</button>
                         </div>
                     </div>
                 </div>
@@ -241,7 +259,8 @@
                 icon: 'success',
                 title: 'Berhasil!',
                 text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#831a16',
             });
         </script>
     @endif
@@ -252,7 +271,8 @@
                 icon: 'error',
                 title: 'Gagal!',
                 text: 'Data gagal diperbarui. Periksa kembali input Anda.',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#831a16',
             });
         </script>
     @endif

@@ -74,10 +74,8 @@
         $(document).ready(function() {
             new DataTable('#tabelakun', {
                 responsive: true,
-                lengthMenu: [
-                    [50, 100, -1],
-                    [50, 100, "Semua"]
-                ],
+                pageLength: 50,
+                "bLengthChange": false,
                 language: {
                     search: "Cari",
                     lengthMenu: "Tampilkan _MENU_ data",

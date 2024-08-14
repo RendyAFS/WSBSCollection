@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminBillperController;
 use App\Http\Controllers\AdminPranpcController;
+use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\UserController;
@@ -27,6 +28,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 Route::post('/login', [LoginController::class, 'authenticate']);
 
+
+Route::get('/profile', [AkunController::class, 'index'])->name('profile.index');
+Route::post('/profile/update', [AkunController::class, 'update'])->name('profile.update');
 
 Route::prefix('login')->middleware(['auth', 'checkStatus'])->group(function () {
     // Route Super Admin

@@ -328,8 +328,9 @@
             $('#btn-filter').on('click', function() {
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
+                var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = nper + " - " + statusPembayaran;
+                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

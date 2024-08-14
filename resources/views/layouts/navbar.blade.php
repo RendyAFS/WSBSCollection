@@ -10,12 +10,13 @@
                 <!-- Cek Keberadaan Foto Profil -->
                 @if (Auth::user()->foto_profile && Storage::exists('public/file_fotoprofile/' . Auth::user()->foto_profile))
                     <!-- Tampilkan Foto Profil -->
-                    <img src="{{ Storage::url('public/file_fotoprofile/' . Auth::user()->foto_profile) }}"
-                        alt="Foto Profil" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover; margin-right:5px;">
+                    <img src="{{ asset('storage/file_fotoprofile/' . Auth::user()->foto_profile) }}" alt="Foto Profil"
+                        class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover; margin-right: 5px;">
                 @else
                     <!-- Tampilkan Ikon Default -->
                     <i class="bi bi-person-fill me-2"></i>
                 @endif
+
                 <span class="d-none d-md-block me-2"> {{ Auth::user()->name }} </span>
                 <i class="bi bi-caret-down-fill"></i>
             </button>

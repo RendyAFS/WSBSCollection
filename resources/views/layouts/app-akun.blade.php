@@ -36,6 +36,12 @@
         integrity="sha512-n+A0Xug6+j9/fCBVPoCihITLoICIB2FTqjESx+kwYdF5bzpblXz11zaILuLYmN3yk2WyMTw53sah9tTiojgySg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    {{-- Cropfoto --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
 
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -64,7 +70,7 @@
             @include('layouts.navbar')
 
             <!-- Main Content -->
-            <div id="content" >
+            <div id="content">
                 @include('layouts.menu-mobile')
                 @yield('content')
                 @include('layouts.footer')

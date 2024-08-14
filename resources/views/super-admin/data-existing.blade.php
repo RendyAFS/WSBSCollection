@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modalpx-5">Batal</button>
+                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
                                         disabled>Cek Pembayaran</button>
                                 </div>

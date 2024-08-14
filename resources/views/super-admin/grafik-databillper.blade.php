@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modalpx-5">Batal</button>
+                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="Submit" class="btn btn-secondary" data-bs-dismiss="modal">Filter
                                         Data</button>
                                 </div>

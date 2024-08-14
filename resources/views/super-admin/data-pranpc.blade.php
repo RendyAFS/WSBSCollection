@@ -16,7 +16,8 @@
 
             <div class="d-flex flex-column flex-lg-row">
                 <!-- Button trigger modal Filter Data-->
-                <button type="button" class="btn btn-white me-2 mb-2 mb-xl-0" data-bs-toggle="modal" data-bs-target="#modalFilterdata">
+                <button type="button" class="btn btn-white me-2 mb-2 mb-xl-0" data-bs-toggle="modal"
+                    data-bs-target="#modalFilterdata">
                     <i class="bi bi-funnel-fill"></i> Filter Data
                 </button>
 
@@ -378,6 +379,23 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
+                }
+            });
+        });
+
+        // Validate filter download
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSave = document.getElementById('btn-filter-download');
+            const bulanTahunInput = document.getElementById('bulan');
+
+            btnSave.addEventListener('click', function(event) {
+                if (!bulanTahunInput.value || bulanTahunInput.value === "Pilih Rentang Bulan") {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
+                    });
                 }
             });
         });

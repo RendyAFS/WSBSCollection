@@ -483,5 +483,22 @@
                 }
             });
         });
+
+        // Validate filter download
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSave = document.getElementById('btn-filter-download');
+            const bulanTahunInput = document.getElementById('bulan');
+
+            btnSave.addEventListener('click', function(event) {
+                if (!bulanTahunInput.value || bulanTahunInput.value === "Pilih Rentang Bulan") {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Harap isi Bulan/Tahun terlebih dahulu!',
+                    });
+                }
+            });
+        });
     </script>
 @endpush

@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modalpx-5">Batal</button>
+                                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
                                         disabled>Cek Pembayaran</button>
                                 </div>
@@ -328,8 +328,9 @@
             $('#btn-filter').on('click', function() {
                 var nper = $('#nper_filter').val();
                 var statusPembayaran = $('#status_pembayaran_filter').val();
+                var jenisProduk = $('#jenis_produk_filter').val();
 
-                var infoText = nper + " - " + statusPembayaran;
+                var infoText = nper + " - " + statusPembayaran + " - " + jenisProduk;
                 $('#info-filter').text(infoText);
 
                 dataTable.ajax.reload();

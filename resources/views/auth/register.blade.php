@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+
 @section('content')
     <div class="content">
         <div class="left-side-register">
@@ -29,13 +30,13 @@
                     <label for="nik" class="form-label">Nomor Karyawan</label>
                     <div class="mb-3">
                         <input id="nik" type="text"
-                        class="form-control border border-secondary shadow @error('nik') is-invalid @enderror"
-                        name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus
-                        placeholder="Masukkan Nomor Karyawan">
+                            class="form-control border border-secondary shadow @error('nik') is-invalid @enderror"
+                            name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus
+                            placeholder="Masukkan Nomor Karyawan">
                         @error('nik')
-                        <span class="invalid-feedback text-white" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                            <span class="invalid-feedback text-white" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
                         @enderror
                     </div>
 
@@ -52,6 +53,7 @@
                         @enderror
                     </div>
 
+                    <!-- Email Field -->
                     <label for="email" class="form-label">Email</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text bg-white border-0" id="basic-addon2">
@@ -60,9 +62,9 @@
                         <input type="email" id="email" name="email"
                             class="form-control border-0 py-2 px-0 @error('email') is-invalid @enderror"
                             placeholder="Masukkan Email" value="{{ old('email') }}" aria-label="Masukkan Email"
-                            aria-describedby="basic-addon2">
+                            aria-describedby="basic-addon2" required>
                         @error('email')
-                            <span class="invalid-feedback text-white text-danger" role="alert">
+                            <span class="invalid-feedback text-white" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -80,7 +82,7 @@
                             <i class="bi bi-eye-slash text-secondary" id="togglePassword" style="cursor: pointer"></i>
                         </span>
                         @error('password')
-                            <span class="invalid-feedback text-white text-danger" role="alert">
+                            <span class="invalid-feedback text-white " role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -113,11 +115,13 @@
                     <div class="d-flex justify-content-center mb-3">
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
-                                required onclick="setLevel('Admin Billper')" {{ old('btnradio') == 'Admin Billper' ? 'checked' : '' }}>
+                                required onclick="setLevel('Admin Billper')"
+                                {{ old('btnradio') == 'Admin Billper' ? 'checked' : '' }}>
                             <label class="btn btn-outline-light" for="btnradio1">Admin Billper</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
-                                required onclick="setLevel('AdminPra NPC')" {{ old('btnradio') == 'AdminPra NPC' ? 'checked' : '' }}>
+                                required onclick="setLevel('AdminPra NPC')"
+                                {{ old('btnradio') == 'AdminPra NPC' ? 'checked' : '' }}>
                             <label class="btn btn-outline-light" for="btnradio2">Admin Pranpc</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
@@ -138,17 +142,23 @@
                     </div>
 
                     {{-- Button Register --}}
-                    <button type="submit" class="btn-login mt-3">
+                    <button id="submitButton" class="btn-login mt-3" type="submit">
                         <i class="bi bi-plus-circle"></i> Registrasi
                     </button>
+
+                    <button id="loadingButton" class="btn-login mt-3 d-none" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span class="visually" role="status">Loading...</span>
+                    </button>
+
                 </form>
                 <p class="register-link">Sudah punya akun? <a href="/home">Masuk</a>.</p>
             </div>
         </div>
         <div class="right-side"
-            style="background-image: url('{{  asset('storage/file_assets/telkom-sbs.png') }}'); background-size: cover; background-position: center;">
+            style="background-image: url('{{ asset('storage/file_assets/telkom-sbs.png') }}'); background-size: cover; background-position: center;">
             <div class="logo-container">
-                <img src="{{  asset('storage/file_assets/logo-telkom.png') }}" alt="Logo 1" class="logo">
+                <img src="{{ asset('storage/file_assets/logo-telkom.png') }}" alt="Logo 1" class="logo">
             </div>
         </div>
     </div>
@@ -205,6 +215,41 @@
                 // Toggle the icon
                 this.classList.toggle('bi-eye');
                 this.classList.toggle('bi-eye-slash');
+            });
+        });
+
+        // alert OTP
+        document.addEventListener('DOMContentLoaded', () => {
+            @if (session('status'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sukses',
+                    text: '{{ session('status') }}',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#831a16'
+                });
+            @endif
+
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '{{ $errors->first() }}',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#831a16'
+                });
+            @endif
+        })
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitButton = document.getElementById('submitButton');
+            const loadingButton = document.getElementById('loadingButton');
+
+            form.addEventListener('submit', function(event) {
+                // Menampilkan tombol loading dan menyembunyikan tombol submit
+                submitButton.classList.add('d-none');
+                loadingButton.classList.remove('d-none');
             });
         });
     </script>

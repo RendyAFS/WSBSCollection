@@ -165,7 +165,7 @@
             <span class="fw-bold d-block" data-bs-toggle="collapse" href="#manajerdataprofilesuperadmin" role="button"
                 aria-expanded="false" aria-controls="manajerdataprofilesuperadmin">
                 <i class="bi bi-chevron-right me-2"></i>
-                Profil
+                Manajer Akun
             </span>
             <hr class="border border-white my-1">
             <div class="collapse {{ Route::is('data-akun.index') ? 'show' : '' }}" id="manajerdataprofilesuperadmin">

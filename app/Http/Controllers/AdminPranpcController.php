@@ -234,8 +234,9 @@ class AdminPranpcController extends Controller
         $title = 'Data Plotting Pranpc';
         $pranpcs = Pranpc::all();
         $users = User::where('level', 'Sales')->get();
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Pranpc::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Pranpc::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('admin-pranpc.data-pranpc-adminpranpc', compact('title', 'pranpcs', 'users', 'lastUpdate'));
     }
 
@@ -651,8 +652,9 @@ class AdminPranpcController extends Controller
         $title = 'Data Plotting Existing';
         $existings = Existing::all();
         $users = User::where('level', 'Sales')->get();
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Existing::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('admin-pranpc.data-existing-adminpranpc', compact('title', 'existings', 'users', 'lastUpdate'));
     }
 

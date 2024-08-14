@@ -895,8 +895,9 @@ class SuperAdminController extends Controller
         $title = 'Data Billper';
         $billpers = Billper::all();
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Billper::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.data-billper', compact('title', 'billpers', 'lastUpdate'));
     }
@@ -1260,8 +1261,9 @@ class SuperAdminController extends Controller
         $total_unpaid = $reports->sum('total_unpaid');
         $total_pending = $reports->sum('total_pending');
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Billper::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.report-databillper', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats', 'lastUpdate'));
     }
@@ -1360,8 +1362,9 @@ class SuperAdminController extends Controller
             }
         }
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Billper::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Billper::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.grafik-databillper', compact('title', 'chartData', 'selectedYear', 'jenisGrafik', 'lastUpdate'));
     }
@@ -1776,8 +1779,9 @@ class SuperAdminController extends Controller
         $title = 'Data Existing';
         $existings = Existing::all();
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Existing::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('super-admin.data-existing', compact('title', 'existings', 'lastUpdate'));
     }
 
@@ -2137,8 +2141,9 @@ class SuperAdminController extends Controller
         $total_unpaid = $reports->sum('total_unpaid');
         $total_pending = $reports->sum('total_pending');
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Existing::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.report-dataexisting', compact('title', 'reports', 'total_ssl', 'total_saldo', 'total_paid', 'total_unpaid', 'total_pending', 'nper', 'filter_type', 'show_all', 'riwayats', 'lastUpdate'));
     }
@@ -2237,8 +2242,9 @@ class SuperAdminController extends Controller
             }
         }
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Existing::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Existing::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.grafik-dataexisting', compact('title', 'chartData', 'selectedYear', 'jenisGrafik', 'lastUpdate'));
     }
@@ -2565,8 +2571,9 @@ class SuperAdminController extends Controller
         $title = 'Data PraNPC';
         $pranpcs = Pranpc::all();
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Pranpc::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Pranpc::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('super-admin.data-pranpc', compact('title', 'pranpcs', 'lastUpdate'));
     }
 
@@ -2868,8 +2875,9 @@ class SuperAdminController extends Controller
         $total_pending_bill_bln = $reports->sum('total_pending_bill_bln');
         $total_pending_bill_bln1 = $reports->sum('total_pending_bill_bln1');
 
-        // Mengambil last update dari created_at id yang terakhir
-        $lastUpdate = Pranpc::latest()->first()->created_at->translatedFormat('d F Y H:i');
+ // Mengambil last update dari created_at id yang terakhir
+    $lastUpdate = Pranpc::latest()->first();
+    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
 
         return view('super-admin.report-datapranpc', compact(
             'title',

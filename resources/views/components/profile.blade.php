@@ -15,12 +15,13 @@
                     <div class="text-center mb-3">
                         @if ($user->foto_profile && Storage::exists('public/file_fotoprofile/' . $user->foto_profile))
                             <!-- Tampilkan Foto Profil -->
-                            <img src="{{ Storage::url('public/file_fotoprofile/' . $user->foto_profile) }}" alt="Foto Profil"
+                            <img src="{{ asset('storage/file_fotoprofile/' . $user->foto_profile) }}" alt="Foto Profil"
                                 class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                         @else
                             <!-- Tampilkan Ikon Default -->
                             <i class="bi bi-person-circle fs-1 text-center text-secondary"></i>
                         @endif
+
                     </div>
                     <span class="fs-5 fw-bold text-center d-block">
                         {{ $user->name }}

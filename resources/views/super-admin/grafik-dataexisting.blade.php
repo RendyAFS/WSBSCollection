@@ -6,6 +6,7 @@
             <span class="fw-bold fs-2 d-block d-md-none">
                 Grafik Existing
             </span>
+            <span class="fw-bold fst-italic">* Last Update: {{ $lastUpdate }}</span>
             <span class="d-none d-md-block">
                 {{-- Diver --}}
             </span>

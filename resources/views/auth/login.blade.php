@@ -14,6 +14,7 @@
                 </div>
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
+
                     <label for="email" class="form-label">Email</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text bg-white border-0" id="basic-addon2">
@@ -24,7 +25,7 @@
                             placeholder="Masukkan Email" aria-label="Masukkan Email" aria-describedby="basic-addon2"
                             required>
                         @error('email')
-                            <span class="invalid-feedback text-danger"role="alert">
+                            <span class="invalid-feedback text-danger" role="alert">
                                 <strong>Maaf, Perikasa Kembali Email</strong>
                             </span>
                         @enderror
@@ -46,13 +47,16 @@
                                 <strong>Maaf, Perikasa Kembali Password</strong>
                             </span>
                         @enderror
-
                     </div>
+                    <div class="text-end">
+                        <a href="/forgot-password" class="fw-bold text-auth">Lupa Password?</a>
+                    </div>
+
                     <button type="submit" class="btn-login mt-3">
                         <i class="bi bi-box-arrow-in-right"></i> Masuk
                     </button>
                 </form>
-                <p class="register-link">Belum punya akun? <a href="/register" class="fw-bold">Registrasi</a>.</p>
+                <p class="text-auth">Belum punya akun? <a href="/register" class="fw-bold">Registrasi</a>.</p>
             </div>
         </div>
         <div class="right-side"
@@ -63,21 +67,48 @@
         </div>
     </div>
 @endsection
+
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Token Invalid',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#831a16'
+                });
+            @endif
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Reset',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#831a16'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ session('redirect', '/login') }}";
+                    }
+                });
+            @endif
+
+            // Toggle Password Visibility
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
 
-            togglePassword.addEventListener('click', function() {
-                // Toggle the type attribute
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    // Toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
 
-                // Toggle the icon
-                this.classList.toggle('bi-eye');
-                this.classList.toggle('bi-eye-slash');
-            });
+                    // Toggle the icon
+                    this.classList.toggle('bi-eye');
+                    this.classList.toggle('bi-eye-slash');
+                });
+            }
         });
     </script>
 @endpush

@@ -98,18 +98,18 @@ body {
     color: var(--white-color);
 }
 
-.register-link {
+.text-auth {
     margin-top: 15px;
     color: var(--white-color);
     text-align: center;
 }
 
-.register-link a {
+.text-auth a {
     color: var(--primary);
     text-decoration: none;
 }
 
-.register-link a:hover {
+.text-auth a:hover {
     text-decoration: underline;
 }
 

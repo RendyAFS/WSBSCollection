@@ -18,11 +18,15 @@ class PranpcExport implements FromCollection, WithHeadings
     public function collection()
     {
         // Mengubah format Bill Bln dan Bill Bln1 menjadi Rupiah
-        $formatter = new NumberFormatter('id_ID', NumberFormatter::CURRENCY);
+        $formattedData = $this->pranpcs->map(function ($item) {
+            // Konversi Bill Bln dan Bill Bln1 menjadi float jika masih dalam format string
+            $billBln = floatval($item['bill_bln']);
+            $billBln1 = floatval($item['bill_bln1']);
 
-        $formattedData = $this->pranpcs->map(function ($item) use ($formatter) {
-            $item['bill_bln'] = $formatter->formatCurrency($item['bill_bln'], 'IDR');
-            $item['bill_bln1'] = $formatter->formatCurrency($item['bill_bln1'], 'IDR');
+            // Format Bill Bln dan Bill Bln1 menjadi Rupiah
+            $item['bill_bln'] = 'Rp' . number_format($billBln, 2, ',', '.');
+            $item['bill_bln1'] = 'Rp' . number_format($billBln1, 2, ',', '.');
+
             return $item;
         });
 

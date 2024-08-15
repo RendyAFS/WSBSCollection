@@ -35,7 +35,12 @@ Route::get('/profile', [AkunController::class, 'index'])->name('profile.index');
 Route::post('/profile/update', [AkunController::class, 'update'])->name('profile.update');
 
 
-// OTP
+// OTP dan forgot password
+Route::get('/forgot-password', [OtpController::class, 'indexforgotpassword'])->name('forgot-password');
+Route::post('/reset-password', [OtpController::class, 'sendResetLink'])->name('resetPassword');
+Route::get('/reset-password/{token}', [OtpController::class, 'indexresetpassword'])->name('reset-password');
+Route::post('/update-password', [OtpController::class, 'updatePassword'])->name('updatePassword');
+
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('verifyOtp');
 Route::post('/request-otp', [OtpController::class, 'requestOtp'])->name('requestOtp');
 

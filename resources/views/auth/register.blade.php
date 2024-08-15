@@ -152,7 +152,7 @@
                     </button>
 
                 </form>
-                <p class="register-link">Sudah punya akun? <a href="/home">Masuk</a>.</p>
+                <p class="text-auth">Sudah punya akun? <a href="/home">Masuk</a>.</p>
             </div>
         </div>
         <div class="right-side"
@@ -191,6 +191,7 @@
             });
         });
 
+        // Toggle show password
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');

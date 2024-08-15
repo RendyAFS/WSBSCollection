@@ -57,7 +57,7 @@
                         </div>
                         <div class="d-flex flex-column content-2">
                             <div class="head-progres-sales text-center my-5">
-                                <span class="fw-bold fs-4"> Aktivitas Teringgi </span>
+                                <span class="fw-bold fs-4"> Aktivitas Tertinggi </span>
                             </div>
                             <div class="d-flex flex-column flex-xl-row">
                                 <div class="card border border-0 shadow shadow-sm rounded-4 px-3 w-100 me-3 mb-3 mb-xl-0">

@@ -109,7 +109,25 @@
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'td:first-child', // Targets the first column for the collapse icon
+                        renderer: function(api, rowIdx, columns) {
+                            var data = $.map(columns, function(col, i) {
+                                return col.hidden ?
+                                    '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' +
+                                    col.columnIndex + '">' +
+                                    '<td><strong>' + col.title + ' </strong></td>' +
+                                    '<td>' + col.data + '</td>' +
+                                    '</tr>' :
+                                    '';
+                            }).join('');
+
+                            return data ? $('<table/>').append(data) : false;
+                        }
+                    }
+                },
                 ajax: {
                     url: "{{ route('gettabeltempexistings') }}",
                     type: 'GET',

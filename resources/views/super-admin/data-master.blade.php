@@ -82,7 +82,25 @@
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'td:first-child', // Targets the first column for the collapse icon
+                        renderer: function(api, rowIdx, columns) {
+                            var data = $.map(columns, function(col, i) {
+                                return col.hidden ?
+                                    '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' +
+                                    col.columnIndex + '">' +
+                                    '<td><strong>' + col.title + ' </strong></td>' +
+                                    '<td>' + col.data + '</td>' +
+                                    '</tr>' :
+                                    '';
+                            }).join('');
+
+                            return data ? $('<table/>').append(data) : false;
+                        }
+                    }
+                },
                 ajax: {
                     url: "{{ route('gettabeldatamaster') }}",
                     type: 'GET',
@@ -100,50 +118,58 @@
                         data: 'id',
                         name: 'id',
                         visible: false,
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        responsivePriority: 2
                     },
                     {
                         data: 'pelanggan',
                         name: 'pelanggan',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 3
                     },
                     {
                         data: 'event_source',
                         name: 'event_source',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 4
                     },
                     {
                         data: 'csto',
                         name: 'csto',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 5
                     },
                     {
                         data: 'mobile_contact_tel',
                         name: 'mobile_contact_tel',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 6
                     },
                     {
                         data: 'email_address',
                         name: 'email_address',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 7
                     },
                     {
                         data: 'alamat_pelanggan',
                         name: 'alamat_pelanggan',
                         className: 'align-middle',
-                        orderable: false
+                        orderable: false,
+                        responsivePriority: 8
                     },
                     {
                         data: 'opsi-tabel-datamaster',
                         name: 'opsi-tabel-datamaster',
                         className: 'align-middle',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        responsivePriority: 1
                     }
                 ],
                 order: [

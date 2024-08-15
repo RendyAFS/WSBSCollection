@@ -193,7 +193,25 @@
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'td:first-child', // Targets the first column for the collapse icon
+                        renderer: function(api, rowIdx, columns) {
+                            var data = $.map(columns, function(col, i) {
+                                return col.hidden ?
+                                    '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' +
+                                    col.columnIndex + '">' +
+                                    '<td><strong>' + col.title + ' </strong></td>' +
+                                    '<td>' + col.data + '</td>' +
+                                    '</tr>' :
+                                    '';
+                            }).join('');
+
+                            return data ? $('<table/>').append(data) : false;
+                        }
+                    }
+                },
                 ajax: {
                     url: "{{ route('gettabelexistingsadminpranpc') }}",
                     type: 'GET',
@@ -226,12 +244,14 @@
                     {
                         data: 'nama',
                         name: 'nama',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        responsivePriority: 2
                     },
                     {
                         data: 'no_inet',
                         name: 'no_inet',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 3
                     },
                     {
                         data: 'saldo',
@@ -239,27 +259,32 @@
                         className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
-                        }
+                        },
+                        responsivePriority: 4
                     },
                     {
                         data: 'sto',
                         name: 'sto',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 5
                     },
                     {
                         data: 'nper',
                         name: 'nper',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 6
                     },
                     {
                         data: 'produk',
                         name: 'produk',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 7
                     },
                     {
                         data: 'alamat',
                         name: 'alamat',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 8
                     },
                     {
                         data: 'status_pembayaran',
@@ -274,19 +299,22 @@
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;
-                        }
+                        },
+                        responsivePriority: 9
                     },
                     {
                         data: 'nama_user',
                         name: 'nama_user',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 10
                     },
                     {
                         data: 'opsi-tabel-dataexistingadminpranpc',
                         name: 'opsi-tabel-dataexistingadminpranpc',
                         className: 'align-middle',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        responsivePriority: 1
                     }
                 ],
                 order: [

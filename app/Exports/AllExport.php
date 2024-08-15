@@ -19,25 +19,15 @@ class AllExport implements FromCollection, WithHeadings
     public function collection()
     {
         // Mengubah format saldo menjadi rupiah
-        $formatter = new NumberFormatter('id_ID', NumberFormatter::CURRENCY);
-
-        $formattedData = $this->allData->map(function ($item) use ($formatter) {
+        $formattedData = $this->allData->map(function ($item) {
             // Konversi saldo menjadi float jika masih dalam format string
             $saldo = floatval($item['saldo']);
 
-            // Format currency menggunakan NumberFormatter
-            $formattedSaldo = $formatter->formatCurrency($saldo, 'IDR');
-
-            // Menghapus semua spasi dari hasil format
-            $formattedSaldo = preg_replace('/\s+/', '', $formattedSaldo);
-
-            // Update nilai saldo dalam $item dengan saldo yang sudah diformat
-            $item['saldo'] = $formattedSaldo;
+            // Format saldo menjadi Rupiah
+            $item['saldo'] = 'Rp' . number_format($saldo, 2, ',', '.');
 
             return $item;
         });
-
-
 
         return $formattedData;
     }

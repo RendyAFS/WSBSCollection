@@ -23,12 +23,12 @@
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start">
                 <li>
                     <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.index') }}">
-                        <i class="bi bi-person-fill me-2"></i> My Profile
+                        <i class="bi bi-person-fill me-2"></i> Profilku
                     </a>
 
                     <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="bi bi-box-arrow-left me-2"></i> Logout
+                        <i class="bi bi-box-arrow-left me-2"></i> Keluar
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf

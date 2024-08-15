@@ -4,7 +4,7 @@
     <div class="px-3 py-4">
         <div class="mb-4 d-block d-md-none">
             <span class="fw-bold fs-2">
-                My Profile
+                Profilku
             </span>
         </div>
 
@@ -82,7 +82,7 @@
 
                         <!-- Nama -->
                         <div class="mb-3">
-                            <label for="name" class="form-label fw-bold">Name</label>
+                            <label for="name" class="form-label fw-bold">Nama</label>
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                                 id="name" value="{{ old('name', $user->name) }}" required>
                             @error('name')

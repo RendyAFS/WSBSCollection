@@ -12,7 +12,7 @@ class AkunController extends Controller
 {
     public function index()
     {
-        $title = 'My Profile';
+        $title = 'Profilku';
         // Mendapatkan data user yang sedang login berdasarkan ID
         $user = User::find(Auth::id());
 

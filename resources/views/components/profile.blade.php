@@ -117,7 +117,7 @@
                         </div>
 
                         <!-- Email -->
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                             <label for="email" class="form-label fw-bold">Email</label>
                             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                 id="email" value="{{ old('email', $user->email) }}" required>

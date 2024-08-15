@@ -92,7 +92,7 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalCekPembayaranLabel">Cek Pembayaran</h1>
+                                <h1 class="modal-title fs-5" id="modalCekPembayaranLabel">Update Pembayaran</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -120,7 +120,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
-                                        disabled>Cek Pembayaran</button>
+                                        disabled>Update Pembayaran</button>
                                 </div>
                             </form>
 
@@ -415,7 +415,7 @@
                         document.getElementById('cekPembayaranButton').disabled = false;
                     } else {
                         fileStatusElement.classList.add('text-danger');
-                        // Menonaktifkan tombol Cek Pembayaran jika file tidak sesuai
+                        // Menonaktifkan tombol Update Pembayaran jika file tidak sesuai
                         document.getElementById('cekPembayaranButton').disabled = true;
                     }
                 })

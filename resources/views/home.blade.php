@@ -107,7 +107,7 @@
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                            <i class="bi bi-box-arrow-left"></i> Keluar
                                         </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('super-admin.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
@@ -116,7 +116,7 @@
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                            <i class="bi bi-box-arrow-left"></i> Keluar
                                         </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminbillper.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
@@ -125,7 +125,7 @@
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                            <i class="bi bi-box-arrow-left"></i> Keluar
                                         </a>
                                         <a class="btn btn-masuk fw-bold mt-5" href="{{ route('adminpranpc.index') }}">
                                             <i class="bi bi-box-arrow-in-right"></i> Masuk
@@ -134,7 +134,7 @@
                                         <a class="btn btn-keluar fw-bold mt-5 me-2" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                            <i class="bi bi-box-arrow-left"></i> Keluar
                                         </a>
                                         <a class="btn btn-masuk fw-bold mt-5"
                                             href="{{ route('assignmentbillper.index') }}">
@@ -145,7 +145,7 @@
                                     <a class="btn btn-keluar fw-bold mt-5" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                        <i class="bi bi-box-arrow-in-left"></i> Keluar
+                                        <i class="bi bi-box-arrow-left"></i> Keluar
                                     </a>
                                 @endif
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

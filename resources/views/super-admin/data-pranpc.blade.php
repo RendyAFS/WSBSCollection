@@ -191,7 +191,25 @@
                 serverSide: true,
                 processing: true,
                 pagingType: "simple_numbers",
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'td:first-child', // Targets the first column for the collapse icon
+                        renderer: function(api, rowIdx, columns) {
+                            var data = $.map(columns, function(col, i) {
+                                return col.hidden ?
+                                    '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' +
+                                    col.columnIndex + '">' +
+                                    '<td><strong>' + col.title + ' </strong></td>' +
+                                    '<td>' + col.data + '</td>' +
+                                    '</tr>' :
+                                    '';
+                            }).join('');
+
+                            return data ? $('<table/>').append(data) : false;
+                        }
+                    }
+                },
                 ajax: {
                     url: "{{ route('gettabelpranpcs') }}",
                     type: 'GET',
@@ -213,29 +231,34 @@
                 columns: [{
                         data: 'nama',
                         name: 'nama',
-                        className: 'align-middle'
+                        className: 'align-middle',
+                        responsivePriority: 2
                     },
                     {
                         data: 'snd',
                         name: 'snd',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 3
                     },
                     {
                         data: 'sto',
                         name: 'sto',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 4
                     },
                     {
                         data: 'mintgk',
                         name: 'mintgk',
                         className: 'align-middle text-center',
-                        visible: false
+                        visible: false,
+                        responsivePriority: 5
                     },
                     {
                         data: 'maxtgk',
                         name: 'maxtgk',
                         className: 'align-middle text-center',
-                        visible: false
+                        visible: false,
+                        responsivePriority: 6
                     },
                     {
                         data: 'bill_bln',
@@ -243,7 +266,8 @@
                         className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
-                        }
+                        },
+                        responsivePriority: 7
                     },
                     {
                         data: 'bill_bln1',
@@ -251,17 +275,20 @@
                         className: 'align-middle text-center',
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
-                        }
+                        },
+                        responsivePriority: 8
                     },
                     {
                         data: 'multi_kontak1',
                         name: 'multi_kontak1',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 9
                     },
                     {
                         data: 'email',
                         name: 'email',
-                        className: 'align-middle text-center'
+                        className: 'align-middle text-center',
+                        responsivePriority: 10
                     },
                     {
                         data: 'status_pembayaran',
@@ -276,14 +303,16 @@
                                 return '<span class="badge text-bg-success">Paid</span>';
                             }
                             return data;
-                        }
+                        },
+                        responsivePriority: 11
                     },
                     {
                         data: 'opsi-tabel-datapranpc',
                         name: 'opsi-tabel-datapranpc',
                         className: 'align-middle',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        responsivePriority: 1
                     }
                 ],
                 order: [

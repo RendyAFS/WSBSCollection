@@ -120,8 +120,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-secondary" id="cekPembayaranButton"
-                                        disabled>Cek
-                                        Pembayaran</button>
+                                        disabled>Update Pembayaran</button>
                                 </div>
                             </form>
                         </div>

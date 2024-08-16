@@ -224,9 +224,9 @@ class AdminBillperController extends Controller
         $billpers = Billper::all();
         $users = User::where('level', 'Sales')->get();
 
- // Mengambil last update dari created_at id yang terakhir
-    $lastUpdate = Billper::latest()->first();
-    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Billper::latest()->first();
+        $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('admin-billper.data-billper-adminbillper', compact('title', 'billpers', 'users', 'lastUpdate'));
     }
 
@@ -656,9 +656,9 @@ class AdminBillperController extends Controller
         $title = 'Data Plotting Existing';
         $existings = Existing::all();
         $users = User::where('level', 'Sales')->get();
- // Mengambil last update dari created_at id yang terakhir
-    $lastUpdate = Existing::latest()->first();
-    $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
+        // Mengambil last update dari created_at id yang terakhir
+        $lastUpdate = Existing::latest()->first();
+        $lastUpdate = $lastUpdate ? $lastUpdate->created_at->translatedFormat('d F Y H:i') : 'Tidak Ada';
         return view('admin-billper.data-existing-adminbillper', compact('title', 'existings', 'users', 'lastUpdate'));
     }
 

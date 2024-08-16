@@ -277,7 +277,7 @@
                         <a href="{{ route('pranpc-adminpranpc.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('pranpc-adminpranpc.index') || Route::is('edit-pranpcsadminpranpc') ? '-fill' : '' }}"></i>
-                            Data Plotting Pranpc
+                            Data Plotting
                         </a>
                     </li>
                 </ul>
@@ -286,7 +286,7 @@
                         <a href="{{ route('report-pranpc-adminpranpc.index') }}">
                             <i
                                 class="bi bi-flag{{ Route::is('report-pranpc-adminpranpc.index') ? '-fill' : '' }}"></i>
-                            Report Sales Pranpc
+                            Report Sales
                         </a>
                     </li>
                 </ul>
@@ -309,7 +309,7 @@
                         <a href="{{ route('existing-adminpranpc.index') }}">
                             <i
                                 class="bi bi-clipboard2-data{{ Route::is('existing-adminpranpc.index') || Route::is('edit-existingsadminpranpc') ? '-fill' : '' }}"></i>
-                            Data Plotting Existing
+                            Data Plotting
                         </a>
                     </li>
                 </ul>
@@ -318,7 +318,7 @@
                         <a href="{{ route('report-existing-adminpranpc.index') }}">
                             <i
                                 class="bi bi-flag{{ Route::is('report-existing-adminpranpc.index') ? '-fill' : '' }}"></i>
-                            Report Sales Existing
+                            Report Sales
                         </a>
                     </li>
                 </ul>

@@ -60,30 +60,55 @@ class OtpController extends Controller
 
     public function requestOtp(Request $request)
     {
-        // Validasi input email
+        // Validate the email input
         $request->validate([
             'email' => 'required|email|exists:users,email',
         ]);
 
         $email = $request->input('email');
 
-        // Hapus kode OTP lama untuk email yang sama
+        // Fetch user data
+        $user = User::where('email', $email)->firstOrFail();
+        $userData = [
+            'level' => $user->level,
+            'status' => $user->status,
+            'name' => $user->name,
+            'nik' => $user->nik,
+            'no_hp' => $user->no_hp,
+            'email' => $user->email,
+            'created_at' => $user->created_at->format('Y-m-d H:i:s'),
+        ];
+
+        // Delete old OTP codes for the same email
         OtpCode::where('email', $email)->delete();
 
-        // Generate kode OTP 6 digit
-        $otpCode = rand(100000, 999999);
+        // Generate a 6-digit OTP code securely
+        $otpCode = random_int(100000, 999999);
 
-        // Simpan data OTP ke database
+        // Save the OTP data to the database
         OtpCode::create([
             'email' => $email,
             'kode_otp' => $otpCode,
         ]);
 
-        // Kirim email dengan kode OTP
-        Mail::to($email)->send(new OtpCodeMail($otpCode));
+        try {
+            // Send the email with the OTP code and user data
+            Mail::to($email)->send(new OtpCodeMail($otpCode, $userData));
 
-        // Return response
-        return response()->json(['status' => 'Success']);
+            // Return a success response
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'OTP sent successfully.',
+                'email' => $email,
+            ]);
+        } catch (\Exception $e) {
+            // Handle the case where the email fails to send
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Failed to send OTP. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 
@@ -190,5 +215,4 @@ class OtpController extends Controller
             ->with('success', 'Password telah berhasil direset.')
             ->with('redirect', '/login');
     }
-
 }

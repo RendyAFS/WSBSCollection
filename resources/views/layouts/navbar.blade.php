@@ -26,7 +26,7 @@
                         <i class="bi bi-person-fill me-2"></i> Profilku
                     </a>
 
-                    <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" id="logoutLink"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="bi bi-box-arrow-left me-2"></i> Keluar
                     </a>

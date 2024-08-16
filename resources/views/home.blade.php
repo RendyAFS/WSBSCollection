@@ -142,7 +142,7 @@
                                         </a>
                                     @endif
                                 @else
-                                    <a class="btn btn-keluar fw-bold mt-5" href="{{ route('logout') }}"
+                                    <a class="btn btn-keluar fw-bold mt-5" href="{{ route('logout') }}" id="logoutLink"
                                         onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
                                         <i class="bi bi-box-arrow-left"></i> Keluar
@@ -182,11 +182,10 @@
                         clearInterval(interval);
                         otpCountdownButton.style.display = 'none';
                         requestOtpLink.style.display = 'block';
-                        localStorage.removeItem(
-                            'otpExpiryTime'); // Hapus waktu kadaluarsa dari localStorage
+                        localStorage.removeItem('otpExpiryTime'); // Clear expiry time from localStorage
                     } else {
                         localStorage.setItem('otpExpiryTime', Date.now() + timer *
-                            1000); // Simpan waktu kadaluarsa di localStorage
+                        1000); // Save expiry time in localStorage
                     }
                 }, 1000);
             }
@@ -200,10 +199,12 @@
                         otpCountdownButton.style.display = 'block';
                         startCountdown(remainingTime);
                     } else {
-                        localStorage.removeItem('otpExpiryTime'); // Hapus waktu kadaluarsa jika sudah lewat
+                        localStorage.removeItem('otpExpiryTime'); // Clear expired time
                     }
                 }
             }
+
+            // Remove the clearCountdown function and related code
 
             requestOtpLink.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -222,7 +223,8 @@
                         body: JSON.stringify({
                             email: '{{ Auth::user()->email }}'
                         })
-                    }).then(response => response.json())
+                    })
+                    .then(response => response.json())
                     .then(data => {
                         if (data.status === 'Success') {
                             Swal.fire({
@@ -235,7 +237,8 @@
                         } else {
                             throw new Error('Error response');
                         }
-                    }).catch(error => {
+                    })
+                    .catch(error => {
                         console.error('Error:', error);
                         Swal.fire({
                             icon: 'error',
@@ -249,7 +252,7 @@
                     });
             });
 
-            checkCountdown(); // Periksa countdown saat halaman dimuat
+            checkCountdown(); // Check countdown on page load
         });
     </script>
 @endpush

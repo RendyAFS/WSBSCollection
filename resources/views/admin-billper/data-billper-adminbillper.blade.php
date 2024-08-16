@@ -238,7 +238,8 @@
                         render: function(data, type, row) {
                             return '<input type="checkbox" class="row-checkbox" value="' + row.id +
                                 '">';
-                        }
+                        },
+                        responsivePriority: 1
                     },
                     {
                         data: 'nama',
@@ -250,7 +251,7 @@
                         data: 'no_inet',
                         name: 'no_inet',
                         className: 'align-middle text-center',
-                        responsivePriority: 3
+                        responsivePriority: 5
                     },
                     {
                         data: 'saldo',
@@ -260,31 +261,31 @@
                             return formatRupiah(data, 'Rp. ');
                         }
                         ,
-                        responsivePriority: 4
+                        responsivePriority: 6
                     },
                     {
                         data: 'sto',
                         name: 'sto',
                         className: 'align-middle text-center',
-                        responsivePriority: 5
+                        responsivePriority: 7
                     },
                     {
                         data: 'nper',
                         name: 'nper',
                         className: 'align-middle text-center',
-                        responsivePriority: 6
+                        responsivePriority: 8
                     },
                     {
                         data: 'produk',
                         name: 'produk',
                         className: 'align-middle text-center',
-                        responsivePriority: 7
+                        responsivePriority: 9
                     },
                     {
                         data: 'alamat',
                         name: 'alamat',
                         className: 'align-middle text-center',
-                        responsivePriority: 8
+                        responsivePriority: 10
                     },
                     {
                         data: 'status_pembayaran',
@@ -300,14 +301,14 @@
                             }
                             return data;
                         },
-                        responsivePriority: 9
+                        responsivePriority: 11
 
                     },
                     {
                         data: 'nama_user',
                         name: 'nama_user',
                         className: 'align-middle text-center',
-                        responsivePriority: 10
+                        responsivePriority: 3
                     },
                     {
                         data: 'opsi-tabel-databillperadminbillper',
@@ -315,7 +316,7 @@
                         className: 'align-middle',
                         orderable: false,
                         searchable: false,
-                        responsivePriority: 1
+                        responsivePriority: 4
                     }
                 ],
                 order: [

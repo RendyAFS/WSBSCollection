@@ -17,7 +17,7 @@ class CheckUserStatus
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->status !== 'Aktif') {
+        if (Auth::check() && Auth::user()->status !== 'Aktif' && Auth::user()->email_verified_at !==null) {
             return redirect('/home')->with('error', 'Your account is not active.');
         }
 

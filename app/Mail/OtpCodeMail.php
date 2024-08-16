@@ -11,16 +11,19 @@ class OtpCodeMail extends Mailable
     use Queueable, SerializesModels;
 
     public $otpCode;
+    public $userData;
 
     /**
      * Create a new message instance.
      *
      * @param  string  $otpCode
+     * @param  array   $userData
      * @return void
      */
-    public function __construct($otpCode)
+    public function __construct($otpCode, $userData)
     {
         $this->otpCode = $otpCode;
+        $this->userData = $userData;
     }
 
     /**
@@ -30,7 +33,11 @@ class OtpCodeMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Your OTP Code')
-            ->html('<p>Your OTP code is: <strong>' . $this->otpCode . '</strong></p>');
+        return $this->subject('Kode OTP')
+            ->view('emails.otp_code')
+            ->with([
+                'otpCode' => $this->otpCode,
+                'userData' => $this->userData,
+            ]);
     }
 }

@@ -262,7 +262,8 @@
                         render: function(data, type, row) {
                             return '<input type="checkbox" class="row-checkbox" value="' + row.id +
                                 '">';
-                        }
+                        },
+                        responsivePriority: 1
                     },
                     {
                         data: 'nama',
@@ -274,27 +275,27 @@
                         data: 'snd',
                         name: 'snd',
                         className: 'align-middle text-center',
-                        responsivePriority: 3
+                        responsivePriority: 5
                     },
                     {
                         data: 'sto',
                         name: 'sto',
                         className: 'align-middle text-center',
-                        responsivePriority: 4
+                        responsivePriority: 6
                     },
                     {
                         data: 'mintgk',
                         name: 'mintgk',
                         className: 'align-middle text-center',
                         visible: false,
-                        responsivePriority: 5
+                        responsivePriority: 7
                     },
                     {
                         data: 'maxtgk',
                         name: 'maxtgk',
                         className: 'align-middle text-center',
                         visible: false,
-                        responsivePriority: 6
+                        responsivePriority: 8
                     },
                     {
                         data: 'bill_bln',
@@ -303,7 +304,7 @@
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         },
-                        responsivePriority: 7
+                        responsivePriority: 9
                     },
                     {
                         data: 'bill_bln1',
@@ -312,7 +313,7 @@
                         render: function(data, type, row) {
                             return formatRupiah(data, 'Rp. ');
                         },
-                        responsivePriority: 8
+                        responsivePriority: 10
                     },
                     {
                         data: 'status_pembayaran',
@@ -328,13 +329,13 @@
                             }
                             return data;
                         },
-                        responsivePriority: 9
+                        responsivePriority: 11
                     },
                     {
                         data: 'nama_user',
                         name: 'nama_user',
                         className: 'align-middle text-center',
-                        responsivePriority: 10
+                        responsivePriority: 3
                     },
                     {
                         data: 'opsi-tabel-datapranpcadminpranpc',
@@ -342,7 +343,7 @@
                         className: 'align-middle',
                         orderable: false,
                         searchable: false,
-                        responsivePriority: 1
+                        responsivePriority: 4
                     }
                 ],
                 order: [

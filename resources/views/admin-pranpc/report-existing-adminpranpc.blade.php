@@ -17,7 +17,7 @@
         </div>
         <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
             <div class="row mb-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label for="month" class="form-label fw-bold">Bulan</label>
                     @php
                         // Array of month names in Indonesian
@@ -46,7 +46,7 @@
                     </select>
 
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label for="year" class="form-label fw-bold mt-3 mt-md-0">Tahun</label>
                     <select id="year" name="year" class="form-control">
                         @for ($y = now()->year; $y >= 2000; $y--)
@@ -56,7 +56,7 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label for="filter_sales" class="form-label fw-bold mt-3 mt-md-0">Nama Sales</label>
                     <select id="filter_sales" name="filter_sales" class="form-control">
                         <option value="">Semua</option>
@@ -67,7 +67,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end justify-content-end justify-content-md-start">
+                <div class="col-md-4 d-flex align-items-end justify-content-end justify-content-md-start">
                     <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
                         <i class="bi bi-funnel-fill"></i> Filter
                     </button>
@@ -109,7 +109,7 @@
 
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Pranpc
+                Report Existing
             </span>
         </div>
 
@@ -135,7 +135,7 @@
 
         <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
             <span class="fw-bold fs-2">
-                Detail Pranpc
+                Detail Existing
             </span>
             <div class="btn-group">
                 <a href="{{ route('download.excelreportexistingadminpranpc') }}" class="btn btn-green">

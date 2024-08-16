@@ -114,20 +114,20 @@
         </div>
 
         {{-- Table --}}
-        <table class="table">
+        <table class=" table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">No. </th>
-                    <th scope="col">Jenis Voc Kendala</th>
-                    <th scope="col">Total Reports</th>
+                    <th scope="col" class="align-middle">No. </th>
+                    <th scope="col" class="align-middle">Jenis Voc Kendala</th>
+                    <th scope="col" class="text-center align-middle">Total Reports</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($voc_kendalas as $voc_kendala)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
-                        <td>{{ $voc_kendala->voc_kendala }}</td>
-                        <td>{{ $voc_kendala->sales_reports_count }}</td>
+                        <th scope="row" class="align-middle">{{ $loop->iteration }}</th>
+                        <td class="align-middle">{{ $voc_kendala->voc_kendala }}</td>
+                        <td class="text-center align-middle">{{ $voc_kendala->sales_reports_count }}</td>
                     </tr>
                 @endforeach
             </tbody>

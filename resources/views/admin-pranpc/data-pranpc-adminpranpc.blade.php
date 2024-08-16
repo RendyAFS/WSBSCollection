@@ -369,16 +369,43 @@
                 },
             });
 
-            $('#btn-filter').on('click', function() {
-                var yearFilter = $('#year_filter').val();
-                var bulanFilter = $('#bulan_filter').val();
-                var statusPembayaran = $('#status_pembayaran_filter').val();
+            $(document).ready(function() {
+                // Peta kode bulan ke nama bulan
+                var bulanMap = {
+                    '01-02': 'Januari - Februari',
+                    '02-03': 'Februari - Maret',
+                    '03-04': 'Maret - April',
+                    '04-05': 'April - Mei',
+                    '05-06': 'Mei - Juni',
+                    '06-07': 'Juni - Juli',
+                    '07-08': 'Juli - Agustus',
+                    '08-09': 'Agustus - September',
+                    '09-10': 'September - Oktober',
+                    '10-11': 'Oktober - November',
+                    '11-12': 'November - Desember',
+                    '12-01': 'Desember - Januari'
+                };
 
-                var infoText = yearFilter + "-" + bulanFilter + " - " + statusPembayaran;
-                $('#info-filter').text(infoText);
+                $('#btn-filter').on('click', function() {
+                    var yearFilter = $('#year_filter').val();
+                    var bulanFilter = $('#bulan_filter').val();
+                    var statusPembayaran = $('#status_pembayaran_filter').val();
 
-                dataTable.ajax.reload();
+                    // Jika bulanFilter null atau kosong, set ke 'Semua'
+                    if (!bulanFilter || bulanFilter === 'Semua') {
+                        bulanFilter = 'Semua';
+                    } else {
+                        // Gunakan bulanMap untuk mengubah kode bulan menjadi nama bulan
+                        bulanFilter = bulanMap[bulanFilter] || 'Semua';
+                    }
+
+                    var infoText = yearFilter + "-" + bulanFilter + " - " + statusPembayaran;
+                    $('#info-filter').text(infoText);
+
+                    dataTable.ajax.reload();
+                });
             });
+
 
             // Event handler untuk select all
             $('#tabelpranpcadminpranpc').on('change', '#select-all', function() {

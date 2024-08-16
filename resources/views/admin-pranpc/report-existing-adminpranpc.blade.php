@@ -67,7 +67,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4 d-flex align-items-end justify-content-end justify-content-md-start">
+                <div class="col-md-12 d-flex align-items-end justify-content-end justify-content-md-start">
                     <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
                         <i class="bi bi-funnel-fill"></i> Filter
                     </button>

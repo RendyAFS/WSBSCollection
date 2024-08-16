@@ -138,6 +138,7 @@
                                                 aria-label="Default select example" required>
                                                 <option selected value="Semua">Semua</option>
                                                 <option value="Paid">Paid</option>
+                                                <option value="Pending">Pending</option>
                                                 <option value="Unpaid">Unpaid</option>
                                             </select>
                                         </div>

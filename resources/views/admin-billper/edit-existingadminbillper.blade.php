@@ -18,7 +18,7 @@
         </div>
 
         <div class="px-0 px-md-5">
-            <form action="{{ route('update-billpersadminbillper', ['id' => $existing->id]) }}" method="POST">
+            <form action="{{ route('update-existingsadminbillper', ['id' => $existing->id]) }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-12 col-md-6">

@@ -369,6 +369,17 @@
                 },
             });
 
+            $('#btn-filter').on('click', function() {
+                var yearFilter = $('#year_filter').val();
+                var bulanFilter = $('#bulan_filter').val();
+                var statusPembayaran = $('#status_pembayaran_filter').val();
+
+                var infoText = yearFilter + "-" + bulanFilter + " - " + statusPembayaran;
+                $('#info-filter').text(infoText);
+
+                dataTable.ajax.reload();
+            });
+
             // Event handler untuk select all
             $('#tabelpranpcadminpranpc').on('change', '#select-all', function() {
                 var isChecked = $(this).is(':checked');
@@ -437,17 +448,6 @@
                         cancelButtonColor: '#727375',
                     });
                 }
-            });
-
-            $('#btn-filter').on('click', function() {
-                var yearFilter = $('#year_filter').val();
-                var bulanFilter = $('#bulan_filter').val();
-                var statusPembayaran = $('#status_pembayaran_filter').val();
-
-                var infoText = jenisData + " - " + nper + " - " + statusPembayaran;
-                $('#info-filter').text(infoText);
-
-                dataTable.ajax.reload();
             });
         });
 

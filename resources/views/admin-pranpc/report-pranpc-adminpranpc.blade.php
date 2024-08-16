@@ -16,7 +16,7 @@
             </span>
         </div>
         {{-- Filter Form --}}
-        <form id="filterForm" action="{{ route('report-existing-adminpranpc.index') }}" method="GET">
+        <form id="filterForm" action="{{ route('report-pranpc-adminpranpc.index') }}" method="GET">
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="month" class="form-label fw-bold">Bulan</label>
@@ -109,7 +109,7 @@
 
         <div class="mb-4">
             <span class="fw-bold fs-2">
-                Report Existing
+                Report Pranpc
             </span>
         </div>
 
@@ -134,7 +134,7 @@
         </table>
         <div class="mt-5 mb-2 d-flex justify-content-between align-items-center">
             <span class="fw-bold fs-2">
-                Detail Existing
+                Detail Pranpc
             </span>
             <div class="btn-group">
                 <a href="{{ route('download.excelreportpranpc') }}" class="btn btn-green">

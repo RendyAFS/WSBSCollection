@@ -70,7 +70,6 @@
                     <button type="submit" class="btn btn-secondary me-2 mt-3 mt-md-0">
                         <i class="bi bi-funnel-fill"></i> Filter
                     </button>
-
                 </div>
             </div>
         </form>

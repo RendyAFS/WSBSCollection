@@ -898,7 +898,7 @@ class AdminPranpcController extends Controller
     public function indexreportexistingadminpranpc(Request $request)
     {
         confirmDelete();
-        $title = 'Report Sales Existng';
+        $title = 'Report Sales Existing';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));

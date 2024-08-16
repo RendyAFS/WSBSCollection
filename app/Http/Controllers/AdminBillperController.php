@@ -902,7 +902,7 @@ class AdminBillperController extends Controller
     public function indexreportexistingadminbillper(Request $request)
     {
         confirmDelete();
-        $title = 'Report Sales Existng';
+        $title = 'Report Sales Existing';
 
         // Get filter values from request
         $filterMonth = $request->input('month', now()->format('m'));

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Exists;
 
 class SalesReport extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'billper_id', 'pranpc_id', 'jmlh_visit'
+        'users_id', 'snd', 'witel', 'waktu_visit', 'voc_kendalas_id', 'follow_up', 'evidence_sales', 'evidence_pembayaran', 'billper_id', 'existing_id', 'pranpc_id', 'jmlh_visit'
     ];
 
     public function user()
@@ -30,7 +31,7 @@ class SalesReport extends Model
 
     public function existings()
     {
-        return $this->belongsTo(Billper::class, 'existing_id');
+        return $this->belongsTo(Existing::class, 'existing_id');
     }
 
     public function pranpcs()

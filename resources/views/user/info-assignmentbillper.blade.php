@@ -157,15 +157,9 @@
                                             <input type="file" class="form-control" id="evidence_sales"
                                                 name="evidence_sales" accept="image/*" required>
                                         </div>
-                                        <div class="mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input border border-dark" type="checkbox"
-                                                    id="toggleEvidencePembayaran" name="toggleEvidencePembayaran">
-                                                <label class="form-check-label" for="toggleEvidencePembayaran">Tambah
-                                                    Evidence Pembayaran</label>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3" id="evidencePembayaranWrapper" style="display: none;">
+
+                                        <!-- Wrapper for evidence_pembayaran input (Initially hidden with d-none) -->
+                                        <div class="mb-3 d-none" id="evidencePembayaranWrapper">
                                             <label for="evidence_pembayaran" class="form-label fw-bold">Evidence
                                                 Pembayaran</label>
                                             <input type="file" class="form-control" id="evidence_pembayaran"
@@ -190,40 +184,27 @@
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
             var vocSelect = document.getElementById('voc_kendalas_id');
-            var toggleCheckbox = document.getElementById('toggleEvidencePembayaran');
             var evidenceWrapper = document.getElementById('evidencePembayaranWrapper');
             var evidenceInput = document.getElementById('evidence_pembayaran');
 
-            // Function to update checkbox state based on select value
-            function updateCheckboxState() {
-                if (vocSelect.value === '1') { // Jika nilai adalah '1', maka aktifkan checkbox
-                    toggleCheckbox.disabled = false;
+            // Function to show or hide evidence_pembayaran input based on select value
+            function updateEvidenceInput() {
+                if (vocSelect.value === '1') { // '1' represents 'Tidak Ada'
+                    evidenceWrapper.classList.remove('d-none');
+                    evidenceWrapper.classList.add('d-block');
+                    evidenceInput.required = true;
                 } else {
-                    toggleCheckbox.disabled = true;
-                    toggleCheckbox.checked = false;
-                    evidenceWrapper.style.display = 'none';
+                    evidenceWrapper.classList.remove('d-block');
+                    evidenceWrapper.classList.add('d-none');
                     evidenceInput.required = false;
                 }
             }
 
             // Initial update based on the current select value
-            updateCheckboxState();
+            updateEvidenceInput();
 
             // Handle change event for the voc_kendalas_id select
-            vocSelect.addEventListener('change', updateCheckboxState);
-
-            // Handle change event for the toggleEvidencePembayaran checkbox
-            toggleCheckbox.addEventListener('change', function() {
-                if (!this.disabled) {
-                    if (this.checked) {
-                        evidenceWrapper.style.display = 'block';
-                        evidenceInput.required = true;
-                    } else {
-                        evidenceWrapper.style.display = 'none';
-                        evidenceInput.required = false;
-                    }
-                }
-            });
+            vocSelect.addEventListener('change', updateEvidenceInput);
         });
     </script>
 @endpush

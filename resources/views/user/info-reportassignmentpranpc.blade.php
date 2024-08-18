@@ -118,8 +118,16 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                        <a href="{{ route('reportassignmentpranpc.index') }}" class="btn btn-grey me-2 px-5">Batal</a>
-                        <button type="submit" class="btn btn-secondary px-5">Update</button>
+                        @if ($sales_report->pranpcs->status_pembayaran !== 'Paid')
+                            <!-- Tombol Update dan Batal jika status_pembayaran bukan 'Paid' -->
+                            <a href="{{ route('reportassignmentpranpc.index') }}"
+                                class="btn btn-grey me-2 px-5">Batal</a>
+                            <button type="submit" class="btn btn-secondary px-5">Update</button>
+                        @else
+                            <!-- Tombol Kembali jika status_pembayaran adalah 'Paid' -->
+                            <a href="{{ route('reportassignmentpranpc.index') }}"
+                                class="btn btn-grey me-2 px-5">Kembali</a>
+                        @endif
                     </div>
                 </form>
             </div>

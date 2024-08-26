@@ -91,7 +91,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // Create the user
+        // Buat pengguna
         $user = User::create([
             'level' => $data['level'],
             'status' => $data['status'],
@@ -104,19 +104,19 @@ class RegisterController extends Controller
 
         $email = $data['email'];
 
-        // Delete old OTP codes for the same email
+        // Hapus kode OTP lama untuk email yang sama
         OtpCode::where('email', $email)->delete();
 
-        // Generate a 6-digit OTP code securely
+        // Hasilkan kode OTP 6 digit secara aman
         $otpCode = random_int(100000, 999999);
 
-        // Store the new OTP code in the database
+        // Simpan kode OTP baru ke dalam database
         OtpCode::create([
             'email' => $email,
             'kode_otp' => $otpCode,
         ]);
 
-        // Prepare user data for email
+        // Siapkan data pengguna untuk email
         $userData = [
             'level' => $user->level,
             'status' => $user->status,
@@ -127,10 +127,16 @@ class RegisterController extends Controller
             'created_at' => $user->created_at->toDateTimeString(),
         ];
 
-        // Send the OTP email with the user data
+        // Kirim email OTP dengan data pengguna
         Mail::to($user->email)->send(new OtpCodeMail($otpCode, $userData));
 
-        // Return the created user instance
+        // Simpan ID pengguna di session setelah registrasi
+        session()->put('user_id', $user->id);
+
+        // Regenerasi session untuk keamanan
+        session()->regenerate();
+
+        // Return instance user yang telah dibuat
         return $user;
     }
 }

@@ -1,0 +1,96 @@
+# version: '3.8'
+# services:
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: laravel-app
+#     container_name: laravel_app
+#     restart: unless-stopped
+#     volumes:
+#       - .:/var/www
+#     networks:
+#       - laravel
+
+#   db:
+#     image: mysql:8.0
+#     container_name: laravel_db
+#     restart: unless-stopped
+#     environment:
+#       MYSQL_ROOT_USER: root
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: wsbs_collection
+#       MYSQL_USER: RendyAFS
+#       MYSQL_PASSWORD: password
+#     volumes:
+#       - dbdata:/var/lib/mysql
+#     networks:
+#       - laravel
+#     ports:
+#       - "3306:3306"
+
+#   webserver:
+#     image: nginx:alpine
+#     container_name: laravel_web
+#     restart: unless-stopped
+#     ports:
+#       - "8000:80"
+#     volumes:
+#       - .:/var/www
+#       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+#     networks:
+#       - laravel
+
+# networks:
+#   laravel:
+
+# volumes:
+#   dbdata:
+
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-app
+    container_name: laravel_app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel
+
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wsbs_collection
+      MYSQL_USER: RendyAFS
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel
+    ports:
+      - "3306:3306"
+
+  webserver:
+    image: nginx:alpine
+    container_name: laravel_web
+    restart: unless-stopped
+    ports:
+      - "8081:80" # Port diubah menjadi 8081 untuk Nginx
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:

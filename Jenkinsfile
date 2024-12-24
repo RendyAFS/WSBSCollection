@@ -8,7 +8,7 @@ pipeline {
         stage("Deploy Application with Docker Compose") {
             steps {
                 echo "Starting containers using Docker Compose..."
-                sh "docker-compose up -d" // Pastikan semua container berjalan
+                bat "docker-compose up -d" // Pastikan semua container berjalan
             }
         }
 
@@ -16,7 +16,7 @@ pipeline {
         stage("Health Check") {
             steps {
                 echo "Checking if application is running..."
-                sh "curl -f http://localhost:8081 || exit 1" // Periksa aplikasi melalui Nginx
+                bat "curl -f http://localhost:8081 || exit 1" // Periksa aplikasi melalui Nginx
             }
         }
     }

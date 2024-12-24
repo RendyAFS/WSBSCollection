@@ -4,15 +4,7 @@ pipeline {
         DOCKER_SERVER = 'localhost' // Docker Desktop berjalan di lokal
     }
     stages {
-        // Stage 1: Checkout kode dari GitHub
-        stage("Checkout Code") {
-            steps {
-                echo "Checking out project from GitHub..."
-                git branch: 'main', url: 'https://github.com/RendyAFS/WSBSCollection.git'
-            }
-        }
-
-        // Stage 2: Deploy using Docker Compose
+        // Stage 1: Deploy using Docker Compose
         stage("Deploy Application with Docker Compose") {
             steps {
                 echo "Starting containers using Docker Compose..."
@@ -20,7 +12,7 @@ pipeline {
             }
         }
 
-        // Stage 3: Health Check
+        // Stage 2: Health Check
         stage("Health Check") {
             steps {
                 echo "Checking if application is running..."

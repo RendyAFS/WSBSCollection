@@ -50,13 +50,13 @@ pipeline {
         stage("Install Dependencies") {
             steps {
                 echo "Menjalankan npm install..."
-                bat "npm install" // Menjalankan npm install untuk Node.js dependencies
+                // bat "npm install" // Menjalankan npm install untuk Node.js dependencies
 
                 echo "Menjalankan composer install..."
-                bat "composer install" // Menjalankan composer install untuk PHP dependencies
+                // bat "composer install" // Menjalankan composer install untuk PHP dependencies
 
                 echo "Menyalin file .env.example ke .env..."
-                bat "copy .env.example .env" // Menyalin file .env.example menjadi .env
+                // bat "copy .env.example .env" // Menyalin file .env.example menjadi .env
             }
         }
 
